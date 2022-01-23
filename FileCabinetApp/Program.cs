@@ -124,16 +124,30 @@
             dateString = Console.ReadLine();
             DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
 
-            Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime);
+            Console.WriteLine("Height: ");
+            short height;
+            height = short.Parse(Console.ReadLine());
+
+            Console.WriteLine("Weight: ");
+            decimal weight;
+            weight = decimal.Parse(Console.ReadLine());
+
+            Console.WriteLine("Temperament: ");
+            char temperament;
+            temperament = char.Parse(Console.ReadLine());
+
+            Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, temperament);
         }
 
         private static void List(string parameters)
         {
+            // TO DO : изменить способ вывода темперамента
             FileCabinetRecord[] records = fileCabinetService.GetRecords();
             for (int i = 0; i < records.Length; i++)
             {
                 Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
-                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}");
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
             }
         }
     }

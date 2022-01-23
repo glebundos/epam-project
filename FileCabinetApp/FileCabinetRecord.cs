@@ -9,5 +9,11 @@
         public string LastName { get; set; }
 
         public DateTime DateOfBirth { get; set; }
+
+        public short Height { get; set; }
+
+        public decimal Weigth { get; set; }
+
+        public char Temperament { get; set; }
     }
 }

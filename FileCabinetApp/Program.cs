@@ -17,14 +17,16 @@
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "prints the statistics", "The 'stat' prints the statistics." },
-            new string[] { "create", "creates a new record", "The 'create' creates a new record." },
+            new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
+            new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
+            new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
         };
 
         public static void Main(string[] args)
@@ -123,6 +125,16 @@
             DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
 
             Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime);
+        }
+
+        private static void List(string parameters)
+        {
+            FileCabinetRecord[] records = fileCabinetService.GetRecords();
+            for (int i = 0; i < records.Length; i++)
+            {
+                Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}");
+            }
         }
     }
 }

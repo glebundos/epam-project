@@ -7,6 +7,7 @@
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static bool isRunning = true;
 
@@ -14,12 +15,18 @@
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
+            new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
+            new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
         };
 
         public static void Main(string[] args)
@@ -94,6 +101,54 @@
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.WriteLine("First name: ");
+            string firstName = string.Empty;
+            firstName = Console.ReadLine();
+
+            Console.WriteLine("Last name: ");
+            string lastName = string.Empty;
+            lastName = Console.ReadLine();
+
+            Console.WriteLine("Date of birth: ");
+            string dateString = string.Empty;
+            dateString = Console.ReadLine();
+            DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
+
+            Console.WriteLine("Height: ");
+            short height;
+            height = short.Parse(Console.ReadLine());
+
+            Console.WriteLine("Weight: ");
+            decimal weight;
+            weight = decimal.Parse(Console.ReadLine());
+
+            Console.WriteLine("Temperament: ");
+            char temperament;
+            temperament = char.Parse(Console.ReadLine());
+
+            Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, temperament);
+        }
+
+        private static void List(string parameters)
+        {
+            // TO DO : изменить способ вывода темперамента
+            FileCabinetRecord[] records = fileCabinetService.GetRecords();
+            for (int i = 0; i < records.Length; i++)
+            {
+                Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+            }
         }
     }
 }

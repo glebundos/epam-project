@@ -5,6 +5,7 @@
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
@@ -81,6 +82,16 @@
             {
                 this.lastNameDictionary.Add(lastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
                 this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
+            }
+
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
+            {
+                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
+                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
             }
 
             return record.Id;
@@ -171,6 +182,17 @@
                 this.lastNameDictionary.Add(lastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
                 this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
             }
+
+            this.dateOfBirthDictionary[oldRecord.DateOfBirth.ToString(this.cultureInfo)].Remove(oldRecord);
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
+            {
+                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
+                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+            }
         }
 
         public int IsExistRecord(int id)
@@ -208,16 +230,12 @@
 
         public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
         {
-            var result = new List<FileCabinetRecord>();
-            for (int i = 0; i < this.list.Count; i++)
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
             {
-                if (this.list[i].DateOfBirth.CompareTo(dateOfBirth) == 0)
-                {
-                    result.Add(this.list[i]);
-                }
+                return this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray();
             }
 
-            return result.ToArray();
+            return Array.Empty<FileCabinetRecord>();
         }
 
         public FileCabinetRecord[] GetRecords()

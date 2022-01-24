@@ -6,6 +6,48 @@
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
         {
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+            }
+
+            if (firstName.Length < 2 || firstName.Length > 60)
+            {
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+            }
+
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+            }
+
+            if (lastName.Length < 2 || lastName.Length > 60)
+            {
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+            }
+
+            DateTime min = new DateTime(1950, 1, 1);
+            if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
+            {
+                throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+            }
+
+            if (height < 45 || height > 252)
+            {
+                throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+            }
+
+            if (weight < 2 || weight > 600)
+            {
+                throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+            }
+
+            temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
+            if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
+            {
+                throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+            }
+
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,

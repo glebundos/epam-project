@@ -19,6 +19,7 @@
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -29,6 +30,7 @@
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
+            new string[] { "find <parameter> <value>", "finds a record", "The 'find' finds all records with a specific parameter value." },
         };
 
         public static void Main(string[] args)
@@ -294,6 +296,23 @@
             else
             {
                 Console.WriteLine($"#{id} record is not found.");
+            }
+        }
+
+        private static void Find(string parameters)
+        {
+            string parameter = parameters.Split()[0].ToLower(new System.Globalization.CultureInfo("en-US"));
+            string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"));
+
+            if (parameter == "firstname")
+            {
+                var records = fileCabinetService.FindByFirstName(value);
+                for (int i = 0; i < records.Length; i++)
+                {
+                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+                }
             }
         }
     }

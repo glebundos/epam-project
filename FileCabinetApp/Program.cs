@@ -314,6 +314,17 @@
                     $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
                 }
             }
+
+            if (parameter == "lastname")
+            {
+                var records = fileCabinetService.FindByLastName(value);
+                for (int i = 0; i < records.Length; i++)
+                {
+                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+                }
+            }
         }
     }
 }

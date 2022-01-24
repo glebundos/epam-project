@@ -156,6 +156,20 @@
             return result.ToArray();
         }
 
+        public FileCabinetRecord[] FindByLastName(string lastName)
+        {
+            var result = new List<FileCabinetRecord>();
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                if (this.list[i].LastName.ToLower(new System.Globalization.CultureInfo("en-US")) == lastName)
+                {
+                    result.Add(this.list[i]);
+                }
+            }
+
+            return result.ToArray();
+        }
+
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();

@@ -114,31 +114,76 @@
             try
             {
                 Console.WriteLine("First name: ");
-                string firstName = string.Empty;
+                string? firstName = string.Empty;
                 firstName = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(firstName))
+                {
+                    throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+                }
+
+                if (firstName.Length < 2 || firstName.Length > 60)
+                {
+                    throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+                }
 
                 Console.WriteLine("Last name: ");
-                string lastName = string.Empty;
+                string? lastName = string.Empty;
                 lastName = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(lastName))
+                {
+                    throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+                }
+
+                if (lastName.Length < 2 || lastName.Length > 60)
+                {
+                    throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+                }
 
                 Console.WriteLine("Date of birth: ");
-                string dateString = string.Empty;
+                string? dateString = string.Empty;
                 dateString = Console.ReadLine();
-                DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
+                DateTime dateOfBirth = DateTime.Now;
+                bool parsedSuccessfully = DateTime.TryParse(dateString, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
+                DateTime min = new DateTime(1950, 1, 1);
+                if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
+                {
+                    throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+                }
 
+                parsedSuccessfully = true;
                 Console.WriteLine("Height: ");
-                short height;
-                height = short.Parse(Console.ReadLine());
+                short height = 0;
+                parsedSuccessfully = short.TryParse(Console.ReadLine(), out height);
+                if (height < 45 || height > 252 || !parsedSuccessfully)
+                {
+                    throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+                }
 
+                parsedSuccessfully = true;
                 Console.WriteLine("Weight: ");
-                decimal weight;
-                weight = decimal.Parse(Console.ReadLine());
+                decimal weight = 0;
+                parsedSuccessfully = decimal.TryParse(Console.ReadLine(), out weight);
+                if (weight < 2 || weight > 600 || !parsedSuccessfully)
+                {
+                    throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+                }
 
+                parsedSuccessfully = true;
                 Console.WriteLine("Temperament: ");
-                char temperament;
-                temperament = char.Parse(Console.ReadLine());
+                char temperament = ' ';
+                parsedSuccessfully = char.TryParse(Console.ReadLine(), out temperament);
+                if (!parsedSuccessfully)
+                {
+                    throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                }
 
-                Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, temperament);
+                temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
+                if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
+                {
+                    throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                }
+
+                Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, height, weight, temperament);
             }
             catch (Exception e)
             {

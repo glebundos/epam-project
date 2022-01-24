@@ -301,12 +301,13 @@
 
         private static void Find(string parameters)
         {
+            // TODO: кидать исключения при некорректном вводе
             string parameter = parameters.Split()[0].ToLower(new System.Globalization.CultureInfo("en-US"));
             string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"));
 
             if (parameter == "firstname")
             {
-                var records = fileCabinetService.FindByFirstName(value);
+                var records = fileCabinetService.FindByFirstName(value[1..^1]);
                 for (int i = 0; i < records.Length; i++)
                 {
                     Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
@@ -317,7 +318,20 @@
 
             if (parameter == "lastname")
             {
-                var records = fileCabinetService.FindByLastName(value);
+                var records = fileCabinetService.FindByLastName(value[1..^1]);
+                for (int i = 0; i < records.Length; i++)
+                {
+                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
+                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+                }
+            }
+
+            if (parameter == "dateofbirth")
+            {
+                DateTime dateOfBirth;
+                bool parsedSuccessfully = DateTime.TryParse(value[1..^1], new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
+                var records = fileCabinetService.FindByDateOfBirth(dateOfBirth);
                 for (int i = 0; i < records.Length; i++)
                 {
                     Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +

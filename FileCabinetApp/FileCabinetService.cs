@@ -170,6 +170,20 @@
             return result.ToArray();
         }
 
+        public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
+        {
+            var result = new List<FileCabinetRecord>();
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                if (this.list[i].DateOfBirth.CompareTo(dateOfBirth) == 0)
+                {
+                    result.Add(this.list[i]);
+                }
+            }
+
+            return result.ToArray();
+        }
+
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();

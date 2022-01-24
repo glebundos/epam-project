@@ -111,32 +111,40 @@
 
         private static void Create(string parameters)
         {
-            Console.WriteLine("First name: ");
-            string firstName = string.Empty;
-            firstName = Console.ReadLine();
+            try
+            {
+                Console.WriteLine("First name: ");
+                string firstName = string.Empty;
+                firstName = Console.ReadLine();
 
-            Console.WriteLine("Last name: ");
-            string lastName = string.Empty;
-            lastName = Console.ReadLine();
+                Console.WriteLine("Last name: ");
+                string lastName = string.Empty;
+                lastName = Console.ReadLine();
 
-            Console.WriteLine("Date of birth: ");
-            string dateString = string.Empty;
-            dateString = Console.ReadLine();
-            DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
+                Console.WriteLine("Date of birth: ");
+                string dateString = string.Empty;
+                dateString = Console.ReadLine();
+                DateTime dateTime = DateTime.Parse(dateString, new System.Globalization.CultureInfo("en-US"));
 
-            Console.WriteLine("Height: ");
-            short height;
-            height = short.Parse(Console.ReadLine());
+                Console.WriteLine("Height: ");
+                short height;
+                height = short.Parse(Console.ReadLine());
 
-            Console.WriteLine("Weight: ");
-            decimal weight;
-            weight = decimal.Parse(Console.ReadLine());
+                Console.WriteLine("Weight: ");
+                decimal weight;
+                weight = decimal.Parse(Console.ReadLine());
 
-            Console.WriteLine("Temperament: ");
-            char temperament;
-            temperament = char.Parse(Console.ReadLine());
+                Console.WriteLine("Temperament: ");
+                char temperament;
+                temperament = char.Parse(Console.ReadLine());
 
-            Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, temperament);
+                Program.fileCabinetService.CreateRecord(firstName, lastName, dateTime, height, weight, temperament);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Некорректный ввод: " + e.Message);
+                Create(parameters);
+            }
         }
 
         private static void List(string parameters)

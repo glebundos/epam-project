@@ -30,7 +30,7 @@
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
-            new string[] { "find <parameter> <value>", "finds a record", "The 'find' finds all records with a specific parameter value." },
+            new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
         };
 
         public static void Main(string[] args)
@@ -198,20 +198,17 @@
 
         private static void List(string parameters)
         {
-            // TO DO : изменить способ вывода темперамента
             FileCabinetRecord[] records = fileCabinetService.GetRecords();
             for (int i = 0; i < records.Length; i++)
             {
-                Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
-                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+                WriteRecord(records[i]);
             }
         }
 
         private static void Edit(string parameters)
         {
             int id = Convert.ToInt32(parameters, new System.Globalization.CultureInfo("en-US"));
-            if (fileCabinetService.IsExistRecord(id) > 0)
+            if (fileCabinetService.IsExistRecord(id) > -1)
             {
                 try
                 {
@@ -301,44 +298,95 @@
 
         private static void Find(string parameters)
         {
-            // TODO: кидать исключения при некорректном вводе
-            string parameter = parameters.Split()[0].ToLower(new System.Globalization.CultureInfo("en-US"));
-            string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"));
-
-            if (parameter == "firstname")
+            try
             {
-                var records = fileCabinetService.FindByFirstName(value[1..^1]);
+                string parameter = parameters.Split()[0].ToLower(new System.Globalization.CultureInfo("en-US"));
+                if (string.IsNullOrEmpty(parameter))
+                {
+                    throw new ArgumentException("Wrong parameter", parameter);
+                }
+
+                string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
+                var records = Array.Empty<FileCabinetRecord>();
+
+                if (parameter == "firstname")
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentNullException(nameof(value), "Parameter is null");
+                    }
+
+                    if (value.Length < 2 || value.Length > 60)
+                    {
+                        throw new ArgumentException("Value has wrong length", value);
+                    }
+
+                    records = fileCabinetService.FindByFirstName(value);
+                }
+                else if (parameter == "lastname")
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        throw new ArgumentNullException(nameof(value), "Parameter is null");
+                    }
+
+                    if (value.Length < 2 || value.Length > 60)
+                    {
+                        throw new ArgumentException("Value has wrong length", value);
+                    }
+
+                    records = fileCabinetService.FindByLastName(value);
+                }
+                else if (parameter == "dateofbirth")
+                {
+                    DateTime dateOfBirth;
+                    bool parsedSuccessfully = DateTime.TryParse(value, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
+                    if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
+                    {
+                        throw new ArgumentException("Parameter is wrong", nameof(dateOfBirth));
+                    }
+
+                    records = fileCabinetService.FindByDateOfBirth(dateOfBirth);
+                }
+                else
+                {
+                    throw new ArgumentException("Wrong parameter", parameter);
+                }
+
                 for (int i = 0; i < records.Length; i++)
                 {
-                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
-                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
+                    WriteRecord(records[i]);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Некорректный ввод: " + e.Message);
+                Console.WriteLine("Используйте find <parameter name> \"value\"");
+            }
+        }
+
+        private static void WriteRecord(FileCabinetRecord record)
+        {
+            string temperamentString = string.Empty;
+            switch (record.Temperament)
+            {
+                case 'P':
+                    temperamentString = "Phlegmatic";
+                    break;
+                case 'S':
+                    temperamentString = "Sanguine";
+                    break;
+                case 'C':
+                    temperamentString = "Choleric";
+                    break;
+                case 'M':
+                    temperamentString = "Melancholic";
+                    break;
             }
 
-            if (parameter == "lastname")
-            {
-                var records = fileCabinetService.FindByLastName(value[1..^1]);
-                for (int i = 0; i < records.Length; i++)
-                {
-                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
-                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
-                }
-            }
-
-            if (parameter == "dateofbirth")
-            {
-                DateTime dateOfBirth;
-                bool parsedSuccessfully = DateTime.TryParse(value[1..^1], new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
-                var records = fileCabinetService.FindByDateOfBirth(dateOfBirth);
-                for (int i = 0; i < records.Length; i++)
-                {
-                    Console.WriteLine($"#{records[i].Id}, {records[i].FirstName}, {records[i].LastName}, " +
-                    $"{records[i].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{records[i].Height} cm, {records[i].Weigth} kg, {records[i].Temperament}");
-                }
-            }
+            Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
+                    $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
+                    $"{record.Height} cm, {record.Weigth} kg, {temperamentString}");
         }
     }
 }

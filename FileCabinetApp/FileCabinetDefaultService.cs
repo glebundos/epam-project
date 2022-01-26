@@ -6,12 +6,11 @@
     public class FileCabinetDefaultService : FileCabinetService
     {
         /// <summary>
-        /// Creating a DefaultValidator instance.
+        /// Initializes a new instance of the <see cref="FileCabinetDefaultService"/> class.
         /// </summary>
-        /// <returns>DefaultValidator instance.</returns>
-        protected override IRecordValidator CreateValidator()
+        public FileCabinetDefaultService()
+            : base(new DefaultValidator())
         {
-            return new DefaultValidator();
         }
     }
 }

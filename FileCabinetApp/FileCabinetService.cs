@@ -6,10 +6,20 @@
     public abstract class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly IRecordValidator validator;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// </summary>
+        /// <param name="validator">Validator.</param>
+        protected FileCabinetService(IRecordValidator validator)
+        {
+            this.validator = validator;
+        }
 
         /// <summary>
         /// Creates new record with given parameters.
@@ -22,7 +32,7 @@
         {
             try
             {
-                this.CreateValidator().ValidateParameters(newRecord);
+                this.validator.ValidateParameters(newRecord);
                 var record = new FileCabinetRecord
                 {
                     Id = this.list.Count + 1,
@@ -90,7 +100,7 @@
                     throw new ArgumentException("Wrong id", $"{nameof(id)}");
                 }
 
-                this.CreateValidator().ValidateParameters(newRecord);
+                this.validator.ValidateParameters(newRecord);
                 var oldRecord = this.list[indexOfRecord];
                 var record = new FileCabinetRecord
                 {
@@ -241,11 +251,5 @@
         {
             return this.list.Count;
         }
-
-        /// <summary>
-        /// Creating a validator instance.
-        /// </summary>
-        /// <returns>Validator instance.</returns>
-        protected abstract IRecordValidator CreateValidator();
     }
 }

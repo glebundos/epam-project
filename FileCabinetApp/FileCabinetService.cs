@@ -1,5 +1,8 @@
 ﻿namespace FileCabinetApp
 {
+    /// <summary>
+    /// Represents standart operations with list of records.
+    /// </summary>
     public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
@@ -8,6 +11,16 @@
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
+        /// <summary>
+        /// Creates new record with given parameters.
+        /// </summary>
+        /// <param name="firstName">The first name.</param>
+        /// <param name="lastName">The last name.</param>
+        /// <param name="dateOfBirth">Date of birth.</param>
+        /// <param name="height">Height in cm.</param>
+        /// <param name="weight">Weight in kg.</param>
+        /// <param name="temperament">The first letter of temperament.</param>
+        /// <returns>Id of the created record.</returns>
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
         {
             if (string.IsNullOrWhiteSpace(firstName))
@@ -96,6 +109,16 @@
             return record.Id;
         }
 
+        /// <summary>
+        /// Edits the record with the given id according to the given parameters.
+        /// </summary>
+        /// <param name="id">The Id of the record to change.</param>
+        /// <param name="firstName">The first name.</param>
+        /// <param name="lastName">The last name.</param>
+        /// <param name="dateOfBirth">Date of birth.</param>
+        /// <param name="height">Height in cm.</param>
+        /// <param name="weight">Weight in kg.</param>
+        /// <param name="temperament">The first letter of temperament.</param>
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
         {
             int indexOfRecord = this.RecordIndex(id);
@@ -205,6 +228,11 @@
             }
         }
 
+        /// <summary>
+        /// Searches for a record with given Id.
+        /// </summary>
+        /// <param name="id">The Id of the record to search.</param>
+        /// <returns>Index of the record in list, or -1 if record with that Id was not found.</returns>
         public int RecordIndex(int id)
         {
             for (int i = 0; i < this.list.Count; i++)
@@ -219,6 +247,11 @@
             return -1;
         }
 
+        /// <summary>
+        /// Searches for all records with given first name (Ignoring lower case and upper case differences).
+        /// </summary>
+        /// <param name="firstName">The first name to search for.</param>
+        /// <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
@@ -230,6 +263,11 @@
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for all records with given last name (Ignoring lower case and upper case differences).
+        /// </summary>
+        /// <param name="lastName">The last name to search for.</param>
+        /// <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
@@ -241,6 +279,11 @@
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for all records with given date of birth.
+        /// </summary>
+        /// <param name="dateOfBirth">The date of birth to search for.</param>
+        /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
         public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
         {
             if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
@@ -252,11 +295,19 @@
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Gets the all records.
+        /// </summary>
+        /// <returns>Array of all records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
         }
 
+        /// <summary>
+        /// Gets the number of all records.
+        /// </summary>
+        /// <returns>Number of all records.</returns>
         public int GetStat()
         {
             return this.list.Count;

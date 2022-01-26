@@ -1,5 +1,8 @@
 ﻿namespace FileCabinetApp
 {
+    /// <summary>
+    /// Main class of the program.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Gleb Kontovsky";
@@ -33,6 +36,10 @@
             new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
         };
 
+        /// <summary>
+        /// Еhe main method from which the program execution starts.
+        /// </summary>
+        /// <param name="args">Initial program arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");

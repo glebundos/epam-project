@@ -4,5 +4,146 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Contains all record parameters.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets the value that matches the Id of the record.
+            </summary>
+            <value>
+            The value that matches the Id of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets the first name of the record.
+            </summary>
+            <value>
+            The first name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets the last name of the record.
+            </summary>
+            <value>
+            The last name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets the date of birth of the record.
+            </summary>
+            <value>
+            Date of birth of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Height">
+            <summary>
+            Gets or sets the height of the record.
+            </summary>
+            <value>
+            Height of the record in cm.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Weigth">
+            <summary>
+            Gets or sets the weight of the record.
+            </summary>
+            <value>
+            Weight of the record in kg.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Temperament">
+            <summary>
+            Gets or sets the temperament of the record.
+            </summary>
+            <value>
+            First letter of temperament.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Represents standart operations with list of records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Creates new record with given parameters.
+            </summary>
+            <param name="firstName">The first name.</param>
+            <param name="lastName">The last name.</param>
+            <param name="dateOfBirth">Date of birth.</param>
+            <param name="height">Height in cm.</param>
+            <param name="weight">Weight in kg.</param>
+            <param name="temperament">The first letter of temperament.</param>
+            <returns>Id of the created record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Edits the record with the given id according to the given parameters.
+            </summary>
+            <param name="id">The Id of the record to change.</param>
+            <param name="firstName">The first name.</param>
+            <param name="lastName">The last name.</param>
+            <param name="dateOfBirth">Date of birth.</param>
+            <param name="height">Height in cm.</param>
+            <param name="weight">Weight in kg.</param>
+            <param name="temperament">The first letter of temperament.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.RecordIndex(System.Int32)">
+            <summary>
+            Searches for a record with given Id.
+            </summary>
+            <param name="id">The Id of the record to search.</param>
+            <returns>Index of the record in list, or -1 if record with that Id was not found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for all records with given first name (Ignoring lower case and upper case differences).
+            </summary>
+            <param name="firstName">The first name to search for.</param>
+            <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for all records with given last name (Ignoring lower case and upper case differences).
+            </summary>
+            <param name="lastName">The last name to search for.</param>
+            <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Searches for all records with given date of birth.
+            </summary>
+            <param name="dateOfBirth">The date of birth to search for.</param>
+            <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Gets the all records.
+            </summary>
+            <returns>Array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Gets the number of all records.
+            </summary>
+            <returns>Number of all records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Main class of the program.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            Еhe main method from which the program execution starts.
+            </summary>
+            <param name="args">Initial program arguments.</param>
+        </member>
     </members>
 </doc>

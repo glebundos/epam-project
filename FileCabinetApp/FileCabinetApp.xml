@@ -4,6 +4,28 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            Custom configuration of FileCabinetService class (Adult configuration).
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetDefaultService">
+            <summary>
+            Default configuration of FileCabinetService class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Contains all record parameters and its Id in the FileCabinet.
@@ -75,7 +97,7 @@
             Creates new record with given parameters.
             </summary>
             <param name="newRecord">Object with all record parameters.</param>
-            <returns>Id of the created record.</returns>
+            <returns>Id of the created record or -1 in case of error.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.Record)">
             <summary>
@@ -123,6 +145,12 @@
             Gets the number of all records.
             </summary>
             <returns>Number of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

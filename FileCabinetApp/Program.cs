@@ -10,7 +10,7 @@
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
+        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
 
         private static bool isRunning = true;
 
@@ -43,7 +43,7 @@
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            if (args == null)
+            if (args == null || args.Length < 1)
             {
                 Console.WriteLine("Using default validation rules.");
             }
@@ -53,7 +53,7 @@
                 {
                     if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
                     {
-                        fileCabinetService = new FileCabinetCustomService();
+                        fileCabinetService = new FileCabinetService(new CustomValidator());
                         Console.WriteLine("Using custom validation rules.");
                     }
                     else
@@ -66,7 +66,7 @@
                     args = args[0].Split('=');
                     if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
                     {
-                        fileCabinetService = new FileCabinetCustomService();
+                        fileCabinetService = new FileCabinetService(new CustomValidator());
                         Console.WriteLine("Using custom validation rules.");
                     }
                     else

@@ -5,7 +5,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Represents standart operations with list of records.
     /// </summary>
-    public class FileCabinetService
+    public class FileCabinetService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly IRecordValidator validator;

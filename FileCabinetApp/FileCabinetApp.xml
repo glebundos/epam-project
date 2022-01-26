@@ -152,6 +152,65 @@
             </summary>
             <returns>Number of all records.</returns>
         </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            Represents interface for services with standart operations with list of records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.Record)">
+            <summary>
+            Creates new record with given parameters.
+            </summary>
+            <param name="newRecord">Object with all record parameters.</param>
+            <returns>Id of the created record or -1 in case of error.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.Record)">
+            <summary>
+            Edits the record with the given id according to the given parameters.
+            </summary>
+            <param name="id">The Id of the record to change.</param>
+            <param name="newRecord">Object with all record parameters.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RecordIndex(System.Int32)">
+            <summary>
+            Searches for a record with given Id.
+            </summary>
+            <param name="id">The Id of the record to search.</param>
+            <returns>Index of the record in list, or -1 if record with that Id was not found.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for all records with given first name (Ignoring lower case and upper case differences).
+            </summary>
+            <param name="firstName">The first name to search for.</param>
+            <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for all records with given last name (Ignoring lower case and upper case differences).
+            </summary>
+            <param name="lastName">The last name to search for.</param>
+            <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Searches for all records with given date of birth.
+            </summary>
+            <param name="dateOfBirth">The date of birth to search for.</param>
+            <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Gets the all records.
+            </summary>
+            <returns>Array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            Gets the number of all records.
+            </summary>
+            <returns>Number of all records.</returns>
+        </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
             Interface for validators classes.

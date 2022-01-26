@@ -194,7 +194,8 @@
                     throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
                 }
 
-                Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, height, weight, temperament);
+                Record newRecord = new Record(firstName, lastName, dateOfBirth, height, weight, temperament);
+                Program.fileCabinetService.CreateRecord(newRecord);
             }
             catch (Exception e)
             {
@@ -295,7 +296,8 @@
                         throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
                     }
 
-                    Program.fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, height, weight, temperament);
+                    Record newRecord = new Record(firstName, lastName, dateOfBirth, height, weight, temperament);
+                    Program.fileCabinetService.EditRecord(id, newRecord);
                     Console.WriteLine($"Record #{id} is updated");
                 }
                 catch (Exception e)

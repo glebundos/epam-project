@@ -6,7 +6,7 @@
     <members>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
-            Contains all record parameters.
+            Contains all record parameters and its Id in the FileCabinet.
             </summary>
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Id">
@@ -70,29 +70,19 @@
             Represents standart operations with list of records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.Record)">
             <summary>
             Creates new record with given parameters.
             </summary>
-            <param name="firstName">The first name.</param>
-            <param name="lastName">The last name.</param>
-            <param name="dateOfBirth">Date of birth.</param>
-            <param name="height">Height in cm.</param>
-            <param name="weight">Weight in kg.</param>
-            <param name="temperament">The first letter of temperament.</param>
+            <param name="newRecord">Object with all record parameters.</param>
             <returns>Id of the created record.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.Record)">
             <summary>
             Edits the record with the given id according to the given parameters.
             </summary>
             <param name="id">The Id of the record to change.</param>
-            <param name="firstName">The first name.</param>
-            <param name="lastName">The last name.</param>
-            <param name="dateOfBirth">Date of birth.</param>
-            <param name="height">Height in cm.</param>
-            <param name="weight">Weight in kg.</param>
-            <param name="temperament">The first letter of temperament.</param>
+            <param name="newRecord">Object with all record parameters.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.RecordIndex(System.Int32)">
             <summary>
@@ -144,6 +134,70 @@
             Еhe main method from which the program execution starts.
             </summary>
             <param name="args">Initial program arguments.</param>
+        </member>
+        <member name="T:FileCabinetApp.Record">
+            <summary>
+            Contains all record parameters.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Record.#ctor(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Record"/> class.
+            </summary>
+            <param name="firstName">The first name.</param>
+            <param name="lastName">The last name.</param>
+            <param name="dateOfBirth">Date of birth.</param>
+            <param name="height">Height in cm.</param>
+            <param name="weight">Weight in kg.</param>
+            <param name="temperament">The first letter of temperament.</param>
+        </member>
+        <member name="P:FileCabinetApp.Record.FirstName">
+            <summary>
+            Gets the first name of the record.
+            </summary>
+            <value>
+            The first name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Record.LastName">
+            <summary>
+            Gets the last name of the record.
+            </summary>
+            <value>
+            The last name of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Record.DateOfBirth">
+            <summary>
+            Gets the date of birth of the record.
+            </summary>
+            <value>
+            Date of birth of the record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Record.Height">
+            <summary>
+            Gets the height of the record.
+            </summary>
+            <value>
+            Height of the record in cm.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Record.Weigth">
+            <summary>
+            Gets the weight of the record.
+            </summary>
+            <value>
+            Weight of the record in kg.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Record.Temperament">
+            <summary>
+            Gets the temperament of the record.
+            </summary>
+            <value>
+            First letter of temperament.
+            </value>
         </member>
     </members>
 </doc>

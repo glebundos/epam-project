@@ -14,51 +14,46 @@
         /// <summary>
         /// Creates new record with given parameters.
         /// </summary>
-        /// <param name="firstName">The first name.</param>
-        /// <param name="lastName">The last name.</param>
-        /// <param name="dateOfBirth">Date of birth.</param>
-        /// <param name="height">Height in cm.</param>
-        /// <param name="weight">Weight in kg.</param>
-        /// <param name="temperament">The first letter of temperament.</param>
+        /// <param name="newRecord">Object with all record parameters.</param>
         /// <returns>Id of the created record.</returns>
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
+        public int CreateRecord(Record newRecord)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (string.IsNullOrWhiteSpace(newRecord.FirstName))
             {
-                throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+                throw new ArgumentNullException($"{nameof(newRecord.FirstName)}", "Parameter is null");
             }
 
-            if (firstName.Length < 2 || firstName.Length > 60)
+            if (newRecord.FirstName.Length < 2 || newRecord.FirstName.Length > 60)
             {
-                throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(newRecord.FirstName)}");
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(newRecord.LastName))
             {
-                throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+                throw new ArgumentNullException($"{nameof(newRecord.LastName)}", "Parameter is null");
             }
 
-            if (lastName.Length < 2 || lastName.Length > 60)
+            if (newRecord.LastName.Length < 2 || newRecord.LastName.Length > 60)
             {
-                throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(newRecord.LastName)}");
             }
 
-            if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
+            if (DateTime.Compare(newRecord.DateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(newRecord.DateOfBirth, DateTime.Now) > 0)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.DateOfBirth)}");
             }
 
-            if (height < 45 || height > 252)
+            if (newRecord.Height < 45 || newRecord.Height > 252)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.Height)}");
             }
 
-            if (weight < 2 || weight > 600)
+            if (newRecord.Weigth < 2 || newRecord.Weigth > 600)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.Weigth)}");
             }
 
-            temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
+            char temperament = char.ToUpper(newRecord.Temperament, new System.Globalization.CultureInfo("en-US"));
             if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
             {
                 throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
@@ -67,43 +62,43 @@
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Height = height,
-                Weigth = weight,
+                FirstName = newRecord.FirstName,
+                LastName = newRecord.LastName,
+                DateOfBirth = newRecord.DateOfBirth,
+                Height = newRecord.Height,
+                Weigth = newRecord.Weigth,
                 Temperament = temperament,
             };
 
             this.list.Add(record);
-            if (this.firstNameDictionary.ContainsKey(firstName.ToLower(this.cultureInfo)))
+            if (this.firstNameDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
             {
-                this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
+                this.firstNameDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.firstNameDictionary.Add(firstName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
-                this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
+                this.firstNameDictionary.Add(newRecord.FirstName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
+                this.firstNameDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(record);
             }
 
-            if (this.lastNameDictionary.ContainsKey(lastName.ToLower(this.cultureInfo)))
+            if (this.lastNameDictionary.ContainsKey(newRecord.LastName.ToLower(this.cultureInfo)))
             {
-                this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
+                this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.lastNameDictionary.Add(lastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
-                this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
+                this.lastNameDictionary.Add(newRecord.LastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
+                this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
             }
 
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
+            if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth.ToString(this.cultureInfo)))
             {
-                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+                this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
-                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+                this.dateOfBirthDictionary.Add(newRecord.DateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
+                this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
             }
 
             return record.Id;
@@ -113,13 +108,8 @@
         /// Edits the record with the given id according to the given parameters.
         /// </summary>
         /// <param name="id">The Id of the record to change.</param>
-        /// <param name="firstName">The first name.</param>
-        /// <param name="lastName">The last name.</param>
-        /// <param name="dateOfBirth">Date of birth.</param>
-        /// <param name="height">Height in cm.</param>
-        /// <param name="weight">Weight in kg.</param>
-        /// <param name="temperament">The first letter of temperament.</param>
-        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
+        /// <param name="newRecord">Object with all record parameters.</param>
+        public void EditRecord(int id, Record newRecord)
         {
             int indexOfRecord = this.RecordIndex(id);
 
@@ -128,42 +118,42 @@
                 throw new ArgumentException("Wrong id", $"{nameof(id)}");
             }
 
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (string.IsNullOrWhiteSpace(newRecord.FirstName))
             {
-                throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+                throw new ArgumentNullException($"{nameof(newRecord.FirstName)}", "Parameter is null");
             }
 
-            if (firstName.Length < 2 || firstName.Length > 60)
+            if (newRecord.FirstName.Length < 2 || newRecord.FirstName.Length > 60)
             {
-                throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(newRecord.FirstName)}");
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(newRecord.LastName))
             {
-                throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+                throw new ArgumentNullException($"{nameof(newRecord.LastName)}", "Parameter is null");
             }
 
-            if (lastName.Length < 2 || lastName.Length > 60)
+            if (newRecord.LastName.Length < 2 || newRecord.LastName.Length > 60)
             {
-                throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+                throw new ArgumentException("Parameter has wrong length", $"{nameof(newRecord.LastName)}");
             }
 
-            if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
+            if (DateTime.Compare(newRecord.DateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(newRecord.DateOfBirth, DateTime.Now) > 0)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.DateOfBirth)}");
             }
 
-            if (height < 45 || height > 252)
+            if (newRecord.Height < 45 || newRecord.Height > 252)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.Height)}");
             }
 
-            if (weight < 2 || weight > 600)
+            if (newRecord.Weigth < 2 || newRecord.Weigth > 600)
             {
-                throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+                throw new ArgumentException("Parameter is wrong", $"{nameof(newRecord.Weigth)}");
             }
 
-            temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
+            char temperament = char.ToUpper(newRecord.Temperament, new System.Globalization.CultureInfo("en-US"));
             if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
             {
                 throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
@@ -173,11 +163,11 @@
             var record = new FileCabinetRecord
             {
                 Id = id,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Height = height,
-                Weigth = weight,
+                FirstName = newRecord.FirstName,
+                LastName = newRecord.LastName,
+                DateOfBirth = newRecord.DateOfBirth,
+                Height = newRecord.Height,
+                Weigth = newRecord.Weigth,
                 Temperament = temperament,
             };
 
@@ -189,14 +179,14 @@
             }
 
             this.firstNameDictionary[firstNameKey].Remove(oldRecord);
-            if (this.firstNameDictionary.ContainsKey(firstName.ToLower(this.cultureInfo)))
+            if (this.firstNameDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
             {
-                this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
+                this.firstNameDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.firstNameDictionary.Add(firstName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
-                this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
+                this.firstNameDictionary.Add(newRecord.FirstName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
+                this.firstNameDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(record);
             }
 
             string lastNameKey = string.Empty;
@@ -206,25 +196,25 @@
             }
 
             this.lastNameDictionary[lastNameKey].Remove(oldRecord);
-            if (this.lastNameDictionary.ContainsKey(lastName.ToLower(this.cultureInfo)))
+            if (this.lastNameDictionary.ContainsKey(newRecord.LastName.ToLower(this.cultureInfo)))
             {
-                this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
+                this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.lastNameDictionary.Add(lastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
-                this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
+                this.lastNameDictionary.Add(newRecord.LastName.ToLower(this.cultureInfo), new List<FileCabinetRecord>());
+                this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
             }
 
             this.dateOfBirthDictionary[oldRecord.DateOfBirth.ToString(this.cultureInfo)].Remove(oldRecord);
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
+            if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth.ToString(this.cultureInfo)))
             {
-                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+                this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
             }
             else
             {
-                this.dateOfBirthDictionary.Add(dateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
-                this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].Add(record);
+                this.dateOfBirthDictionary.Add(newRecord.DateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
+                this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿namespace FileCabinetApp
 {
     /// <summary>
-    /// Contains all record parameters.
+    /// Contains all record parameters and its Id in the FileCabinet.
     /// </summary>
     public class FileCabinetRecord
     {

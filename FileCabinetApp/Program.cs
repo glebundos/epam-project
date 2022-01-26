@@ -122,12 +122,12 @@
                 firstName = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(firstName))
                 {
-                    throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+                    throw new ArgumentNullException(nameof(firstName), "Parameter is null");
                 }
 
                 if (firstName.Length < 2 || firstName.Length > 60)
                 {
-                    throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+                    throw new ArgumentException($"Firstname length must be between 2 and 60", nameof(firstName));
                 }
 
                 Console.WriteLine("Last name: ");
@@ -135,12 +135,12 @@
                 lastName = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(lastName))
                 {
-                    throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+                    throw new ArgumentNullException(nameof(lastName), "Parameter is null");
                 }
 
                 if (lastName.Length < 2 || lastName.Length > 60)
                 {
-                    throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+                    throw new ArgumentException($"Lastname length must be between 2 and 60", nameof(lastName));
                 }
 
                 Console.WriteLine("Date of birth: ");
@@ -151,7 +151,7 @@
                 DateTime min = new DateTime(1950, 1, 1);
                 if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
                 {
-                    throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+                    throw new ArgumentException($"Date of birth must be between 01/01/1950 and today({DateTime.Now})", nameof(dateOfBirth));
                 }
 
                 parsedSuccessfully = true;
@@ -160,7 +160,7 @@
                 parsedSuccessfully = short.TryParse(Console.ReadLine(), out height);
                 if (height < 45 || height > 252 || !parsedSuccessfully)
                 {
-                    throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+                    throw new ArgumentException("Height must be between 45 and 252", nameof(height));
                 }
 
                 parsedSuccessfully = true;
@@ -169,7 +169,7 @@
                 parsedSuccessfully = decimal.TryParse(Console.ReadLine(), out weight);
                 if (weight < 2 || weight > 600 || !parsedSuccessfully)
                 {
-                    throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+                    throw new ArgumentException("Height must be between 2 and 600", nameof(weight));
                 }
 
                 parsedSuccessfully = true;
@@ -178,13 +178,13 @@
                 parsedSuccessfully = char.TryParse(Console.ReadLine(), out temperament);
                 if (!parsedSuccessfully)
                 {
-                    throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                    throw new ArgumentException("Parameter is wrong", nameof(temperament));
                 }
 
                 temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
                 if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
                 {
-                    throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                    throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
                 }
 
                 Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, height, weight, temperament);
@@ -199,16 +199,22 @@
         private static void List(string parameters)
         {
             FileCabinetRecord[] records = fileCabinetService.GetRecords();
-            for (int i = 0; i < records.Length; i++)
+            foreach (var record in records)
             {
-                WriteRecord(records[i]);
+                WriteRecord(record);
             }
         }
 
         private static void Edit(string parameters)
         {
+            if (string.IsNullOrEmpty(parameters))
+            {
+                Console.WriteLine("Parameter cant be null");
+                return;
+            }
+
             int id = Convert.ToInt32(parameters, new System.Globalization.CultureInfo("en-US"));
-            if (fileCabinetService.IsExistRecord(id) > -1)
+            if (fileCabinetService.RecordIndex(id) > -1)
             {
                 try
                 {
@@ -217,12 +223,12 @@
                     firstName = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(firstName))
                     {
-                        throw new ArgumentNullException($"{nameof(firstName)}", "Parameter is null");
+                        throw new ArgumentNullException(nameof(firstName), "Parameter is null");
                     }
 
                     if (firstName.Length < 2 || firstName.Length > 60)
                     {
-                        throw new ArgumentException("Parameter has wrong length", $"{nameof(firstName)}");
+                        throw new ArgumentException($"Firstname length must be between 2 and 60", nameof(firstName));
                     }
 
                     Console.WriteLine("Last name: ");
@@ -230,12 +236,12 @@
                     lastName = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(lastName))
                     {
-                        throw new ArgumentNullException($"{nameof(lastName)}", "Parameter is null");
+                        throw new ArgumentNullException(nameof(lastName), "Parameter is null");
                     }
 
                     if (lastName.Length < 2 || lastName.Length > 60)
                     {
-                        throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
+                        throw new ArgumentException($"Lastname length must be between 2 and 60", nameof(lastName));
                     }
 
                     Console.WriteLine("Date of birth: ");
@@ -246,7 +252,7 @@
                     DateTime min = new DateTime(1950, 1, 1);
                     if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
                     {
-                        throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
+                        throw new ArgumentException($"Date of birth must be between 01/01/1950 and today({DateTime.Now})", nameof(dateOfBirth));
                     }
 
                     parsedSuccessfully = true;
@@ -255,7 +261,7 @@
                     parsedSuccessfully = short.TryParse(Console.ReadLine(), out height);
                     if (height < 45 || height > 252 || !parsedSuccessfully)
                     {
-                        throw new ArgumentException("Parameter is wrong", $"{nameof(height)}");
+                        throw new ArgumentException("Height must be between 45 and 252", nameof(height));
                     }
 
                     parsedSuccessfully = true;
@@ -264,7 +270,7 @@
                     parsedSuccessfully = decimal.TryParse(Console.ReadLine(), out weight);
                     if (weight < 2 || weight > 600 || !parsedSuccessfully)
                     {
-                        throw new ArgumentException("Parameter is wrong", $"{nameof(weight)}");
+                        throw new ArgumentException("Height must be between 2 and 600", nameof(weight));
                     }
 
                     parsedSuccessfully = true;
@@ -273,13 +279,13 @@
                     parsedSuccessfully = char.TryParse(Console.ReadLine(), out temperament);
                     if (!parsedSuccessfully)
                     {
-                        throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                        throw new ArgumentException("Parameter is wrong", nameof(temperament));
                     }
 
                     temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
                     if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
                     {
-                        throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
+                        throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
                     }
 
                     Program.fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, height, weight, temperament);
@@ -313,7 +319,7 @@
                 {
                     if (string.IsNullOrWhiteSpace(value))
                     {
-                        throw new ArgumentNullException(nameof(value), "Parameter is null");
+                        throw new ArgumentNullException(nameof(value), "Value is null");
                     }
 
                     if (value.Length < 2 || value.Length > 60)
@@ -327,7 +333,7 @@
                 {
                     if (string.IsNullOrWhiteSpace(value))
                     {
-                        throw new ArgumentNullException(nameof(value), "Parameter is null");
+                        throw new ArgumentNullException(nameof(value), "Value is null");
                     }
 
                     if (value.Length < 2 || value.Length > 60)
@@ -340,8 +346,8 @@
                 else if (parameter == "dateofbirth")
                 {
                     DateTime dateOfBirth;
-                    bool parsedSuccessfully = DateTime.TryParse(value, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
-                    if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
+                    bool isParsedSuccessfully = DateTime.TryParse(value, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
+                    if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !isParsedSuccessfully)
                     {
                         throw new ArgumentException("Parameter is wrong", nameof(dateOfBirth));
                     }
@@ -353,9 +359,9 @@
                     throw new ArgumentException("Wrong parameter", parameter);
                 }
 
-                for (int i = 0; i < records.Length; i++)
+                foreach (var record in records)
                 {
-                    WriteRecord(records[i]);
+                    WriteRecord(record);
                 }
             }
             catch (Exception e)
@@ -367,26 +373,29 @@
 
         private static void WriteRecord(FileCabinetRecord record)
         {
-            string temperamentString = string.Empty;
+            string temperament = string.Empty;
             switch (record.Temperament)
             {
                 case 'P':
-                    temperamentString = "Phlegmatic";
+                    temperament = "Phlegmatic";
                     break;
                 case 'S':
-                    temperamentString = "Sanguine";
+                    temperament = "Sanguine";
                     break;
                 case 'C':
-                    temperamentString = "Choleric";
+                    temperament = "Choleric";
                     break;
                 case 'M':
-                    temperamentString = "Melancholic";
+                    temperament = "Melancholic";
+                    break;
+                default:
+                    temperament = "MISSING";
                     break;
             }
 
             Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
                     $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{record.Height} cm, {record.Weigth} kg, {temperamentString}");
+                    $"{record.Height} cm, {record.Weigth} kg, {temperament}");
         }
     }
 }

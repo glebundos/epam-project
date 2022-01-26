@@ -30,8 +30,7 @@
                 throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
             }
 
-            DateTime min = new DateTime(1950, 1, 1);
-            if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
+            if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
             {
                 throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
             }
@@ -99,9 +98,9 @@
 
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char temperament)
         {
-            int index = this.IsExistRecord(id);
+            int indexOfRecord = this.RecordIndex(id);
 
-            if (index == -1)
+            if (indexOfRecord == -1)
             {
                 throw new ArgumentException("Wrong id", $"{nameof(id)}");
             }
@@ -126,8 +125,7 @@
                 throw new ArgumentException("Parameter has wrong length", $"{nameof(lastName)}");
             }
 
-            DateTime min = new DateTime(1950, 1, 1);
-            if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
+            if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0)
             {
                 throw new ArgumentException("Parameter is wrong", $"{nameof(dateOfBirth)}");
             }
@@ -148,7 +146,7 @@
                 throw new ArgumentException("Parameter is wrong", $"{nameof(temperament)}");
             }
 
-            var oldRecord = this.list[index];
+            var oldRecord = this.list[indexOfRecord];
             var record = new FileCabinetRecord
             {
                 Id = id,
@@ -160,8 +158,14 @@
                 Temperament = temperament,
             };
 
-            this.list[index] = record;
-            this.firstNameDictionary[oldRecord.FirstName.ToLower(this.cultureInfo)].Remove(oldRecord);
+            this.list[indexOfRecord] = record;
+            string firstNameKey = string.Empty;
+            if (oldRecord.FirstName != null)
+            {
+                firstNameKey = oldRecord.FirstName.ToLower(this.cultureInfo);
+            }
+
+            this.firstNameDictionary[firstNameKey].Remove(oldRecord);
             if (this.firstNameDictionary.ContainsKey(firstName.ToLower(this.cultureInfo)))
             {
                 this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
@@ -172,7 +176,13 @@
                 this.firstNameDictionary[firstName.ToLower(this.cultureInfo)].Add(record);
             }
 
-            this.lastNameDictionary[oldRecord.LastName.ToLower(this.cultureInfo)].Remove(oldRecord);
+            string lastNameKey = string.Empty;
+            if (oldRecord.LastName != null)
+            {
+                lastNameKey = oldRecord.LastName.ToLower(this.cultureInfo);
+            }
+
+            this.lastNameDictionary[lastNameKey].Remove(oldRecord);
             if (this.lastNameDictionary.ContainsKey(lastName.ToLower(this.cultureInfo)))
             {
                 this.lastNameDictionary[lastName.ToLower(this.cultureInfo)].Add(record);
@@ -195,13 +205,14 @@
             }
         }
 
-        public int IsExistRecord(int id)
+        public int RecordIndex(int id)
         {
             for (int i = 0; i < this.list.Count; i++)
             {
                 if (this.list[i].Id == id)
                 {
-                    return i;
+                    int recordIndex = i;
+                    return recordIndex;
                 }
             }
 
@@ -212,7 +223,8 @@
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
-                return this.firstNameDictionary[firstName].ToArray();
+                FileCabinetRecord[] fileCabinetRecordsByFirstName = this.firstNameDictionary[firstName].ToArray();
+                return fileCabinetRecordsByFirstName;
             }
 
             return Array.Empty<FileCabinetRecord>();
@@ -222,7 +234,8 @@
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                return this.lastNameDictionary[lastName].ToArray();
+                FileCabinetRecord[] fileCabinetRecordsByLastName = this.lastNameDictionary[lastName].ToArray();
+                return fileCabinetRecordsByLastName;
             }
 
             return Array.Empty<FileCabinetRecord>();
@@ -232,7 +245,8 @@
         {
             if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
             {
-                return this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray();
+                FileCabinetRecord[] fileCabinetRecordsByDateofBirth = this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray();
+                return fileCabinetRecordsByDateofBirth;
             }
 
             return Array.Empty<FileCabinetRecord>();

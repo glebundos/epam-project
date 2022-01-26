@@ -1,4 +1,6 @@
-﻿namespace FileCabinetApp
+﻿using System.Collections.ObjectModel;
+
+namespace FileCabinetApp
 {
     /// <summary>
     /// Main class of the program.
@@ -239,7 +241,7 @@
 
         private static void List(string parameters)
         {
-            FileCabinetRecord[] records = fileCabinetService.GetRecords();
+            var records = fileCabinetService.GetRecords();
             foreach (var record in records)
             {
                 WriteRecord(record);
@@ -355,7 +357,7 @@
                 }
 
                 string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
-                var records = Array.Empty<FileCabinetRecord>();
+                var records = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
 
                 if (parameter == "firstname")
                 {

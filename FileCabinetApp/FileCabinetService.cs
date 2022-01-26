@@ -1,4 +1,6 @@
-﻿namespace FileCabinetApp
+﻿using System.Collections.ObjectModel;
+
+namespace FileCabinetApp
 {
     /// <summary>
     /// Represents standart operations with list of records.
@@ -191,15 +193,15 @@
         /// </summary>
         /// <param name="firstName">The first name to search for.</param>
         /// <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
+            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByFirstName = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
-                FileCabinetRecord[] fileCabinetRecordsByFirstName = this.firstNameDictionary[firstName].ToArray();
-                return fileCabinetRecordsByFirstName;
+                fileCabinetRecordsByFirstName = new (this.firstNameDictionary[firstName].ToArray());
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return fileCabinetRecordsByFirstName;
         }
 
         /// <summary>
@@ -207,15 +209,15 @@
         /// </summary>
         /// <param name="lastName">The last name to search for.</param>
         /// <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
+            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByLastName = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                FileCabinetRecord[] fileCabinetRecordsByLastName = this.lastNameDictionary[lastName].ToArray();
-                return fileCabinetRecordsByLastName;
+                fileCabinetRecordsByLastName = new (this.lastNameDictionary[lastName].ToArray());
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return fileCabinetRecordsByLastName;
         }
 
         /// <summary>
@@ -223,24 +225,25 @@
         /// </summary>
         /// <param name="dateOfBirth">The date of birth to search for.</param>
         /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
-        public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
+            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByDateOfBirth = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
             if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
             {
-                FileCabinetRecord[] fileCabinetRecordsByDateofBirth = this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray();
-                return fileCabinetRecordsByDateofBirth;
+                fileCabinetRecordsByDateOfBirth = new (this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray());
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return fileCabinetRecordsByDateOfBirth;
         }
 
         /// <summary>
         /// Gets the all records.
         /// </summary>
         /// <returns>Array of all records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            return this.list.ToArray();
+            ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            return records;
         }
 
         /// <summary>

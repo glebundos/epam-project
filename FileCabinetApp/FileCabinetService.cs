@@ -22,7 +22,7 @@
         {
             try
             {
-                this.ValidateParameters(newRecord);
+                this.CreateValidator().ValidateParameters(newRecord);
                 var record = new FileCabinetRecord
                 {
                     Id = this.list.Count + 1,
@@ -90,7 +90,7 @@
                     throw new ArgumentException("Wrong id", $"{nameof(id)}");
                 }
 
-                this.ValidateParameters(newRecord);
+                this.CreateValidator().ValidateParameters(newRecord);
                 var oldRecord = this.list[indexOfRecord];
                 var record = new FileCabinetRecord
                 {
@@ -243,9 +243,9 @@
         }
 
         /// <summary>
-        /// Validating parameters.
+        /// Creating a validator instance.
         /// </summary>
-        /// <param name="parameters">Parameters to validate.</param>
-        protected abstract void ValidateParameters(Record parameters);
+        /// <returns>Validator instance.</returns>
+        protected abstract IRecordValidator CreateValidator();
     }
 }

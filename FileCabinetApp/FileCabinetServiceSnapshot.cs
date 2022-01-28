@@ -20,10 +20,22 @@
         /// Writes the snapshot into .csv file.
         /// </summary>
         /// <param name="streamWriter">Stream with file path.</param>
-        public void SaveToCsv(StreamWriter streamWriter)
+        /// <param name="append">Append text if true, rewrite if false.</param>
+        public void SaveToCsv(StreamWriter streamWriter, bool append)
         {
             FileCabinetRecordCsvWriter writer = new FileCabinetRecordCsvWriter(streamWriter);
-            writer.Write(this.records);
+            writer.Write(this.records, append);
+        }
+
+        /// <summary>
+        /// Writes the snapshot into .xml file.
+        /// </summary>
+        /// <param name="streamWriter">Stream with file path.</param>
+        /// <param name="append">Append text if true, rewrite if false.</param>
+        public void SaveToXml(StreamWriter streamWriter, bool append)
+        {
+            FileCabinetRecordXmlWriter writer = new FileCabinetRecordXmlWriter(streamWriter);
+            writer.Write(this.records, append);
         }
     }
 }

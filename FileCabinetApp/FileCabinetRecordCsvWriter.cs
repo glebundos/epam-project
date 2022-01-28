@@ -34,9 +34,14 @@
         /// Write a collection of <see cref="FileCabinetRecord"/> sequences to CSV file and save it.
         /// </summary>
         /// <param name="records">Collection of actual <see cref="FileCabinetRecord"/> data.</param>
-        public void Write(IReadOnlyCollection<FileCabinetRecord> records)
+        /// <param name="append">Append text if true, rewrite if false.</param>
+        public void Write(IReadOnlyCollection<FileCabinetRecord> records, bool append)
         {
-            this.writer.WriteLine("Id, FirstName, LastName, DateOfBirth, Height, Weigth, Temperament.");
+            if (!append)
+            {
+                this.writer.WriteLine("Id, FirstName, LastName, DateOfBirth, Height, Weigth, Temperament.");
+            }
+
             foreach (var record in records ?? throw new ArgumentNullException(nameof(records), "Records can't be null"))
             {
                 if (record is null)
@@ -57,7 +62,7 @@
         /// <param name="record">Contains actual <see cref="FileCabinetRecord"/> data.</param>
         private void Write(FileCabinetRecord record)
         {
-            this.writer.WriteLine($"{record.Id},{record.FirstName},{record.LastName},{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))},{record.Height},{record.Weigth},{record.Temperament}.");
+            this.writer.WriteLine($"{record.Id},{record.FirstName},{record.LastName},{record.DateOfBirth.ToString("MM/dd/yyyy", new System.Globalization.CultureInfo("en-US"))},{record.Height},{record.Weigth},{record.Temperament}.");
         }
 
         private void Dispose(bool disposing)

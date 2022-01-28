@@ -263,5 +263,14 @@ namespace FileCabinetApp
         {
             return this.list.Count;
         }
+
+        /// <summary>
+        /// Makes a snapshot of current records list.
+        /// </summary>
+        /// <returns>Snapshot of current records list.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceSnapshot(this.list);
+        }
     }
 }

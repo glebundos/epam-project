@@ -31,6 +31,11 @@
                 throw new ArgumentNullException(nameof(parameters), "Record is null");
             }
 
+            if (string.IsNullOrWhiteSpace(parameters.FirstName))
+            {
+                throw new ArgumentNullException(nameof(parameters.FirstName), "FirstName is null");
+            }
+
             return parameters.FirstName.Length >= this.minNameLength && parameters.FirstName.Length <= this.maxNameLength;
         }
     }

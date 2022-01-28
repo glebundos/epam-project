@@ -2,6 +2,8 @@
 
 namespace FileCabinetApp
 {
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     /// <summary>
     /// Main class of the program.
     /// </summary>
@@ -26,6 +28,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -37,6 +40,7 @@ namespace FileCabinetApp
             new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
             new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
+            new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
         };
 
         /// <summary>
@@ -454,6 +458,40 @@ namespace FileCabinetApp
                 return value;
             }
             while (true);
+        }
+
+        private static void Export(string parameters)
+        {
+            try
+            {
+                string[] arguments = parameters.Split();
+                bool append = true;
+                if (arguments[0] == "csv")
+                {
+                    arguments[1] = arguments[1][1..^1];
+                    if (File.Exists(arguments[1]))
+                    {
+                        Console.WriteLine($"File is exist - rewrite {arguments[1]}? [Y/n]");
+                        if (Console.ReadKey().Key == ConsoleKey.Y)
+                        {
+                            append = false;
+                        }
+
+                        Console.WriteLine();
+                    }
+
+                    StreamWriter streamWriter = new StreamWriter(arguments[1], append);
+                    fileCabinetService.MakeSnapshot().SaveToCsv(streamWriter);
+                }
+                else
+                {
+                    throw new ArgumentException("Wrong parameters.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Export failed: " + e.Message);
+            }
         }
     }
 }

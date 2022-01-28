@@ -60,5 +60,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Number of all records.</returns>
         public int GetStat();
+
+        /// <summary>
+        /// Makes a snapshot of current records list.
+        /// </summary>
+        /// <returns>Snapshot of current records list.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot();
     }
 }

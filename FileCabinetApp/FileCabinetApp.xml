@@ -84,6 +84,68 @@
             First letter of temperament.
             </value>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            Writing <see cref="T:FileCabinetApp.FileCabinetRecord"/> to the .csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="writer">Contains <see cref="T:System.IO.TextWriter"/> to use.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(System.Collections.Generic.IReadOnlyCollection{FileCabinetApp.FileCabinetRecord},System.Boolean)">
+            <summary>
+            Write a collection of <see cref="T:FileCabinetApp.FileCabinetRecord"/> sequences to CSV file and save it.
+            </summary>
+            <param name="records">Collection of actual <see cref="T:FileCabinetApp.FileCabinetRecord"/> data.</param>
+            <param name="append">Append text if true, rewrite if false.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Write <see cref="T:FileCabinetApp.FileCabinetRecord"/> sequence to CSV file and save it.
+            </summary>
+            <param name="record">Contains actual <see cref="T:FileCabinetApp.FileCabinetRecord"/> data.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            Writing <see cref="T:FileCabinetApp.FileCabinetRecord"/> to the .xml file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="writer">Contains <see cref="T:System.IO.TextWriter"/> to use.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(System.Collections.Generic.IReadOnlyCollection{FileCabinetApp.FileCabinetRecord},System.Boolean)">
+            <summary>
+            Write a collection of <see cref="T:FileCabinetApp.FileCabinetRecord"/> sequences to XML file and save it.
+            </summary>
+            <param name="records">Collection of actual <see cref="T:FileCabinetApp.FileCabinetRecord"/> data.</param>
+            <param name="append">Append text if true, rewrite if false.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             Represents standart operations with list of records.
@@ -148,6 +210,37 @@
             Gets the number of all records.
             </summary>
             <returns>Number of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            Makes a snapshot of current records list.
+            </summary>
+            <returns>Snapshot of current records list.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
+            <summary>
+            Represents the snapshot of records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(System.Collections.Generic.IReadOnlyCollection{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            </summary>
+            <param name="list">List of records to make a snapshot.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter,System.Boolean)">
+            <summary>
+            Writes the snapshot into .csv file.
+            </summary>
+            <param name="streamWriter">Stream with file path.</param>
+            <param name="append">Append text if true, rewrite if false.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter,System.Boolean)">
+            <summary>
+            Writes the snapshot into .xml file.
+            </summary>
+            <param name="streamWriter">Stream with file path.</param>
+            <param name="append">Append text if true, rewrite if false.</param>
         </member>
         <member name="T:FileCabinetApp.FirstNameValidator">
             <summary>
@@ -263,6 +356,12 @@
             Gets the number of all records.
             </summary>
             <returns>Number of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Makes a snapshot of current records list.
+            </summary>
+            <returns>Snapshot of current records list.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

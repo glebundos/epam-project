@@ -12,7 +12,8 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static ValidatorsSettings validatorsSettings = new ValidatorsSettings();
+        private static IFileCabinetService fileCabinetService;
 
         private static bool isRunning = true;
 
@@ -45,38 +46,35 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
+            validatorsSettings.SetDefaultConfig();
             if (args == null || args.Length < 1)
             {
                 Console.WriteLine("Using default validation rules.");
+                validatorsSettings.SetDefaultConfig();
             }
             else
             {
-                if (args.Length == 2)
-                {
-                    if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
-                    {
-                        fileCabinetService = new FileCabinetService(new CustomValidator());
-                        Console.WriteLine("Using custom validation rules.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Using default validation rules.");
-                    }
-                }
-                else
+                if (args.Length == 1)
                 {
                     args = args[0].Split('=');
+                }
+
+                if (args[0] == "-v" || args[0] == "--validation-rules")
+                {
                     if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
                     {
-                        fileCabinetService = new FileCabinetService(new CustomValidator());
                         Console.WriteLine("Using custom validation rules.");
+                        validatorsSettings.SetCustomConfig();
                     }
                     else
                     {
                         Console.WriteLine("Using default validation rules.");
+                        validatorsSettings.SetDefaultConfig();
                     }
                 }
             }
+
+            fileCabinetService = new FileCabinetService(ValidatorBuilder.CreateFullValidator(validatorsSettings));
 
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
@@ -157,86 +155,133 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            try
+            Console.Write("First name: ");
+            string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
+
+            Console.Write("Last name: ");
+            string lastName = (string)ReadInput(StringConverter, LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
+
+            Console.Write("Height: ");
+            short height = (short)ReadInput(HeightConverter, HeightValidator);
+
+            Console.Write("Weight: ");
+            decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
+
+            Console.Write("Temperament: ");
+            char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
+
+            Record newRecord = new Record(firstName, lastName, dob, height, weight, temperament);
+            Program.fileCabinetService.CreateRecord(newRecord);
+        }
+
+        private static Tuple<bool, string> FirstNameValidator(object input)
+        {
+            Record onlyFirstNameRecord = new Record();
+            onlyFirstNameRecord.FirstName = input.ToString();
+            FirstNameValidator firstNameValidator = new FirstNameValidator(validatorsSettings.FirstNameLenght_min, validatorsSettings.FirstNameLenght_max);
+            return Tuple.Create(firstNameValidator.ValidateParameters(onlyFirstNameRecord), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string> LastNameValidator(object input)
+        {
+            Record onlyLastNameRecord = new Record();
+            onlyLastNameRecord.LastName = input.ToString();
+            LastNameValidator lastNameValidator = new LastNameValidator(validatorsSettings.LastNameLenght_min, validatorsSettings.LastNameLenght_max);
+            return Tuple.Create(lastNameValidator.ValidateParameters(onlyLastNameRecord), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string> DateOfBirthValidator(object input)
+        {
+            Record onlyDateOfBirthRecord = new Record();
+            onlyDateOfBirthRecord.DateOfBirth = (DateTime)input;
+            DateOfBirthValidator dateOfBirthValidator = new DateOfBirthValidator(validatorsSettings.DateOfBitrth_min, validatorsSettings.DateOfBitrth_max);
+            return Tuple.Create(dateOfBirthValidator.ValidateParameters(onlyDateOfBirthRecord), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string> HeightValidator(object input)
+        {
+            Record onlyHeightRecord = new Record();
+            onlyHeightRecord.Height = (short)input;
+            HeightValidator heightValidator = new HeightValidator(validatorsSettings.Height_min, validatorsSettings.Height_max);
+            return Tuple.Create(heightValidator.ValidateParameters(onlyHeightRecord), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string> WeightValidator(object input)
+        {
+            Record onlyWeightRecord = new Record();
+            onlyWeightRecord.Weight = (decimal)input;
+            WeightValidator weightValidator = new WeightValidator(validatorsSettings.Weight_min, validatorsSettings.Weight_max);
+            return Tuple.Create(weightValidator.ValidateParameters(onlyWeightRecord), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string> TemperamentValidator(object input)
+        {
+            Record onlyTemperamentValidator = new Record();
+            onlyTemperamentValidator.Temperament = (char)input;
+            TemperamentValidator temperamentValidator = new TemperamentValidator(validatorsSettings.AllowedTemperaments);
+            return Tuple.Create(temperamentValidator.ValidateParameters(onlyTemperamentValidator), "Parameter is invalid");
+        }
+
+        private static Tuple<bool, string, object> StringConverter(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
             {
-                Console.WriteLine("First name: ");
-                string? firstName = string.Empty;
-                firstName = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(firstName))
-                {
-                    throw new ArgumentNullException(nameof(firstName), "Parameter is null");
-                }
-
-                if (firstName.Length < 2 || firstName.Length > 60)
-                {
-                    throw new ArgumentException($"Firstname length must be between 2 and 60", nameof(firstName));
-                }
-
-                Console.WriteLine("Last name: ");
-                string? lastName = string.Empty;
-                lastName = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(lastName))
-                {
-                    throw new ArgumentNullException(nameof(lastName), "Parameter is null");
-                }
-
-                if (lastName.Length < 2 || lastName.Length > 60)
-                {
-                    throw new ArgumentException($"Lastname length must be between 2 and 60", nameof(lastName));
-                }
-
-                Console.WriteLine("Date of birth: ");
-                string? dateString = string.Empty;
-                dateString = Console.ReadLine();
-                DateTime dateOfBirth = DateTime.Now;
-                bool parsedSuccessfully = DateTime.TryParse(dateString, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
-                DateTime min = new DateTime(1950, 1, 1);
-                if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
-                {
-                    throw new ArgumentException($"Date of birth must be between 01/01/1950 and today({DateTime.Now})", nameof(dateOfBirth));
-                }
-
-                parsedSuccessfully = true;
-                Console.WriteLine("Height: ");
-                short height = 0;
-                parsedSuccessfully = short.TryParse(Console.ReadLine(), out height);
-                if (height < 45 || height > 252 || !parsedSuccessfully)
-                {
-                    throw new ArgumentException("Height must be between 45 and 252", nameof(height));
-                }
-
-                parsedSuccessfully = true;
-                Console.WriteLine("Weight: ");
-                decimal weight = 0;
-                parsedSuccessfully = decimal.TryParse(Console.ReadLine(), out weight);
-                if (weight < 2 || weight > 600 || !parsedSuccessfully)
-                {
-                    throw new ArgumentException("Height must be between 2 and 600", nameof(weight));
-                }
-
-                parsedSuccessfully = true;
-                Console.WriteLine("Temperament: ");
-                char temperament = ' ';
-                parsedSuccessfully = char.TryParse(Console.ReadLine(), out temperament);
-                if (!parsedSuccessfully)
-                {
-                    throw new ArgumentException("Parameter is wrong", nameof(temperament));
-                }
-
-                temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
-                if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
-                {
-                    throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
-                }
-
-                Record newRecord = new Record(firstName, lastName, dateOfBirth, height, weight, temperament);
-                Program.fileCabinetService.CreateRecord(newRecord);
+                return Tuple.Create<bool, string, object>(false, "Input was null", input);
             }
-            catch (Exception e)
+
+            return Tuple.Create<bool, string, object>(true, "Convertating error", input);
+        }
+
+        private static Tuple<bool, string, object> DateConverter(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
             {
-                Console.WriteLine("Некорректный ввод: " + e.Message);
-                Create(parameters);
+                return Tuple.Create<bool, string, object>(false, "Input was null", input);
             }
+
+            DateTime dateOfBirth;
+            DateTime.TryParse(input, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
+
+            return Tuple.Create<bool, string, object>(true, "Convertating error", dateOfBirth);
+        }
+
+        private static Tuple<bool, string, object> HeightConverter(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return Tuple.Create<bool, string, object>(false, "Input was null", input);
+            }
+
+            short height;
+            bool isConvertered = short.TryParse(input, out height);
+            return Tuple.Create<bool, string, object>(isConvertered, "Convertating error", height);
+        }
+
+        private static Tuple<bool, string, object> WeightConverter(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return Tuple.Create<bool, string, object>(false, "Input was null", input);
+            }
+
+            decimal weight;
+            bool isConvertered = decimal.TryParse(input, out weight);
+            return Tuple.Create<bool, string, object>(isConvertered, "Convertating error", weight);
+        }
+
+        private static Tuple<bool, string, object> TemperamentConverter(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return Tuple.Create<bool, string, object>(false, "Input was null", input);
+            }
+
+            char temperament;
+            bool isConvertered = char.TryParse(input, out temperament);
+            return Tuple.Create<bool, string, object>(isConvertered, "Convertating error", char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US")));
         }
 
         private static void List(string parameters)
@@ -259,86 +304,26 @@ namespace FileCabinetApp
             int id = Convert.ToInt32(parameters, new System.Globalization.CultureInfo("en-US"));
             if (fileCabinetService.RecordIndex(id) > -1)
             {
-                try
-                {
-                    Console.WriteLine("First name: ");
-                    string? firstName = string.Empty;
-                    firstName = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(firstName))
-                    {
-                        throw new ArgumentNullException(nameof(firstName), "Parameter is null");
-                    }
+                Console.Write("First name: ");
+                string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
 
-                    if (firstName.Length < 2 || firstName.Length > 60)
-                    {
-                        throw new ArgumentException($"Firstname length must be between 2 and 60", nameof(firstName));
-                    }
+                Console.Write("Last name: ");
+                string lastName = (string)ReadInput(StringConverter, LastNameValidator);
 
-                    Console.WriteLine("Last name: ");
-                    string? lastName = string.Empty;
-                    lastName = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(lastName))
-                    {
-                        throw new ArgumentNullException(nameof(lastName), "Parameter is null");
-                    }
+                Console.Write("Date of birth: ");
+                DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
 
-                    if (lastName.Length < 2 || lastName.Length > 60)
-                    {
-                        throw new ArgumentException($"Lastname length must be between 2 and 60", nameof(lastName));
-                    }
+                Console.Write("Height: ");
+                short height = (short)ReadInput(HeightConverter, HeightValidator);
 
-                    Console.WriteLine("Date of birth: ");
-                    string? dateString = string.Empty;
-                    dateString = Console.ReadLine();
-                    DateTime dateOfBirth = DateTime.Now;
-                    bool parsedSuccessfully = DateTime.TryParse(dateString, new System.Globalization.CultureInfo("en-US"), 0, out dateOfBirth);
-                    DateTime min = new DateTime(1950, 1, 1);
-                    if (DateTime.Compare(dateOfBirth, min) < 0 || DateTime.Compare(dateOfBirth, DateTime.Now) > 0 || !parsedSuccessfully)
-                    {
-                        throw new ArgumentException($"Date of birth must be between 01/01/1950 and today({DateTime.Now})", nameof(dateOfBirth));
-                    }
+                Console.Write("Weight: ");
+                decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
 
-                    parsedSuccessfully = true;
-                    Console.WriteLine("Height: ");
-                    short height = 0;
-                    parsedSuccessfully = short.TryParse(Console.ReadLine(), out height);
-                    if (height < 45 || height > 252 || !parsedSuccessfully)
-                    {
-                        throw new ArgumentException("Height must be between 45 and 252", nameof(height));
-                    }
+                Console.Write("Temperament: ");
+                char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
 
-                    parsedSuccessfully = true;
-                    Console.WriteLine("Weight: ");
-                    decimal weight = 0;
-                    parsedSuccessfully = decimal.TryParse(Console.ReadLine(), out weight);
-                    if (weight < 2 || weight > 600 || !parsedSuccessfully)
-                    {
-                        throw new ArgumentException("Height must be between 2 and 600", nameof(weight));
-                    }
-
-                    parsedSuccessfully = true;
-                    Console.WriteLine("Temperament: ");
-                    char temperament = ' ';
-                    parsedSuccessfully = char.TryParse(Console.ReadLine(), out temperament);
-                    if (!parsedSuccessfully)
-                    {
-                        throw new ArgumentException("Parameter is wrong", nameof(temperament));
-                    }
-
-                    temperament = char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US"));
-                    if (!(temperament == 'P' || temperament == 'S' || temperament == 'C' || temperament == 'M'))
-                    {
-                        throw new ArgumentException("Temperament must be P, S, C, or M", nameof(temperament));
-                    }
-
-                    Record newRecord = new Record(firstName, lastName, dateOfBirth, height, weight, temperament);
-                    Program.fileCabinetService.EditRecord(id, newRecord);
-                    Console.WriteLine($"Record #{id} is updated");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Некорректный ввод: " + e.Message);
-                }
+                Record newRecord = new Record(firstName, lastName, dob, height, weight, temperament);
+                Program.fileCabinetService.EditRecord(id, newRecord);
             }
             else
             {
@@ -440,6 +425,35 @@ namespace FileCabinetApp
             Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
                     $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
                     $"{record.Height} cm, {record.Weigth} kg, {temperament}");
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
         }
     }
 }

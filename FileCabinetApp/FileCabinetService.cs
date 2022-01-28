@@ -34,7 +34,11 @@ namespace FileCabinetApp
         {
             try
             {
-                this.validator.ValidateParameters(newRecord);
+                if (!this.validator.ValidateParameters(newRecord))
+                {
+                    throw new ArgumentException("Wrong parameters", nameof(newRecord));
+                }
+
                 var record = new FileCabinetRecord
                 {
                     Id = this.list.Count + 1,
@@ -42,7 +46,7 @@ namespace FileCabinetApp
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
                     Height = newRecord.Height,
-                    Weigth = newRecord.Weigth,
+                    Weigth = newRecord.Weight,
                     Temperament = char.ToUpper(newRecord.Temperament, this.cultureInfo),
                 };
 
@@ -102,6 +106,11 @@ namespace FileCabinetApp
                     throw new ArgumentException("Wrong id", $"{nameof(id)}");
                 }
 
+                if (!this.validator.ValidateParameters(newRecord))
+                {
+                    throw new ArgumentException("Wrong parameters", nameof(newRecord));
+                }
+
                 this.validator.ValidateParameters(newRecord);
                 var oldRecord = this.list[indexOfRecord];
                 var record = new FileCabinetRecord
@@ -111,7 +120,7 @@ namespace FileCabinetApp
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
                     Height = newRecord.Height,
-                    Weigth = newRecord.Weigth,
+                    Weigth = newRecord.Weight,
                     Temperament = char.ToUpper(newRecord.Temperament, this.cultureInfo),
                 };
 

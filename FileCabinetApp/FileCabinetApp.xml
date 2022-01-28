@@ -4,27 +4,24 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetApp.CustomValidator">
+        <member name="T:FileCabinetApp.DateOfBirthValidator">
             <summary>
-            Custom validator class.
+            Validator for date of birth.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.DateOfBirthValidator.#ctor(System.DateTime,System.DateTime)">
             <summary>
-            Validating given parameters by custom configuration.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.DateOfBirthValidator"/> class.
+            </summary>
+            <param name="minDate">Minimal possible date of birth.</param>
+            <param name="maxDate">Maximum possible date of birth.</param>
+        </member>
+        <member name="M:FileCabinetApp.DateOfBirthValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
             </summary>
             <param name="parameters">Parameters to validate.</param>
-        </member>
-        <member name="T:FileCabinetApp.DefaultValidator">
-            <summary>
-            Default validator class.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.Record)">
-            <summary>
-            Validating given parameters by default configuraton.
-            </summary>
-            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -152,6 +149,62 @@
             </summary>
             <returns>Number of all records.</returns>
         </member>
+        <member name="T:FileCabinetApp.FirstNameValidator">
+            <summary>
+            Validator for first name.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FirstNameValidator.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FirstNameValidator"/> class.
+            </summary>
+            <param name="minNameLength">Minimal possible length of first name.</param>
+            <param name="maxNameLength">Maximum possible length of first name.</param>
+        </member>
+        <member name="M:FileCabinetApp.FirstNameValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FullValidator">
+            <summary>
+            Contains all validators.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FullValidator.#ctor(System.Collections.Generic.IReadOnlyCollection{FileCabinetApp.IRecordValidator})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FullValidator"/> class.
+            </summary>
+            <param name="validators">List of validators.</param>
+        </member>
+        <member name="M:FileCabinetApp.FullValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false if at least one parameter is not validated.</returns>
+        </member>
+        <member name="T:FileCabinetApp.HeightValidator">
+            <summary>
+            Validator for height.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.HeightValidator.#ctor(System.Int16,System.Int16)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.HeightValidator"/> class.
+            </summary>
+            <param name="minHeight">Minimal possible height.</param>
+            <param name="maxHeight">Maximum possible height.</param>
+        </member>
+        <member name="M:FileCabinetApp.HeightValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
             Represents interface for services with standart operations with list of records.
@@ -221,6 +274,26 @@
             Validating given parameters.
             </summary>
             <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
+        </member>
+        <member name="T:FileCabinetApp.LastNameValidator">
+            <summary>
+            Validator for last name.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.LastNameValidator.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.LastNameValidator"/> class.
+            </summary>
+            <param name="minNameLength">Minimal possible length of last name.</param>
+            <param name="maxNameLength">Maximum possible length of last name.</param>
+        </member>
+        <member name="M:FileCabinetApp.LastNameValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
@@ -240,7 +313,7 @@
         </member>
         <member name="M:FileCabinetApp.Record.#ctor(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
             <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.Record"/> class.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Record"/> class with given values.
             </summary>
             <param name="firstName">The first name.</param>
             <param name="lastName">The last name.</param>
@@ -249,9 +322,14 @@
             <param name="weight">Weight in kg.</param>
             <param name="temperament">The first letter of temperament.</param>
         </member>
+        <member name="M:FileCabinetApp.Record.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Record"/> class with initial values.
+            </summary>
+        </member>
         <member name="P:FileCabinetApp.Record.FirstName">
             <summary>
-            Gets the first name of the record.
+            Gets or sets the first name of the record.
             </summary>
             <value>
             The first name of the record.
@@ -259,7 +337,7 @@
         </member>
         <member name="P:FileCabinetApp.Record.LastName">
             <summary>
-            Gets the last name of the record.
+            Gets or sets the last name of the record.
             </summary>
             <value>
             The last name of the record.
@@ -267,7 +345,7 @@
         </member>
         <member name="P:FileCabinetApp.Record.DateOfBirth">
             <summary>
-            Gets the date of birth of the record.
+            Gets or sets the date of birth of the record.
             </summary>
             <value>
             Date of birth of the record.
@@ -275,15 +353,15 @@
         </member>
         <member name="P:FileCabinetApp.Record.Height">
             <summary>
-            Gets the height of the record.
+            Gets or sets the height of the record.
             </summary>
             <value>
             Height of the record in cm.
             </value>
         </member>
-        <member name="P:FileCabinetApp.Record.Weigth">
+        <member name="P:FileCabinetApp.Record.Weight">
             <summary>
-            Gets the weight of the record.
+            Gets or sets the weight of the record.
             </summary>
             <value>
             Weight of the record in kg.
@@ -291,11 +369,163 @@
         </member>
         <member name="P:FileCabinetApp.Record.Temperament">
             <summary>
-            Gets the temperament of the record.
+            Gets or sets the temperament of the record.
             </summary>
             <value>
             First letter of temperament.
             </value>
+        </member>
+        <member name="T:FileCabinetApp.TemperamentValidator">
+            <summary>
+            Validator for temperament.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.TemperamentValidator.#ctor(System.Char[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.TemperamentValidator"/> class.
+            </summary>
+            <param name="allowedTemperaments">Array of allowed temperaments.</param>
+        </member>
+        <member name="M:FileCabinetApp.TemperamentValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
+        </member>
+        <member name="T:FileCabinetApp.ValidatorBuilder">
+            <summary>
+            Builds the FullValidator with given ValidatorsSettings.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ValidatorBuilder.CreateFullValidator(FileCabinetApp.ValidatorsSettings)">
+            <summary>
+            Creating FullValidator instance.
+            </summary>
+            <param name="settings">Validators settings.</param>
+            <returns>FullValidator instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.ValidatorsSettings">
+            <summary>
+            Contents all limits for validators.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.FirstNameLenght_min">
+            <summary>
+            Gets or sets minimal possible length of first name.
+            </summary>
+            <value>
+            Minimal possible length of first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.FirstNameLenght_max">
+            <summary>
+            Gets or sets maximum possible length of first name.
+            </summary>
+            <value>
+            Maximum possible length of first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.LastNameLenght_min">
+            <summary>
+            Gets or sets minimal possible length of last name.
+            </summary>
+            <value>
+            Minimal possible length of last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.LastNameLenght_max">
+            <summary>
+            Gets or sets maximum possible length of last name.
+            </summary>
+            <value>
+            Maximum possible length of last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.DateOfBitrth_min">
+            <summary>
+            Gets or sets minimal possible date of birth.
+            </summary>
+            <value>
+            Minimal possible date of birth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.DateOfBitrth_max">
+            <summary>
+            Gets or sets maximum possible date of birth.
+            </summary>
+            <value>
+            Maximum possible date of birth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.Height_min">
+            <summary>
+            Gets or sets minimum possible height.
+            </summary>
+            <value>
+            Minimum possible height.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.Height_max">
+            <summary>
+            Gets or sets maximum possible height.
+            </summary>
+            <value>
+            Maximum possible height.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.Weight_min">
+            <summary>
+            Gets or sets minimum possible weight.
+            </summary>
+            <value>
+            Minimum possible weight.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.Weight_max">
+            <summary>
+            Gets or sets maximum possible weight.
+            </summary>
+            <value>
+            Maximum possible weight.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidatorsSettings.AllowedTemperaments">
+            <summary>
+            Gets or sets array of allowed temperaments.
+            </summary>
+            <value>
+            Array of allowed temperaments.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.ValidatorsSettings.SetDefaultConfig">
+            <summary>
+            Sets all settings to default preset values.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ValidatorsSettings.SetCustomConfig">
+            <summary>
+            Sets all settings to custom preset values.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.WeightValidator">
+            <summary>
+            Validator for weight.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.WeightValidator.#ctor(System.Decimal,System.Decimal)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.WeightValidator"/> class.
+            </summary>
+            <param name="minWeight">Minimum possible weight.</param>
+            <param name="maxWeight">Maximum possible weight.</param>
+        </member>
+        <member name="M:FileCabinetApp.WeightValidator.ValidateParameters(FileCabinetApp.Record)">
+            <summary>
+            Validating given parameters.
+            </summary>
+            <param name="parameters">Parameters to validate.</param>
+            <returns>True if validation successful or false in the other case.</returns>
         </member>
     </members>
 </doc>

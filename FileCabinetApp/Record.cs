@@ -6,7 +6,7 @@
     public class Record
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Record"/> class.
+        /// Initializes a new instance of the <see cref="Record"/> class with given values.
         /// </summary>
         /// <param name="firstName">The first name.</param>
         /// <param name="lastName">The last name.</param>
@@ -20,56 +20,69 @@
             this.LastName = lastName;
             this.DateOfBirth = dateOfBirth;
             this.Height = height;
-            this.Weigth = weight;
+            this.Weight = weight;
             this.Temperament = temperament;
         }
 
         /// <summary>
-        /// Gets the first name of the record.
+        /// Initializes a new instance of the <see cref="Record"/> class with initial values.
+        /// </summary>
+        public Record()
+        {
+            this.FirstName = "FirstName";
+            this.LastName = "LastName";
+            this.DateOfBirth = DateTime.Now;
+            this.Height = 200;
+            this.Weight = 100;
+            this.Temperament = 'P';
+        }
+
+        /// <summary>
+        /// Gets or sets the first name of the record.
         /// </summary>
         /// <value>
         /// The first name of the record.
         /// </value>
-        public string? FirstName { get; }
+        public string? FirstName { get; set; }
 
         /// <summary>
-        /// Gets the last name of the record.
+        /// Gets or sets the last name of the record.
         /// </summary>
         /// <value>
         /// The last name of the record.
         /// </value>
-        public string? LastName { get; }
+        public string? LastName { get; set; }
 
         /// <summary>
-        /// Gets the date of birth of the record.
+        /// Gets or sets the date of birth of the record.
         /// </summary>
         /// <value>
         /// Date of birth of the record.
         /// </value>
-        public DateTime DateOfBirth { get; }
+        public DateTime DateOfBirth { get; set; }
 
         /// <summary>
-        /// Gets the height of the record.
+        /// Gets or sets the height of the record.
         /// </summary>
         /// <value>
         /// Height of the record in cm.
         /// </value>
-        public short Height { get; }
+        public short Height { get; set; }
 
         /// <summary>
-        /// Gets the weight of the record.
+        /// Gets or sets the weight of the record.
         /// </summary>
         /// <value>
         /// Weight of the record in kg.
         /// </value>
-        public decimal Weigth { get; }
+        public decimal Weight { get; set; }
 
         /// <summary>
-        /// Gets the temperament of the record.
+        /// Gets or sets the temperament of the record.
         /// </summary>
         /// <value>
         /// First letter of temperament.
         /// </value>
-        public char Temperament { get; }
+        public char Temperament { get; set; }
     }
 }

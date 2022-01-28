@@ -9,6 +9,7 @@
         /// Validating given parameters.
         /// </summary>
         /// <param name="parameters">Parameters to validate.</param>
-        public void ValidateParameters(Record parameters);
+        /// <returns>True if validation successful or false in the other case.</returns>
+        public bool ValidateParameters(Record parameters);
     }
 }

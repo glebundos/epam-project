@@ -10,6 +10,7 @@ namespace FileCabinetApp
         public FileCabinetFilesystemService(IRecordValidator validator)
         {
             this.validator = validator;
+            this.fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
 
         public int CreateRecord(Record newRecord)

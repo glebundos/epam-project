@@ -5,7 +5,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Represents standart operations with list of records.
     /// </summary>
-    public class FileCabinetService : IFileCabinetService
+    public class FileCabinetMemoryService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly IRecordValidator validator;
@@ -15,10 +15,10 @@ namespace FileCabinetApp
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
         /// </summary>
         /// <param name="validator">Validator.</param>
-        public FileCabinetService(IRecordValidator validator)
+        public FileCabinetMemoryService(IRecordValidator validator)
         {
             this.validator = validator;
         }

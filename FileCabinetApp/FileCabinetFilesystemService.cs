@@ -138,7 +138,8 @@ namespace FileCabinetApp
 
         public int GetStat()
         {
-            throw new NotImplementedException();
+            this.count = this.ReadRecords().Count;
+            return this.count;
         }
 
         public FileCabinetServiceSnapshot MakeSnapshot()

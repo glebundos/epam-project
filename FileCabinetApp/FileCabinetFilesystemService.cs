@@ -71,12 +71,40 @@ namespace FileCabinetApp
 
         public void EditRecord(int id, Record newRecord)
         {
-            throw new NotImplementedException();
+            int index = this.RecordIndex(id);
+            if (index < 0)
+            {
+                throw new ArgumentException("Wrong id", $"{nameof(id)}");
+            }
+
+            this.fileStream.Position = index * MaxRecordLength;
+            byte[] recordByteArray = this.RecordToByte(newRecord, id);
+            this.fileStream.Write(recordByteArray);
+            this.fileStream.Flush();
         }
 
         public int RecordIndex(int id)
         {
-            throw new NotImplementedException();
+            byte[] byteId = new byte[4];
+            int readedId = 0;
+            int index = 0;
+            this.fileStream.Position = 2;
+            while (this.fileStream.Position < this.fileStream.Length)
+            {
+                this.fileStream.Read(byteId, 0, 4);
+                readedId = BitConverter.ToInt32(byteId);
+                if (readedId == id)
+                {
+                    return index;
+                }
+                else
+                {
+                    index++;
+                    this.fileStream.Position += MaxRecordLength - 4;
+                }
+            }
+
+            return -1;
         }
 
         public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)

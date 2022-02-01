@@ -389,7 +389,7 @@ namespace FileCabinetApp
                 }
 
                 string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
-                var records = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                IReadOnlyCollection<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
                 if (parameter == "firstname")
                 {

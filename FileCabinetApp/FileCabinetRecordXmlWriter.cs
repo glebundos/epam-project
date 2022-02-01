@@ -54,14 +54,16 @@ namespace FileCabinetApp
                         new XAttribute("Last", record.LastName)),
                     new XElement("DateOfBirth", record.DateOfBirth.ToString("MM/dd/yyyy", new System.Globalization.CultureInfo("en-US"))),
                     new XElement("Height", record.Height),
-                    new XElement("Gender", record.Weigth),
-                    new XElement("Money", record.Temperament))));
+                    new XElement("Wieght", record.Weight),
+                    new XElement("Temperament", record.Temperament))));
             this.writer.WriteLine(document);
             this.writer.Flush();
             this.writer.Dispose();
         }
 
+#pragma warning disable CA1063 // Правильно реализуйте IDisposable
         private void Dispose(bool disposing)
+#pragma warning restore CA1063 // Правильно реализуйте IDisposable
         {
             this.writer?.Dispose();
         }

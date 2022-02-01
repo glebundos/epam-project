@@ -21,7 +21,7 @@
         /// </summary>
         /// <param name="parameters">Parameters to validate.</param>
         /// <returns>True if validation successful or false if at least one parameter is not validated.</returns>
-        public bool ValidateParameters(Record parameters)
+        public bool ValidateParameters(FileCabinetRecord parameters)
         {
             return this.validators.All(validator => validator.ValidateParameters(parameters));
         }

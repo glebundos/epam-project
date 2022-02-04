@@ -50,35 +50,35 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            if (args is not null)
+            validatorsSettings.SetDefaultConfig();
+            if (args == null || args.Length < 1)
             {
-                Dictionary<string, string> configuration = new Dictionary<string, string>();
-                for (int i = 0; i < args.Length; i++)
+                Console.WriteLine("Using default validation rules.");
+                validatorsSettings.SetDefaultConfig();
+            }
+            else
+            {
+                if (args.Length == 1)
                 {
-                    string key = args[i].ToLower(new System.Globalization.CultureInfo("en-US"));
-                    string value = string.Empty;
-                    if (key.Contains('=', StringComparison.InvariantCultureIgnoreCase))
+                    args = args[0].Split('=');
+                }
+
+                if (args[0] == "-v" || args[0] == "--validation-rules")
+                {
+                    if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
                     {
-                        value = key.Split('=')[1];
-                        key = key.Split('=')[0];
+                        Console.WriteLine("Using custom validation rules.");
+                        validatorsSettings.SetCustomConfig();
                     }
                     else
                     {
-                        if (++i < args.Length)
-                        {
-                            value = args[i].ToLower();
-                        }
-                        else
-                        {
-                            value = "default";
-                        }
+                        Console.WriteLine("Using default validation rules.");
+                        validatorsSettings.SetDefaultConfig();
                     }
-
-                    configuration.Add(key, value);
                 }
-
-                Configure(configuration);
             }
+
+            fileCabinetService = new FileCabinetService(ValidatorBuilder.CreateFullValidator(validatorsSettings));
 
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
@@ -110,49 +110,6 @@ namespace FileCabinetApp
                 }
             }
             while (isRunning);
-        }
-
-        private static void Configure(Dictionary<string, string> configuration)
-        {
-            string? value = string.Empty;
-            if (configuration.TryGetValue("-v", out value) || configuration.TryGetValue("--validation-rules", out value))
-            {
-                if (value == "custom")
-                {
-                    validatorsSettings.SetCustomConfig();
-                    Console.WriteLine("Using custom validation rules");
-                }
-                else
-                {
-                    validatorsSettings.SetDefaultConfig();
-                    Console.WriteLine("Using default validation rules");
-                }
-            }
-            else
-            {
-                validatorsSettings.SetDefaultConfig();
-                Console.WriteLine("Using default validation rules");
-            }
-
-            IRecordValidator validator = ValidatorBuilder.CreateFullValidator(validatorsSettings);
-            if (configuration.TryGetValue("-s", out value) || configuration.TryGetValue("--storage", out value))
-            {
-                if (value == "file")
-                {
-                    fileCabinetService = new FileCabinetFilesystemService(validator);
-                    Console.WriteLine("Using filesystem service");
-                }
-                else
-                {
-                    fileCabinetService = new FileCabinetMemoryService(validator);
-                    Console.WriteLine("Using memory service");
-                }
-            }
-            else
-            {
-                fileCabinetService = new FileCabinetMemoryService(validator);
-                Console.WriteLine("Using memory service");
-            }
         }
 
         private static void PrintMissedCommandInfo(string command)
@@ -389,7 +346,7 @@ namespace FileCabinetApp
                 }
 
                 string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
-                IReadOnlyCollection<FileCabinetRecord> records = new List<FileCabinetRecord>();
+                var records = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
 
                 if (parameter == "firstname")
                 {

@@ -2,8 +2,8 @@
 
 namespace FileCabinetApp
 {
-#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
+#pragma warning disable CA2208 // Правильно создавайте экземпляры исключений аргументов
     /// <summary>
     /// Main class of the program.
     /// </summary>
@@ -50,35 +50,35 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            validatorsSettings.SetDefaultConfig();
-            if (args == null || args.Length < 1)
+            if (args is not null)
             {
-                Console.WriteLine("Using default validation rules.");
-                validatorsSettings.SetDefaultConfig();
-            }
-            else
-            {
-                if (args.Length == 1)
+                Dictionary<string, string> configuration = new Dictionary<string, string>();
+                for (int i = 0; i < args.Length; i++)
                 {
-                    args = args[0].Split('=');
-                }
-
-                if (args[0] == "-v" || args[0] == "--validation-rules")
-                {
-                    if (args[1].ToLower(new System.Globalization.CultureInfo("en-US")) == "custom")
+                    string key = args[i].ToLower(new System.Globalization.CultureInfo("en-US"));
+                    string value = string.Empty;
+                    if (key.Contains('=', StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Console.WriteLine("Using custom validation rules.");
-                        validatorsSettings.SetCustomConfig();
+                        value = key.Split('=')[1];
+                        key = key.Split('=')[0];
                     }
                     else
                     {
-                        Console.WriteLine("Using default validation rules.");
-                        validatorsSettings.SetDefaultConfig();
+                        if (++i < args.Length)
+                        {
+                            value = args[i].ToLower(new System.Globalization.CultureInfo("en-US"));
+                        }
+                        else
+                        {
+                            value = "default";
+                        }
                     }
-                }
-            }
 
-            fileCabinetService = new FileCabinetService(ValidatorBuilder.CreateFullValidator(validatorsSettings));
+                    configuration.Add(key, value);
+                }
+
+                Configure(configuration);
+            }
 
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
@@ -97,7 +97,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
@@ -112,6 +112,49 @@ namespace FileCabinetApp
             while (isRunning);
         }
 
+        private static void Configure(Dictionary<string, string> configuration)
+        {
+            string? value = string.Empty;
+            if (configuration.TryGetValue("-v", out value) || configuration.TryGetValue("--validation-rules", out value))
+            {
+                if (value == "custom")
+                {
+                    validatorsSettings.SetCustomConfig();
+                    Console.WriteLine("Using custom validation rules");
+                }
+                else
+                {
+                    validatorsSettings.SetDefaultConfig();
+                    Console.WriteLine("Using default validation rules");
+                }
+            }
+            else
+            {
+                validatorsSettings.SetDefaultConfig();
+                Console.WriteLine("Using default validation rules");
+            }
+
+            IRecordValidator validator = ValidatorBuilder.CreateFullValidator(validatorsSettings);
+            if (configuration.TryGetValue("-s", out value) || configuration.TryGetValue("--storage", out value))
+            {
+                if (value == "file")
+                {
+                    fileCabinetService = new FileCabinetFilesystemService(validator);
+                    Console.WriteLine("Using filesystem service");
+                }
+                else
+                {
+                    fileCabinetService = new FileCabinetMemoryService(validator);
+                    Console.WriteLine("Using memory service");
+                }
+            }
+            else
+            {
+                fileCabinetService = new FileCabinetMemoryService(validator);
+                Console.WriteLine("Using memory service");
+            }
+        }
+
         private static void PrintMissedCommandInfo(string command)
         {
             Console.WriteLine($"There is no '{command}' command.");
@@ -122,7 +165,7 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
@@ -177,54 +220,106 @@ namespace FileCabinetApp
             Console.Write("Temperament: ");
             char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
 
-            Record newRecord = new Record(firstName, lastName, dob, height, weight, temperament);
+            FileCabinetRecord newRecord = new FileCabinetRecord()
+            {
+                Id = 0,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dob,
+                Height = height,
+                Weight = weight,
+                Temperament = temperament,
+            };
+
             Program.fileCabinetService.CreateRecord(newRecord);
         }
 
         private static Tuple<bool, string> FirstNameValidator(object input)
         {
-            Record onlyFirstNameRecord = new Record();
-            onlyFirstNameRecord.FirstName = input.ToString();
+            FileCabinetRecord onlyFirstNameRecord = new FileCabinetRecord()
+            {
+                FirstName = input.ToString(),
+                LastName = string.Empty,
+                DateOfBirth = DateTime.Now,
+                Height = 0,
+                Weight = 0,
+                Temperament = 'G',
+            };
             FirstNameValidator firstNameValidator = new FirstNameValidator(validatorsSettings.FirstNameLenght_min, validatorsSettings.FirstNameLenght_max);
             return Tuple.Create(firstNameValidator.ValidateParameters(onlyFirstNameRecord), "Parameter is invalid");
         }
 
         private static Tuple<bool, string> LastNameValidator(object input)
         {
-            Record onlyLastNameRecord = new Record();
-            onlyLastNameRecord.LastName = input.ToString();
+            FileCabinetRecord onlyLastNameRecord = new FileCabinetRecord()
+            {
+                FirstName = string.Empty,
+                LastName = input.ToString(),
+                DateOfBirth = DateTime.Now,
+                Height = 0,
+                Weight = 0,
+                Temperament = 'G',
+            };
             LastNameValidator lastNameValidator = new LastNameValidator(validatorsSettings.LastNameLenght_min, validatorsSettings.LastNameLenght_max);
             return Tuple.Create(lastNameValidator.ValidateParameters(onlyLastNameRecord), "Parameter is invalid");
         }
 
         private static Tuple<bool, string> DateOfBirthValidator(object input)
         {
-            Record onlyDateOfBirthRecord = new Record();
-            onlyDateOfBirthRecord.DateOfBirth = (DateTime)input;
+            FileCabinetRecord onlyDateOfBirthRecord = new FileCabinetRecord()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                DateOfBirth = (DateTime)input,
+                Height = 0,
+                Weight = 0,
+                Temperament = 'G',
+            };
             DateOfBirthValidator dateOfBirthValidator = new DateOfBirthValidator(validatorsSettings.DateOfBitrth_min, validatorsSettings.DateOfBitrth_max);
             return Tuple.Create(dateOfBirthValidator.ValidateParameters(onlyDateOfBirthRecord), "Parameter is invalid");
         }
 
         private static Tuple<bool, string> HeightValidator(object input)
         {
-            Record onlyHeightRecord = new Record();
-            onlyHeightRecord.Height = (short)input;
+            FileCabinetRecord onlyHeightRecord = new FileCabinetRecord()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                DateOfBirth = DateTime.Now,
+                Height = (short)input,
+                Weight = 0,
+                Temperament = 'G',
+            };
             HeightValidator heightValidator = new HeightValidator(validatorsSettings.Height_min, validatorsSettings.Height_max);
             return Tuple.Create(heightValidator.ValidateParameters(onlyHeightRecord), "Parameter is invalid");
         }
 
         private static Tuple<bool, string> WeightValidator(object input)
         {
-            Record onlyWeightRecord = new Record();
-            onlyWeightRecord.Weight = (decimal)input;
+            FileCabinetRecord onlyWeightRecord = new FileCabinetRecord()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                DateOfBirth = DateTime.Now,
+                Height = 0,
+                Weight = (decimal)input,
+                Temperament = 'G',
+            };
             WeightValidator weightValidator = new WeightValidator(validatorsSettings.Weight_min, validatorsSettings.Weight_max);
             return Tuple.Create(weightValidator.ValidateParameters(onlyWeightRecord), "Parameter is invalid");
         }
 
         private static Tuple<bool, string> TemperamentValidator(object input)
         {
-            Record onlyTemperamentValidator = new Record();
-            onlyTemperamentValidator.Temperament = (char)input;
+            FileCabinetRecord onlyTemperamentValidator = new FileCabinetRecord()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                DateOfBirth = DateTime.Now,
+                Height = 0,
+                Weight = 0,
+                Temperament = (char)input,
+            };
             TemperamentValidator temperamentValidator = new TemperamentValidator(validatorsSettings.AllowedTemperaments);
             return Tuple.Create(temperamentValidator.ValidateParameters(onlyTemperamentValidator), "Parameter is invalid");
         }
@@ -326,7 +421,16 @@ namespace FileCabinetApp
                 Console.Write("Temperament: ");
                 char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
 
-                Record newRecord = new Record(firstName, lastName, dob, height, weight, temperament);
+                FileCabinetRecord newRecord = new FileCabinetRecord()
+                {
+                    Id = 0,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dob,
+                    Height = height,
+                    Weight = weight,
+                    Temperament = temperament,
+                };
                 Program.fileCabinetService.EditRecord(id, newRecord);
             }
             else
@@ -346,7 +450,7 @@ namespace FileCabinetApp
                 }
 
                 string value = parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
-                var records = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                IReadOnlyCollection<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
                 if (parameter == "firstname")
                 {
@@ -428,7 +532,7 @@ namespace FileCabinetApp
 
             Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
                     $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{record.Height} cm, {record.Weigth} kg, {temperament}");
+                    $"{record.Height} cm, {record.Weight} kg, {temperament}");
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
@@ -512,3 +616,4 @@ namespace FileCabinetApp
         }
     }
 }
+#pragma warning restore CA2208 // Правильно создавайте экземпляры исключений аргументов

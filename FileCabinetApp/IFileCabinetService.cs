@@ -12,14 +12,14 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="newRecord">Object with all record parameters.</param>
         /// <returns>Id of the created record or -1 in case of error.</returns>
-        public int CreateRecord(Record newRecord);
+        public int CreateRecord(FileCabinetRecord newRecord);
 
         /// <summary>
         /// Edits the record with the given id according to the given parameters.
         /// </summary>
         /// <param name="id">The Id of the record to change.</param>
         /// <param name="newRecord">Object with all record parameters.</param>
-        public void EditRecord(int id, Record newRecord);
+        public void EditRecord(int id, FileCabinetRecord newRecord);
 
         /// <summary>
         /// Searches for a record with given Id.

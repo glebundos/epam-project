@@ -3,7 +3,7 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Represents standart operations with list of records.
+    /// Represents standart operations with list of records in memory.
     /// </summary>
     public class FileCabinetService : IFileCabinetService
     {
@@ -11,7 +11,7 @@ namespace FileCabinetApp
         private readonly IRecordValidator validator;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace FileCabinetApp
         /// <returns>Id of the created record or -1 in case of error.</returns>
 #pragma warning disable CA1062 // newRecord проверяется на null в ValidateParameters.
 #pragma warning disable CS8602 // Разыменование вероятной пустой ссылки (проверяется в ValidateParameters).
-        public int CreateRecord(Record newRecord)
+        public int CreateRecord(FileCabinetRecord newRecord)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace FileCabinetApp
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
                     Height = newRecord.Height,
-                    Weigth = newRecord.Weight,
+                    Weight = newRecord.Weight,
                     Temperament = char.ToUpper(newRecord.Temperament, this.cultureInfo),
                 };
 
@@ -72,14 +72,14 @@ namespace FileCabinetApp
                     this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
                 }
 
-                if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth.ToString(this.cultureInfo)))
+                if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth))
                 {
-                    this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
+                    this.dateOfBirthDictionary[newRecord.DateOfBirth].Add(record);
                 }
                 else
                 {
-                    this.dateOfBirthDictionary.Add(newRecord.DateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
-                    this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
+                    this.dateOfBirthDictionary.Add(newRecord.DateOfBirth, new List<FileCabinetRecord>());
+                    this.dateOfBirthDictionary[newRecord.DateOfBirth].Add(record);
                 }
 
                 return record.Id;
@@ -96,7 +96,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">The Id of the record to change.</param>
         /// <param name="newRecord">Object with all record parameters.</param>
-        public void EditRecord(int id, Record newRecord)
+        public void EditRecord(int id, FileCabinetRecord newRecord)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace FileCabinetApp
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
                     Height = newRecord.Height,
-                    Weigth = newRecord.Weight,
+                    Weight = newRecord.Weight,
                     Temperament = char.ToUpper(newRecord.Temperament, this.cultureInfo),
                 };
 
@@ -159,15 +159,15 @@ namespace FileCabinetApp
                     this.lastNameDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(record);
                 }
 
-                this.dateOfBirthDictionary[oldRecord.DateOfBirth.ToString(this.cultureInfo)].Remove(oldRecord);
-                if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth.ToString(this.cultureInfo)))
+                this.dateOfBirthDictionary[oldRecord.DateOfBirth].Remove(oldRecord);
+                if (this.dateOfBirthDictionary.ContainsKey(newRecord.DateOfBirth))
                 {
-                    this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
+                    this.dateOfBirthDictionary[newRecord.DateOfBirth].Add(record);
                 }
                 else
                 {
-                    this.dateOfBirthDictionary.Add(newRecord.DateOfBirth.ToString(this.cultureInfo), new List<FileCabinetRecord>());
-                    this.dateOfBirthDictionary[newRecord.DateOfBirth.ToString(this.cultureInfo)].Add(record);
+                    this.dateOfBirthDictionary.Add(newRecord.DateOfBirth, new List<FileCabinetRecord>());
+                    this.dateOfBirthDictionary[newRecord.DateOfBirth].Add(record);
                 }
             }
             catch (Exception e)
@@ -237,9 +237,9 @@ namespace FileCabinetApp
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByDateOfBirth = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth.ToString(this.cultureInfo)))
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
             {
-                fileCabinetRecordsByDateOfBirth = new (this.dateOfBirthDictionary[dateOfBirth.ToString(this.cultureInfo)].ToArray());
+                fileCabinetRecordsByDateOfBirth = new (this.dateOfBirthDictionary[dateOfBirth].ToArray());
             }
 
             return fileCabinetRecordsByDateOfBirth;

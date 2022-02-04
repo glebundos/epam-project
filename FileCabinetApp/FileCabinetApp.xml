@@ -16,16 +16,54 @@
             <param name="minDate">Minimal possible date of birth.</param>
             <param name="maxDate">Maximum possible date of birth.</param>
         </member>
-        <member name="M:FileCabinetApp.DateOfBirthValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.DateOfBirthValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
             <param name="parameters">Parameters to validate.</param>
             <returns>True if validation successful or false in the other case.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetFilesystemService">
+            <summary>
+            Represents standart operations with list of records in file system.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetFilesystemService"/> class.
+            </summary>
+            <param name="validator">Validator.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RecordIndex(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.DateTime)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetRecords">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetStat">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
-            Represents standart operations with list of records.
+            Represents standart operations with list of records in memory.
             </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.#ctor(FileCabinetApp.IRecordValidator)">
@@ -34,14 +72,14 @@
             </summary>
             <param name="validator">Validator.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Creates new record with given parameters.
             </summary>
             <param name="newRecord">Object with all record parameters.</param>
             <returns>Id of the created record or -1 in case of error.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32,FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
             <summary>
             Edits the record with the given id according to the given parameters.
             </summary>
@@ -101,7 +139,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Id">
             <summary>
-            Gets or sets the value that matches the Id of the record.
+            Gets the value that matches the Id of the record.
             </summary>
             <value>
             The value that matches the Id of the record.
@@ -109,7 +147,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
             <summary>
-            Gets or sets the first name of the record.
+            Gets the first name of the record.
             </summary>
             <value>
             The first name of the record.
@@ -117,7 +155,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
             <summary>
-            Gets or sets the last name of the record.
+            Gets the last name of the record.
             </summary>
             <value>
             The last name of the record.
@@ -125,7 +163,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
             <summary>
-            Gets or sets the date of birth of the record.
+            Gets the date of birth of the record.
             </summary>
             <value>
             Date of birth of the record.
@@ -133,15 +171,15 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Height">
             <summary>
-            Gets or sets the height of the record.
+            Gets the height of the record.
             </summary>
             <value>
             Height of the record in cm.
             </value>
         </member>
-        <member name="P:FileCabinetApp.FileCabinetRecord.Weigth">
+        <member name="P:FileCabinetApp.FileCabinetRecord.Weight">
             <summary>
-            Gets or sets the weight of the record.
+            Gets the weight of the record.
             </summary>
             <value>
             Weight of the record in kg.
@@ -149,7 +187,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Temperament">
             <summary>
-            Gets or sets the temperament of the record.
+            Gets the temperament of the record.
             </summary>
             <value>
             First letter of temperament.
@@ -254,7 +292,7 @@
             <param name="minNameLength">Minimal possible length of first name.</param>
             <param name="maxNameLength">Maximum possible length of first name.</param>
         </member>
-        <member name="M:FileCabinetApp.FirstNameValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.FirstNameValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -272,7 +310,7 @@
             </summary>
             <param name="validators">List of validators.</param>
         </member>
-        <member name="M:FileCabinetApp.FullValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.FullValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -291,7 +329,7 @@
             <param name="minHeight">Minimal possible height.</param>
             <param name="maxHeight">Maximum possible height.</param>
         </member>
-        <member name="M:FileCabinetApp.HeightValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.HeightValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -303,14 +341,14 @@
             Represents interface for services with standart operations with list of records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Creates new record with given parameters.
             </summary>
             <param name="newRecord">Object with all record parameters.</param>
             <returns>Id of the created record or -1 in case of error.</returns>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
             <summary>
             Edits the record with the given id according to the given parameters.
             </summary>
@@ -368,7 +406,7 @@
             Interface for validators classes.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -387,7 +425,7 @@
             <param name="minNameLength">Minimal possible length of last name.</param>
             <param name="maxNameLength">Maximum possible length of last name.</param>
         </member>
-        <member name="M:FileCabinetApp.LastNameValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.LastNameValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -485,7 +523,7 @@
             </summary>
             <param name="allowedTemperaments">Array of allowed temperaments.</param>
         </member>
-        <member name="M:FileCabinetApp.TemperamentValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.TemperamentValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>
@@ -619,7 +657,7 @@
             <param name="minWeight">Minimum possible weight.</param>
             <param name="maxWeight">Maximum possible weight.</param>
         </member>
-        <member name="M:FileCabinetApp.WeightValidator.ValidateParameters(FileCabinetApp.Record)">
+        <member name="M:FileCabinetApp.WeightValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validating given parameters.
             </summary>

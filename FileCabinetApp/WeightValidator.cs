@@ -31,7 +31,7 @@
                 throw new ArgumentNullException(nameof(parameters), "Record is null");
             }
 
-            return parameters.Weight >= this.minWeight && parameters.Weight <= this.maxWeight;
+            return parameters.Weight > this.minWeight && parameters.Weight < this.maxWeight;
         }
     }
 }

@@ -7,13 +7,16 @@
     {
         private FileCabinetRecord[] records;
 
+        public List<FileCabinetRecord> Records { get; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
         /// <param name="list">List of records to make a snapshot.</param>
-        public FileCabinetServiceSnapshot(IReadOnlyCollection<FileCabinetRecord> list)
+        public FileCabinetServiceSnapshot(List<FileCabinetRecord> list)
         {
             this.records = list.ToArray();
+            this.Records = list;
         }
 
         /// <summary>
@@ -25,6 +28,12 @@
         {
             FileCabinetRecordCsvWriter writer = new FileCabinetRecordCsvWriter(streamWriter);
             writer.Write(this.records, append);
+        }
+
+        public void LoadFromCsv(StreamReader streamReader)
+        {
+            FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(streamReader);
+            Records.AddRange(reader.ReadAll());
         }
 
         /// <summary>

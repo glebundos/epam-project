@@ -29,6 +29,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -41,6 +42,7 @@ namespace FileCabinetApp
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
             new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
+            new string[] { "import <file extension> path", "imports records", "The 'import' imports records from the file(path)." },
         };
 
         /// <summary>
@@ -612,6 +614,36 @@ namespace FileCabinetApp
             catch (Exception e)
             {
                 Console.WriteLine("Export failed: " + e.Message);
+            }
+        }
+
+        private static void Import(string parameters)
+        {
+            try
+            {
+                string[] arguments = parameters.Split();
+                if (arguments[0] == "csv")
+                {
+                    StreamReader streamReader = new StreamReader(arguments[1]);
+                    FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
+                    snapshot.LoadFromCsv(streamReader);
+                    fileCabinetService.Restore(snapshot);
+                }
+                /*else if (arguments[0] == "xml")
+                {
+                    StreamReader streamReader = new StreamReader(arguments[1]);
+                    FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
+                    snapshot.LoadFromCsv(streamReader);
+                    fileCabinetService.Restore(snapshot);
+                }*/
+                else
+                {
+                    throw new ArgumentException("Wrong parameters.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Import failed: " + e.Message);
             }
         }
     }

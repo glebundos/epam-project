@@ -47,11 +47,11 @@ namespace FileCabinetApp
         {
             if (!this.validator.ValidateParameters(newRecord))
             {
-                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Invalid parameters. Id: " + newRecord.Id);
                 return -1;
             }
 
-            int newId = this.LastId() + 1;
+            int newId = newRecord.Id == 0 ? this.LastId() + 1 : newRecord.Id;
             FileCabinetRecord record = new FileCabinetRecord()
             {
                 Id = newId,
@@ -357,6 +357,27 @@ namespace FileCabinetApp
             }
 
             return result;
+        }
+
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            foreach (var snapshotRecord in snapshot.Records)
+            {
+                if (!this.validator.ValidateParameters(snapshotRecord))
+                {
+                    Console.WriteLine("Invalid parameters. Id: " + snapshotRecord.Id);
+                    continue;
+                }
+
+                if (idOffsetDictionary.ContainsKey(snapshotRecord.Id))
+                {
+                    this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                }
+                else
+                {
+                    this.CreateRecord(snapshotRecord);
+                }
+            }
         }
     }
 }

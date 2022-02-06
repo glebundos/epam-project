@@ -14,10 +14,7 @@ namespace FileCabinetApp
         /// <value>
         /// The value that matches the Id of the record.
         /// </value>
-<<<<<<< HEAD
-=======
         [XmlAttribute]
->>>>>>> step8-add-import
         public int Id { get; init; }
 
         /// <summary>

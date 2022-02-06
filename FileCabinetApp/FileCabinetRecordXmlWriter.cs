@@ -40,30 +40,8 @@ namespace FileCabinetApp
         /// <param name="append">Append text if true, rewrite if false.</param>
         public void Write(IReadOnlyCollection<FileCabinetRecord> records, bool append)
         {
-<<<<<<< HEAD
-            if (!append)
-            {
-                this.writer.WriteLine("Id, FirstName, LastName, DateOfBirth, Height, Weigth, Temperament.");
-            }
-
-            var document = new XElement("Records", records.Select(record =>
-                new XElement(
-                    "Record",
-                    new XAttribute("Id", record.Id),
-                    new XElement(
-                        "Name",
-                        new XAttribute("First", record.FirstName),
-                        new XAttribute("Last", record.LastName)),
-                    new XElement("DateOfBirth", record.DateOfBirth.ToString("MM/dd/yyyy", new System.Globalization.CultureInfo("en-US"))),
-                    new XElement("Height", record.Height),
-                    new XElement("Wieght", record.Weight),
-                    new XElement("Temperament", record.Temperament))));
-            this.writer.WriteLine(document);
-            this.writer.Flush();
-=======
             var xmlSerializer = new XmlSerializer(typeof(FileCabinetRecord[]));
             xmlSerializer.Serialize(this.writer, records);
->>>>>>> step8-add-import
             this.writer.Dispose();
         }
 

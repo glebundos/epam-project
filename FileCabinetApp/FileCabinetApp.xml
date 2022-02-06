@@ -260,7 +260,7 @@
             Represents the snapshot of records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(System.Collections.Generic.IReadOnlyCollection{FileCabinetApp.FileCabinetRecord})">
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
             </summary>

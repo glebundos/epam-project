@@ -30,10 +30,20 @@
             writer.Write(this.records, append);
         }
 
-        public void LoadFromCsv(StreamReader streamReader)
+        public int LoadFromCsv(StreamReader streamReader)
         {
             FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(streamReader);
-            Records.AddRange(reader.ReadAll());
+            var records = reader.ReadAll();
+            Records.AddRange(records);
+            return records.Count;
+        }
+
+        public int LoadFromXml(StreamReader streamReader)
+        {
+            FileCabinetRecordXmlReader reader = new FileCabinetRecordXmlReader(streamReader);
+            var records = reader.ReadAll();
+            Records.AddRange(records);
+            return records.Count;
         }
 
         /// <summary>

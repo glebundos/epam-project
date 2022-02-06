@@ -235,17 +235,7 @@ namespace FileCabinetGenerator
                 }
                 else if (config.Type == "xml")
                 {
-                    if (File.Exists(config.FilePath))
-                    {
-                        Console.WriteLine($"File is exist - rewrite {config.FilePath}? [Y/n]");
-                        if (Console.ReadKey().Key == ConsoleKey.N)
-                        {
-                            append = true;
-                        }
-
-                        Console.WriteLine();
-                    }
-
+                    // TODO: append всегда false в случае с xml т.к. если присоединять записи к уже существующим десериализация ломается, пофиксить если возможно.
                     StreamWriter streamWriter = new StreamWriter(config.FilePath, append);
                     FileCabinetRecordXmlWriter xmlWriter = new FileCabinetRecordXmlWriter(streamWriter);
                     xmlWriter.Write(fileCabinetRecords, append);

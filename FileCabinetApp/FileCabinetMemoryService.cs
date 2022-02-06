@@ -273,8 +273,9 @@ namespace FileCabinetApp
             return new FileCabinetServiceSnapshot(this.list);
         }
 
-        public void Restore(FileCabinetServiceSnapshot snapshot)
+        public int Restore(FileCabinetServiceSnapshot snapshot)
         {
+            int counter = 0;
             foreach (var snapshotRecord in snapshot.Records)
             {
                 if (!this.validator.ValidateParameters(snapshotRecord))
@@ -296,12 +297,16 @@ namespace FileCabinetApp
                 if (toRewrite)
                 {
                     this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                    counter++;
                 }
                 else
                 {
                     this.CreateRecord(snapshotRecord);
+                    counter++;
                 }
             }
+
+            return counter;
         }
     }
 }

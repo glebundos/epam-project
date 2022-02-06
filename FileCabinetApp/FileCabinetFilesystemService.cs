@@ -183,7 +183,7 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            return new FileCabinetServiceSnapshot(this.ReadRecords());
         }
 
         /// <inheritdoc/>
@@ -344,7 +344,7 @@ namespace FileCabinetApp
             return ByteToRecord(byteRecord);
         }
 
-        private IReadOnlyCollection<FileCabinetRecord> ReadRecords()
+        private List<FileCabinetRecord> ReadRecords()
         {
             byte[] byteRecord = new byte[MaxRecordLength];
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
@@ -359,8 +359,9 @@ namespace FileCabinetApp
             return result;
         }
 
-        public void Restore(FileCabinetServiceSnapshot snapshot)
+        public int Restore(FileCabinetServiceSnapshot snapshot)
         {
+            int counter = 0;
             foreach (var snapshotRecord in snapshot.Records)
             {
                 if (!this.validator.ValidateParameters(snapshotRecord))
@@ -372,12 +373,16 @@ namespace FileCabinetApp
                 if (idOffsetDictionary.ContainsKey(snapshotRecord.Id))
                 {
                     this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                    counter++;
                 }
                 else
                 {
                     this.CreateRecord(snapshotRecord);
+                    counter++;
                 }
             }
+
+            return counter;
         }
     }
 }

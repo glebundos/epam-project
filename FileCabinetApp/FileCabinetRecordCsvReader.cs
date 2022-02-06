@@ -11,14 +11,20 @@
 
         public IList<FileCabinetRecord> ReadAll()
         {
-            this.reader.ReadLine();
             List<FileCabinetRecord> fileCabinetRecords = new List<FileCabinetRecord>();
             while (!this.reader.EndOfStream)
             {
                 fileCabinetRecords.Add(this.Read());
             }
 
+            this.Dispose();
             return fileCabinetRecords;
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private FileCabinetRecord Read()
@@ -36,6 +42,11 @@
                 Weight = Convert.ToDecimal(recordString[5]),
                 Temperament = recordString[6][0],
             };
+        }
+
+        private void Dispose(bool disposing)
+        {
+            this.reader?.Dispose();
         }
     }
 }

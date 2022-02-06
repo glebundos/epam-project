@@ -67,6 +67,6 @@ namespace FileCabinetApp
         /// <returns>Snapshot of current records list.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot();
 
-        public void Restore(FileCabinetServiceSnapshot snapshot);
+        public int Restore(FileCabinetServiceSnapshot snapshot);
     }
 }

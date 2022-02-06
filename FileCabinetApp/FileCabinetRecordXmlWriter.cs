@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace FileCabinetApp
 {
@@ -39,6 +40,7 @@ namespace FileCabinetApp
         /// <param name="append">Append text if true, rewrite if false.</param>
         public void Write(IReadOnlyCollection<FileCabinetRecord> records, bool append)
         {
+<<<<<<< HEAD
             if (!append)
             {
                 this.writer.WriteLine("Id, FirstName, LastName, DateOfBirth, Height, Weigth, Temperament.");
@@ -58,6 +60,10 @@ namespace FileCabinetApp
                     new XElement("Temperament", record.Temperament))));
             this.writer.WriteLine(document);
             this.writer.Flush();
+=======
+            var xmlSerializer = new XmlSerializer(typeof(FileCabinetRecord[]));
+            xmlSerializer.Serialize(this.writer, records);
+>>>>>>> step8-add-import
             this.writer.Dispose();
         }
 

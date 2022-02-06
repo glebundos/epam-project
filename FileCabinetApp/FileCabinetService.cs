@@ -41,7 +41,7 @@ namespace FileCabinetApp
 
                 var record = new FileCabinetRecord
                 {
-                    Id = this.list.Count + 1,
+                    Id = newRecord.Id == 0 ? this.list.Count + 1 : newRecord.Id,
                     FirstName = newRecord.FirstName,
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
@@ -271,6 +271,42 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.list);
+        }
+
+        public int Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            int counter = 0;
+            foreach (var snapshotRecord in snapshot.Records)
+            {
+                if (!this.validator.ValidateParameters(snapshotRecord))
+                {
+                    Console.WriteLine("Invalid parameters. Id: " + snapshotRecord.Id);
+                    continue;
+                }
+
+                bool toRewrite = false;
+                foreach (var oldRecord in this.list)
+                {
+                    if (oldRecord.Id == snapshotRecord.Id)
+                    {
+                        toRewrite = true;
+                        break;
+                    }
+                }
+
+                if (toRewrite)
+                {
+                    this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                    counter++;
+                }
+                else
+                {
+                    this.CreateRecord(snapshotRecord);
+                    counter++;
+                }
+            }
+
+            return counter;
         }
     }
 }

@@ -37,11 +37,6 @@
         /// <param name="append">Append text if true, rewrite if false.</param>
         public void Write(IReadOnlyCollection<FileCabinetRecord> records, bool append)
         {
-            if (!append)
-            {
-                this.writer.WriteLine("Id, FirstName, LastName, DateOfBirth, Height, Weigth, Temperament.");
-            }
-
             foreach (var record in records ?? throw new ArgumentNullException(nameof(records), "Records can't be null"))
             {
                 if (record is null)

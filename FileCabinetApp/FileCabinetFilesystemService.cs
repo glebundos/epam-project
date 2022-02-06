@@ -47,11 +47,15 @@ namespace FileCabinetApp
         {
             if (!this.validator.ValidateParameters(newRecord))
             {
-                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Invalid parameters. Id: " + newRecord.Id);
                 return -1;
             }
 
+<<<<<<< HEAD
             int newId = this.LastId() + 1;
+=======
+            int newId = newRecord.Id == 0 ? this.LastId() + 1 : newRecord.Id;
+>>>>>>> step8-add-import
             FileCabinetRecord record = new FileCabinetRecord()
             {
                 Id = newId,
@@ -183,7 +187,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
+<<<<<<< HEAD
             throw new NotImplementedException();
+=======
+            return new FileCabinetServiceSnapshot(this.ReadRecords());
+>>>>>>> step8-add-import
         }
 
         /// <inheritdoc/>
@@ -259,6 +267,7 @@ namespace FileCabinetApp
         }
 
         private void AddToDictionaries(FileCabinetRecord newRecord, int position)
+<<<<<<< HEAD
         {
             if (this.idOffsetDictionary.ContainsKey(newRecord.Id))
             {
@@ -302,6 +311,51 @@ namespace FileCabinetApp
 
         private void UpdateDictionaries(FileCabinetRecord newRecord, FileCabinetRecord oldRecord, int position)
         {
+=======
+        {
+            if (this.idOffsetDictionary.ContainsKey(newRecord.Id))
+            {
+                throw new ArgumentException("WRONG ID");
+            }
+            else
+            {
+                this.idOffsetDictionary.Add(newRecord.Id, position);
+            }
+
+            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
+            {
+                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+            }
+            else
+            {
+                this.firstNameOffsetDictionary.Add(newRecord.FirstName.ToLower(this.cultureInfo), new List<int>());
+                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+            }
+
+            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName.ToLower(this.cultureInfo)))
+            {
+                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+            }
+            else
+            {
+                this.lastNameOffsetDictionary.Add(newRecord.LastName.ToLower(this.cultureInfo), new List<int>());
+                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+            }
+
+            if (this.dateOfBirthOffsetDictionary.ContainsKey(newRecord.DateOfBirth))
+            {
+                this.dateOfBirthOffsetDictionary[newRecord.DateOfBirth].Add(position);
+            }
+            else
+            {
+                this.dateOfBirthOffsetDictionary.Add(newRecord.DateOfBirth, new List<int>());
+                this.dateOfBirthOffsetDictionary[newRecord.DateOfBirth].Add(position);
+            }
+        }
+
+        private void UpdateDictionaries(FileCabinetRecord newRecord, FileCabinetRecord oldRecord, int position)
+        {
+>>>>>>> step8-add-import
             this.firstNameOffsetDictionary[oldRecord.FirstName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[oldRecord.Id]);
             if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
             {
@@ -344,7 +398,11 @@ namespace FileCabinetApp
             return ByteToRecord(byteRecord);
         }
 
+<<<<<<< HEAD
         private IReadOnlyCollection<FileCabinetRecord> ReadRecords()
+=======
+        private List<FileCabinetRecord> ReadRecords()
+>>>>>>> step8-add-import
         {
             byte[] byteRecord = new byte[MaxRecordLength];
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
@@ -357,6 +415,35 @@ namespace FileCabinetApp
             }
 
             return result;
+<<<<<<< HEAD
+=======
+        }
+
+        public int Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            int counter = 0;
+            foreach (var snapshotRecord in snapshot.Records)
+            {
+                if (!this.validator.ValidateParameters(snapshotRecord))
+                {
+                    Console.WriteLine("Invalid parameters. Id: " + snapshotRecord.Id);
+                    continue;
+                }
+
+                if (idOffsetDictionary.ContainsKey(snapshotRecord.Id))
+                {
+                    this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                    counter++;
+                }
+                else
+                {
+                    this.CreateRecord(snapshotRecord);
+                    counter++;
+                }
+            }
+
+            return counter;
+>>>>>>> step8-add-import
         }
     }
 }

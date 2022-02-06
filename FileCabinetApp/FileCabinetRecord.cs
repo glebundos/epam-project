@@ -1,8 +1,11 @@
-﻿namespace FileCabinetApp
+﻿using System.Xml.Serialization;
+
+namespace FileCabinetApp
 {
     /// <summary>
     /// Contains all record parameters and its Id in the FileCabinet.
     /// </summary>
+    [Serializable]
     public class FileCabinetRecord
     {
         /// <summary>
@@ -11,6 +14,10 @@
         /// <value>
         /// The value that matches the Id of the record.
         /// </value>
+<<<<<<< HEAD
+=======
+        [XmlAttribute]
+>>>>>>> step8-add-import
         public int Id { get; init; }
 
         /// <summary>

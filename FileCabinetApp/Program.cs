@@ -29,6 +29,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -41,6 +42,7 @@ namespace FileCabinetApp
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
             new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
+            new string[] { "import <file extension> path", "imports records", "The 'import' imports records from the file(path)." },
         };
 
         /// <summary>
@@ -589,18 +591,8 @@ namespace FileCabinetApp
                 }
                 else if (arguments[0] == "xml")
                 {
+                    // TODO: append всегда false в случае с xml т.к. если присоединять записи к уже существующим десериализация ломается, пофиксить если возможно.
                     arguments[1] = arguments[1][1..^1];
-                    if (File.Exists(arguments[1]))
-                    {
-                        Console.WriteLine($"File is exist - rewrite {arguments[1]}? [Y/n]");
-                        if (Console.ReadKey().Key == ConsoleKey.N)
-                        {
-                            append = true;
-                        }
-
-                        Console.WriteLine();
-                    }
-
                     StreamWriter streamWriter = new StreamWriter(arguments[1], append);
                     fileCabinetService.MakeSnapshot().SaveToXml(streamWriter, append);
                 }
@@ -612,6 +604,36 @@ namespace FileCabinetApp
             catch (Exception e)
             {
                 Console.WriteLine("Export failed: " + e.Message);
+            }
+        }
+
+        private static void Import(string parameters)
+        {
+            try
+            {
+                int readedCount = 0;
+                string[] arguments = parameters.Split();
+                StreamReader streamReader = new StreamReader(arguments[1]);
+                FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
+                if (arguments[0] == "csv")
+                {
+                    readedCount = snapshot.LoadFromCsv(streamReader);
+                }
+                else if (arguments[0] == "xml")
+                {
+                    readedCount = snapshot.LoadFromXml(streamReader);
+                }
+                else
+                {
+                    throw new ArgumentException("Wrong parameters.");
+                }
+
+                int importedCount = fileCabinetService.Restore(snapshot);
+                Console.WriteLine($"{importedCount} records were imported from {arguments[1]}. {readedCount - importedCount} errors");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Import failed: " + e.Message);
             }
         }
     }

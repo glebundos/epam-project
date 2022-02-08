@@ -30,6 +30,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -42,7 +43,8 @@ namespace FileCabinetApp
             new string[] { "edit <id>", "edits a record", "The 'edit' edits a record with a specific id." },
             new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
-            new string[] { "import <file extension> path", "imports records", "The 'import' imports records from the file(path)." },
+            new string[] { "import <file extension> <path>", "imports records", "The 'import' imports records from the file(path)." },
+            new string[] { "remove <id>", "removes record", "The 'remove' removes record with given id." },
         };
 
         /// <summary>
@@ -204,36 +206,43 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            Console.Write("First name: ");
-            string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
-
-            Console.Write("Last name: ");
-            string lastName = (string)ReadInput(StringConverter, LastNameValidator);
-
-            Console.Write("Date of birth: ");
-            DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
-
-            Console.Write("Height: ");
-            short height = (short)ReadInput(HeightConverter, HeightValidator);
-
-            Console.Write("Weight: ");
-            decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
-
-            Console.Write("Temperament: ");
-            char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
-
-            FileCabinetRecord newRecord = new FileCabinetRecord()
+            try
             {
-                Id = 0,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dob,
-                Height = height,
-                Weight = weight,
-                Temperament = temperament,
-            };
+                Console.Write("First name: ");
+                string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
 
-            Program.fileCabinetService.CreateRecord(newRecord);
+                Console.Write("Last name: ");
+                string lastName = (string)ReadInput(StringConverter, LastNameValidator);
+
+                Console.Write("Date of birth: ");
+                DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
+
+                Console.Write("Height: ");
+                short height = (short)ReadInput(HeightConverter, HeightValidator);
+
+                Console.Write("Weight: ");
+                decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
+
+                Console.Write("Temperament: ");
+                char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
+
+                FileCabinetRecord newRecord = new FileCabinetRecord()
+                {
+                    Id = 0,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dob,
+                    Height = height,
+                    Weight = weight,
+                    Temperament = temperament,
+                };
+
+                Program.fileCabinetService.CreateRecord(newRecord);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Create error:" + e.Message);
+            }
         }
 
         private static Tuple<bool, string> FirstNameValidator(object input)
@@ -396,48 +405,55 @@ namespace FileCabinetApp
 
         private static void Edit(string parameters)
         {
-            if (string.IsNullOrEmpty(parameters))
+            try
             {
-                Console.WriteLine("Parameter cant be null");
-                return;
-            }
-
-            int id = Convert.ToInt32(parameters, new System.Globalization.CultureInfo("en-US"));
-            if (fileCabinetService.RecordIndex(id) > -1)
-            {
-                Console.Write("First name: ");
-                string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
-
-                Console.Write("Last name: ");
-                string lastName = (string)ReadInput(StringConverter, LastNameValidator);
-
-                Console.Write("Date of birth: ");
-                DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
-
-                Console.Write("Height: ");
-                short height = (short)ReadInput(HeightConverter, HeightValidator);
-
-                Console.Write("Weight: ");
-                decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
-
-                Console.Write("Temperament: ");
-                char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
-
-                FileCabinetRecord newRecord = new FileCabinetRecord()
+                if (string.IsNullOrEmpty(parameters))
                 {
-                    Id = 0,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    DateOfBirth = dob,
-                    Height = height,
-                    Weight = weight,
-                    Temperament = temperament,
-                };
-                Program.fileCabinetService.EditRecord(id, newRecord);
+                    Console.WriteLine("Parameter cant be null");
+                    return;
+                }
+
+                int id = Convert.ToInt32(parameters, new System.Globalization.CultureInfo("en-US"));
+                if (fileCabinetService.RecordIndex(id) > -1)
+                {
+                    Console.Write("First name: ");
+                    string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
+
+                    Console.Write("Last name: ");
+                    string lastName = (string)ReadInput(StringConverter, LastNameValidator);
+
+                    Console.Write("Date of birth: ");
+                    DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
+
+                    Console.Write("Height: ");
+                    short height = (short)ReadInput(HeightConverter, HeightValidator);
+
+                    Console.Write("Weight: ");
+                    decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
+
+                    Console.Write("Temperament: ");
+                    char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
+
+                    FileCabinetRecord newRecord = new FileCabinetRecord()
+                    {
+                        Id = 0,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        DateOfBirth = dob,
+                        Height = height,
+                        Weight = weight,
+                        Temperament = temperament,
+                    };
+                    Program.fileCabinetService.EditRecord(id, newRecord);
+                }
+                else
+                {
+                    Console.WriteLine($"#{id} record is not found.");
+                }
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine($"#{id} record is not found.");
+                Console.WriteLine("Edit error:" + e.Message);
             }
         }
 
@@ -634,6 +650,26 @@ namespace FileCabinetApp
             catch (Exception e)
             {
                 Console.WriteLine("Import failed: " + e.Message);
+            }
+        }
+
+        private static void Remove(string parameters)
+        {
+            try
+            {
+                int id = Convert.ToInt32(parameters);
+                if (fileCabinetService.RemoveRecord(id))
+                {
+                    Console.WriteLine("Record #" + id + " is removed.");
+                }
+                else
+                {
+                    Console.WriteLine("Record #" + id + " doesn't exists.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Remove error: " + e.Message);
             }
         }
     }

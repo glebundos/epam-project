@@ -21,6 +21,8 @@ namespace FileCabinetApp
         /// <param name="newRecord">Object with all record parameters.</param>
         public void EditRecord(int id, FileCabinetRecord newRecord);
 
+        public bool RemoveRecord(int id);
+
         /// <summary>
         /// Searches for a record with given Id.
         /// </summary>

@@ -12,6 +12,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+        private readonly List<int> idList = new List<int>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace FileCabinetApp
 
                 var record = new FileCabinetRecord
                 {
-                    Id = newRecord.Id == 0 ? this.list.Count + 1 : newRecord.Id,
+                    Id = newRecord.Id == 0 ? this.idList.Max() + 1 : newRecord.Id,
                     FirstName = newRecord.FirstName,
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
@@ -51,6 +52,8 @@ namespace FileCabinetApp
                 };
 
                 this.list.Add(record);
+
+                this.idList.Add(record.Id);
 
                 if (this.firstNameDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
                 {
@@ -177,6 +180,37 @@ namespace FileCabinetApp
         }
 #pragma warning restore CA1062 // newRecord проверяется на null в ValidateParameters.
 #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки (проверяется в ValidateParameters).
+
+        public bool RemoveRecord(int id)
+        {
+            if (id < 0)
+            {
+                throw new ArgumentException("Wrong parameter: ", nameof(id));
+            }
+
+            if (!this.idList.Contains(id))
+            {
+                throw new ArgumentException("Wrong parameter: ", nameof(id));
+            }
+
+            int indexToRemove = this.RecordIndex(id);
+            if (indexToRemove == -1)
+            {
+                return false;
+            }
+            else
+            {
+                var recordToRemove = this.list[indexToRemove];
+
+                this.list.RemoveAt(indexToRemove);
+                this.idList.Remove(id);
+                this.firstNameDictionary[recordToRemove.FirstName.ToLower(this.cultureInfo)].Remove(recordToRemove);
+                this.lastNameDictionary[recordToRemove.LastName.ToLower(this.cultureInfo)].Remove(recordToRemove);
+                this.dateOfBirthDictionary[recordToRemove.DateOfBirth].Remove(recordToRemove);
+
+                return true;
+            }
+        }
 
         /// <summary>
         /// Searches for a record with given Id.

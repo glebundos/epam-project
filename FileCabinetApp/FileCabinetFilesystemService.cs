@@ -31,13 +31,21 @@ namespace FileCabinetApp
             this.fileStream = File.Open(@"D:\Прога\epam-project\cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (this.fileStream.Length >= MaxRecordLength)
             {
-                byte[] byteRecord = new byte[MaxRecordLength];
                 this.fileStream.Position = 0;
                 while (this.fileStream.Position != this.fileStream.Length)
                 {
-                    this.fileStream.Read(byteRecord);
-                    var record = ByteToRecord(byteRecord);
-                    this.AddToDictionaries(record, (int)this.fileStream.Position - MaxRecordLength);
+                    try
+                    {
+                        var record = this.ReadRecord((int)this.fileStream.Position);
+                        if (record != null)
+                        {
+                            this.AddToDictionaries(record, (int)this.fileStream.Position - MaxRecordLength);
+                        }
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
+                    }
                 }
             }
         }
@@ -63,7 +71,7 @@ namespace FileCabinetApp
                 Temperament = newRecord.Temperament,
             };
 
-            byte[] recordByteArray = RecordToByte(record);
+            byte[] recordByteArray = RecordToByte(record, true);
             this.fileStream.Position = this.fileStream.Length;
             this.AddToDictionaries(record, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
@@ -78,9 +86,17 @@ namespace FileCabinetApp
             int index = this.RecordIndex(id);
             if (index < 0)
             {
-                throw new ArgumentException("Wrong id", $"{nameof(id)}");
+                throw new ArgumentException("Wrong id", nameof(id));
             }
 
+            this.fileStream.Position = index * MaxRecordLength;
+            var oldRecord = this.ReadRecord((int)this.fileStream.Position);
+            if (oldRecord == null)
+            {
+                throw new ArgumentException("Wrong id", nameof(id));
+            }
+
+            this.fileStream.Position -= MaxRecordLength;
             FileCabinetRecord record = new FileCabinetRecord()
             {
                 Id = id,
@@ -91,24 +107,57 @@ namespace FileCabinetApp
                 Weight = newRecord.Weight,
                 Temperament = newRecord.Temperament,
             };
-            this.fileStream.Position = index * MaxRecordLength;
-            var oldRecord = this.ReadRecord((int)this.fileStream.Position);
-            this.fileStream.Position -= MaxRecordLength;
-            byte[] recordByteArray = RecordToByte(record);
+
+            byte[] recordByteArray = RecordToByte(record, true);
             this.UpdateDictionaries(record, oldRecord, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
             this.fileStream.Flush();
         }
 
         /// <inheritdoc/>
+        public bool RemoveRecord(int id)
+        {
+            if (id < 0)
+            {
+                throw new ArgumentException("Wrong parameter: ", nameof(id));
+            }
+
+            int indexToRemove = this.RecordIndex(id);
+            if (indexToRemove == -1)
+            {
+                return false;
+            }
+            else
+            {
+                this.fileStream.Position = indexToRemove * MaxRecordLength;
+                var recordToRemove = this.ReadRecord((int)this.fileStream.Position);
+                this.RemoveFromDictionaries(recordToRemove);
+                this.fileStream.Position -= MaxRecordLength;
+                byte[] byteStatus = new byte[2];
+                byteStatus = BitConverter.GetBytes((short)4);
+                this.fileStream.Write(byteStatus);
+                return true;
+            }
+        }
+
+        /// <inheritdoc/>
         public int RecordIndex(int id)
         {
+            byte[] byteStatus = new byte[2];
             byte[] byteId = new byte[4];
-            int readedId = 0;
+            int readedId;
             int index = 0;
-            this.fileStream.Position = 2;
+            this.fileStream.Position = 0;
             while (this.fileStream.Position < this.fileStream.Length)
             {
+                this.fileStream.Read(byteStatus, 0, 2);
+                if (BitConverter.ToInt16(byteStatus) == 4)
+                {
+                    index++;
+                    this.fileStream.Position += MaxRecordLength - 2;
+                    continue;
+                }
+
                 this.fileStream.Read(byteId, 0, 4);
                 readedId = BitConverter.ToInt32(byteId);
                 if (readedId == id)
@@ -118,7 +167,7 @@ namespace FileCabinetApp
                 else
                 {
                     index++;
-                    this.fileStream.Position += MaxRecordLength - 4;
+                    this.fileStream.Position += MaxRecordLength - 6;
                 }
             }
 
@@ -206,14 +255,14 @@ namespace FileCabinetApp
             return result;
         }
 
-        private static byte[] RecordToByte(FileCabinetRecord record)
+        private static byte[] RecordToByte(FileCabinetRecord record, bool isAlive)
         {
             byte[] recordByteArray = new byte[MaxRecordLength];
             using var memoryStream = new MemoryStream(recordByteArray);
             using var binaryWriter = new BinaryWriter(memoryStream);
             var byteFirstName = StringToByte(record.FirstName);
             var byteLastName = StringToByte(record.LastName);
-            short status = 0;
+            short status = isAlive ? (short)0 : (short)4;
             binaryWriter.Write(status);
             binaryWriter.Write(record.Id);
             binaryWriter.Write(byteFirstName);
@@ -234,6 +283,11 @@ namespace FileCabinetApp
             using BinaryReader binaryReader = new BinaryReader(memoryStream);
 
             short status = binaryReader.ReadInt16();
+            if (status == 4)
+            {
+                return null;
+            }
+
             var record = new FileCabinetRecord()
             {
                 Id = binaryReader.ReadInt32(),
@@ -336,24 +390,38 @@ namespace FileCabinetApp
             }
         }
 
+        private void RemoveFromDictionaries(FileCabinetRecord recordToRemove)
+        {
+            this.firstNameOffsetDictionary[recordToRemove.FirstName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            this.lastNameOffsetDictionary[recordToRemove.LastName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            this.dateOfBirthOffsetDictionary[recordToRemove.DateOfBirth].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            this.idOffsetDictionary.Remove(recordToRemove.Id);
+        }
+
         private FileCabinetRecord ReadRecord(int startIndex)
         {
             byte[] byteRecord = new byte[MaxRecordLength];
             this.fileStream.Position = startIndex;
             this.fileStream.Read(byteRecord);
+            if (byteRecord[0] == 1)
+            {
+                throw new ArgumentException("Record is deleted.");
+            }
+
             return ByteToRecord(byteRecord);
         }
 
         private List<FileCabinetRecord> ReadRecords()
         {
-            byte[] byteRecord = new byte[MaxRecordLength];
             List<FileCabinetRecord> result = new List<FileCabinetRecord>();
             this.fileStream.Position = 0;
             while (this.fileStream.Position != this.fileStream.Length)
             {
-                this.fileStream.Read(byteRecord);
-                var record = ByteToRecord(byteRecord);
-                result.Add(record);
+                var record = this.ReadRecord((int)this.fileStream.Position);
+                if (record != null)
+                {
+                    result.Add(record);
+                }
             }
 
             return result;
@@ -370,7 +438,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                if (idOffsetDictionary.ContainsKey(snapshotRecord.Id))
+                if (this.idOffsetDictionary.ContainsKey(snapshotRecord.Id))
                 {
                     this.EditRecord(snapshotRecord.Id, snapshotRecord);
                     counter++;

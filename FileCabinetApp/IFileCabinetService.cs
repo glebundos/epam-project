@@ -21,6 +21,8 @@ namespace FileCabinetApp
         /// <param name="newRecord">Object with all record parameters.</param>
         public void EditRecord(int id, FileCabinetRecord newRecord);
 
+        public bool RemoveRecord(int id);
+
         /// <summary>
         /// Searches for a record with given Id.
         /// </summary>
@@ -53,13 +55,13 @@ namespace FileCabinetApp
         /// Gets the all records.
         /// </summary>
         /// <returns>Array of all records.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> GetRecords();
+        public List<FileCabinetRecord> GetRecords();
 
         /// <summary>
         /// Gets the number of all records.
         /// </summary>
         /// <returns>Number of all records.</returns>
-        public int GetStat();
+        public int GetStat(out int removedCount);
 
         /// <summary>
         /// Makes a snapshot of current records list.
@@ -68,5 +70,7 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot MakeSnapshot();
 
         public int Restore(FileCabinetServiceSnapshot snapshot);
+
+        public int Purge();
     }
 }

@@ -12,6 +12,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+        private readonly List<int> idList = new List<int>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         /// <summary>
@@ -39,9 +40,15 @@ namespace FileCabinetApp
                     throw new ArgumentException("Wrong parameters", nameof(newRecord));
                 }
 
+                int newId = 1;
+                if (this.idList.Count > 0)
+                {
+                    newId = this.idList.Max() + 1;
+                }
+
                 var record = new FileCabinetRecord
                 {
-                    Id = newRecord.Id == 0 ? this.list.Count + 1 : newRecord.Id,
+                    Id = newRecord.Id == 0 ? newId : newRecord.Id,
                     FirstName = newRecord.FirstName,
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
@@ -51,6 +58,8 @@ namespace FileCabinetApp
                 };
 
                 this.list.Add(record);
+
+                this.idList.Add(record.Id);
 
                 if (this.firstNameDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
                 {
@@ -178,6 +187,37 @@ namespace FileCabinetApp
 #pragma warning restore CA1062 // newRecord проверяется на null в ValidateParameters.
 #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки (проверяется в ValidateParameters).
 
+        public bool RemoveRecord(int id)
+        {
+            if (id < 0)
+            {
+                throw new ArgumentException("Wrong parameter: ", nameof(id));
+            }
+
+            if (!this.idList.Contains(id))
+            {
+                throw new ArgumentException("Wrong parameter: ", nameof(id));
+            }
+
+            int indexToRemove = this.RecordIndex(id);
+            if (indexToRemove == -1)
+            {
+                return false;
+            }
+            else
+            {
+                var recordToRemove = this.list[indexToRemove];
+
+                this.list.RemoveAt(indexToRemove);
+                this.idList.Remove(id);
+                this.firstNameDictionary[recordToRemove.FirstName.ToLower(this.cultureInfo)].Remove(recordToRemove);
+                this.lastNameDictionary[recordToRemove.LastName.ToLower(this.cultureInfo)].Remove(recordToRemove);
+                this.dateOfBirthDictionary[recordToRemove.DateOfBirth].Remove(recordToRemove);
+
+                return true;
+            }
+        }
+
         /// <summary>
         /// Searches for a record with given Id.
         /// </summary>
@@ -249,9 +289,9 @@ namespace FileCabinetApp
         /// Gets the all records.
         /// </summary>
         /// <returns>Array of all records.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public List<FileCabinetRecord> GetRecords()
         {
-            ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>(this.list);
             return records;
         }
 
@@ -259,8 +299,9 @@ namespace FileCabinetApp
         /// Gets the number of all records.
         /// </summary>
         /// <returns>Number of all records.</returns>
-        public int GetStat()
+        public int GetStat(out int removedCount)
         {
+            removedCount = 0;
             return this.list.Count;
         }
 
@@ -307,6 +348,11 @@ namespace FileCabinetApp
             }
 
             return counter;
+        }
+
+        public int Purge()
+        {
+            throw new NotImplementedException("Purge method is unavailable im memory service.");
         }
     }
 }

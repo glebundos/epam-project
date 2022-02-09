@@ -227,10 +227,6 @@ namespace FileCabinetApp
                 {
                     aliveRecords.Add(record.Item1);
                 }
-                else
-                {
-                    Console.WriteLine("RECORD #" + record.Item1.Id + " IS DELETED.");
-                }
             }
 
             return aliveRecords;
@@ -244,9 +240,19 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public int GetStat()
+        public int GetStat(out int removedCount)
         {
-            return this.ReadRecords().Count;
+            var allRecords = this.ReadRecords();
+            removedCount = 0;
+            foreach (var record in allRecords)
+            {
+                if (record.Item2)
+                {
+                    removedCount++;
+                }
+            }
+
+            return allRecords.Count;
         }
 
         private static byte[] StringToByte(string text)

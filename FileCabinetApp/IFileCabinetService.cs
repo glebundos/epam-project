@@ -61,7 +61,7 @@ namespace FileCabinetApp
         /// Gets the number of all records.
         /// </summary>
         /// <returns>Number of all records.</returns>
-        public int GetStat();
+        public int GetStat(out int removedCount);
 
         /// <summary>
         /// Makes a snapshot of current records list.

@@ -40,9 +40,15 @@ namespace FileCabinetApp
                     throw new ArgumentException("Wrong parameters", nameof(newRecord));
                 }
 
+                int newId = 1;
+                if (this.idList.Count > 0)
+                {
+                    newId = this.idList.Max() + 1;
+                }
+
                 var record = new FileCabinetRecord
                 {
-                    Id = newRecord.Id == 0 ? this.idList.Max() + 1 : newRecord.Id,
+                    Id = newRecord.Id == 0 ? newId : newRecord.Id,
                     FirstName = newRecord.FirstName,
                     LastName = newRecord.LastName,
                     DateOfBirth = newRecord.DateOfBirth,
@@ -293,8 +299,9 @@ namespace FileCabinetApp
         /// Gets the number of all records.
         /// </summary>
         /// <returns>Number of all records.</returns>
-        public int GetStat()
+        public int GetStat(out int removedCount)
         {
+            removedCount = 0;
             return this.list.Count;
         }
 

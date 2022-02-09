@@ -202,8 +202,9 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            int removedCount = 0;
+            var recordsCount = Program.fileCabinetService.GetStat(out removedCount);
+            Console.WriteLine($"{recordsCount} record(s), {removedCount} of them are removed.");
         }
 
         private static void Create(string parameters)
@@ -677,7 +678,8 @@ namespace FileCabinetApp
 
         private static void Purge(string parameters)
         {
-            int startCount = fileCabinetService.GetStat();
+            int removedCount = 0;
+            int startCount = fileCabinetService.GetStat(out removedCount);
             int purgedCount = fileCabinetService.Purge();
             Console.WriteLine($"Data file processing is completed: {purgedCount} of {startCount} records were purged.");
         }

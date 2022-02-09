@@ -283,9 +283,9 @@ namespace FileCabinetApp
         /// Gets the all records.
         /// </summary>
         /// <returns>Array of all records.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public List<FileCabinetRecord> GetRecords()
         {
-            ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>(this.list);
             return records;
         }
 
@@ -341,6 +341,11 @@ namespace FileCabinetApp
             }
 
             return counter;
+        }
+
+        public int Purge()
+        {
+            throw new NotImplementedException("Purge method is unavailable im memory service.");
         }
     }
 }

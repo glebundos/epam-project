@@ -31,6 +31,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
             new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -45,6 +46,7 @@ namespace FileCabinetApp
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
             new string[] { "import <file extension> <path>", "imports records", "The 'import' imports records from the file(path)." },
             new string[] { "remove <id>", "removes record", "The 'remove' removes record with given id." },
+            new string[] { "purge", "purges records", "The 'purge' purges removed records." },
         };
 
         /// <summary>
@@ -671,6 +673,13 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Remove error: " + e.Message);
             }
+        }
+
+        private static void Purge(string parameters)
+        {
+            int startCount = fileCabinetService.GetStat();
+            int purgedCount = fileCabinetService.Purge();
+            Console.WriteLine($"Data file processing is completed: {purgedCount} of {startCount} records were purged.");
         }
     }
 }

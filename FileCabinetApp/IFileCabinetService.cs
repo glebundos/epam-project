@@ -55,7 +55,7 @@ namespace FileCabinetApp
         /// Gets the all records.
         /// </summary>
         /// <returns>Array of all records.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> GetRecords();
+        public List<FileCabinetRecord> GetRecords();
 
         /// <summary>
         /// Gets the number of all records.
@@ -70,5 +70,7 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot MakeSnapshot();
 
         public int Restore(FileCabinetServiceSnapshot snapshot);
+
+        public int Purge();
     }
 }

@@ -10,6 +10,7 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
+        private const string pathToDb = @"D:\Прога\epam-project\cabinet-records.db";
         private const int MaxRecordLength = 258 + sizeof(short) + sizeof(decimal) + sizeof(char);
 
         private readonly Dictionary<int, int> idOffsetDictionary = new Dictionary<int, int>();
@@ -28,23 +29,16 @@ namespace FileCabinetApp
         public FileCabinetFilesystemService(IRecordValidator validator)
         {
             this.validator = validator;
-            this.fileStream = File.Open(@"D:\Прога\epam-project\cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            this.fileStream = File.Open(pathToDb, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (this.fileStream.Length >= MaxRecordLength)
             {
                 this.fileStream.Position = 0;
                 while (this.fileStream.Position != this.fileStream.Length)
                 {
-                    try
+                    var record = this.ReadRecord((int)this.fileStream.Position);
+                    if (!record.Item2)
                     {
-                        var record = this.ReadRecord((int)this.fileStream.Position);
-                        if (record != null)
-                        {
-                            this.AddToDictionaries(record, (int)this.fileStream.Position - MaxRecordLength);
-                        }
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
+                        this.AddToDictionaries(record.Item1, (int)this.fileStream.Position - MaxRecordLength);
                     }
                 }
             }
@@ -71,7 +65,7 @@ namespace FileCabinetApp
                 Temperament = newRecord.Temperament,
             };
 
-            byte[] recordByteArray = RecordToByte(record, true);
+            byte[] recordByteArray = RecordToByte(record, false);
             this.fileStream.Position = this.fileStream.Length;
             this.AddToDictionaries(record, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
@@ -91,7 +85,7 @@ namespace FileCabinetApp
 
             this.fileStream.Position = index * MaxRecordLength;
             var oldRecord = this.ReadRecord((int)this.fileStream.Position);
-            if (oldRecord == null)
+            if (oldRecord.Item2)
             {
                 throw new ArgumentException("Wrong id", nameof(id));
             }
@@ -109,7 +103,7 @@ namespace FileCabinetApp
             };
 
             byte[] recordByteArray = RecordToByte(record, true);
-            this.UpdateDictionaries(record, oldRecord, (int)this.fileStream.Position);
+            this.UpdateDictionaries(record, oldRecord.Item1, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
             this.fileStream.Flush();
         }
@@ -131,7 +125,7 @@ namespace FileCabinetApp
             {
                 this.fileStream.Position = indexToRemove * MaxRecordLength;
                 var recordToRemove = this.ReadRecord((int)this.fileStream.Position);
-                this.RemoveFromDictionaries(recordToRemove);
+                this.RemoveFromDictionaries(recordToRemove.Item1);
                 this.fileStream.Position -= MaxRecordLength;
                 byte[] byteStatus = new byte[2];
                 byteStatus = BitConverter.GetBytes((short)4);
@@ -183,7 +177,7 @@ namespace FileCabinetApp
                 foreach (var item in this.firstNameOffsetDictionary[firstName])
                 {
                     var record = this.ReadRecord(item);
-                    fileCabinetRecordsByFirstName.Add(record);
+                    fileCabinetRecordsByFirstName.Add(record.Item1);
                 }
             }
 
@@ -199,7 +193,7 @@ namespace FileCabinetApp
                 foreach (var item in this.lastNameOffsetDictionary[lastName])
                 {
                     var record = this.ReadRecord(item);
-                    fileCabinetRecordsByLastName.Add(record);
+                    fileCabinetRecordsByLastName.Add(record.Item1);
                 }
             }
 
@@ -215,7 +209,7 @@ namespace FileCabinetApp
                 foreach (var item in this.dateOfBirthOffsetDictionary[dateOfBirth])
                 {
                     var record = this.ReadRecord(item);
-                    fileCabinetRecordsByDateOfBirth.Add(record);
+                    fileCabinetRecordsByDateOfBirth.Add(record.Item1);
                 }
             }
 
@@ -223,16 +217,30 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public List<FileCabinetRecord> GetRecords()
         {
-            var result = this.ReadRecords();
-            return result;
+            var allRecords = this.ReadRecords();
+            List<FileCabinetRecord> aliveRecords = new List<FileCabinetRecord>();
+            foreach (var record in allRecords)
+            {
+                if (!record.Item2)
+                {
+                    aliveRecords.Add(record.Item1);
+                }
+                else
+                {
+                    Console.WriteLine("RECORD #" + record.Item1.Id + " IS DELETED.");
+                }
+            }
+
+            return aliveRecords;
         }
 
         /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.ReadRecords());
+            List<FileCabinetRecord> records = this.GetRecords();
+            return new FileCabinetServiceSnapshot(records);
         }
 
         /// <inheritdoc/>
@@ -255,14 +263,14 @@ namespace FileCabinetApp
             return result;
         }
 
-        private static byte[] RecordToByte(FileCabinetRecord record, bool isAlive)
+        private static byte[] RecordToByte(FileCabinetRecord record, bool isDeleted)
         {
             byte[] recordByteArray = new byte[MaxRecordLength];
             using var memoryStream = new MemoryStream(recordByteArray);
             using var binaryWriter = new BinaryWriter(memoryStream);
             var byteFirstName = StringToByte(record.FirstName);
             var byteLastName = StringToByte(record.LastName);
-            short status = isAlive ? (short)0 : (short)4;
+            short status = isDeleted ? (short)4 : (short)0;
             binaryWriter.Write(status);
             binaryWriter.Write(record.Id);
             binaryWriter.Write(byteFirstName);
@@ -277,17 +285,12 @@ namespace FileCabinetApp
             return recordByteArray;
         }
 
-        private static FileCabinetRecord ByteToRecord(byte[] byteRecord)
+        private static (FileCabinetRecord, bool) ByteToRecord(byte[] byteRecord)
         {
             using MemoryStream memoryStream = new MemoryStream(byteRecord);
             using BinaryReader binaryReader = new BinaryReader(memoryStream);
 
             short status = binaryReader.ReadInt16();
-            if (status == 4)
-            {
-                return null;
-            }
-
             var record = new FileCabinetRecord()
             {
                 Id = binaryReader.ReadInt32(),
@@ -299,7 +302,13 @@ namespace FileCabinetApp
                 Temperament = binaryReader.ReadChar(),
             };
 
-            return record;
+            bool isDeleted = false;
+            if (status == 4)
+            {
+                isDeleted = true;
+            }
+
+            return (record, isDeleted);
         }
 
         private int LastId()
@@ -398,30 +407,23 @@ namespace FileCabinetApp
             this.idOffsetDictionary.Remove(recordToRemove.Id);
         }
 
-        private FileCabinetRecord ReadRecord(int startIndex)
+        private (FileCabinetRecord, bool) ReadRecord(int startIndex)
         {
             byte[] byteRecord = new byte[MaxRecordLength];
             this.fileStream.Position = startIndex;
             this.fileStream.Read(byteRecord);
-            if (byteRecord[0] == 1)
-            {
-                throw new ArgumentException("Record is deleted.");
-            }
 
             return ByteToRecord(byteRecord);
         }
 
-        private List<FileCabinetRecord> ReadRecords()
+        private List<(FileCabinetRecord, bool)> ReadRecords()
         {
-            List<FileCabinetRecord> result = new List<FileCabinetRecord>();
+            List<(FileCabinetRecord, bool)> result = new List<(FileCabinetRecord, bool)>();
             this.fileStream.Position = 0;
             while (this.fileStream.Position != this.fileStream.Length)
             {
                 var record = this.ReadRecord((int)this.fileStream.Position);
-                if (record != null)
-                {
-                    result.Add(record);
-                }
+                result.Add(record);
             }
 
             return result;
@@ -451,6 +453,35 @@ namespace FileCabinetApp
             }
 
             return counter;
+        }
+
+        public int Purge()
+        {
+            var allRecords = this.ReadRecords();
+            List<FileCabinetRecord> aliveRecords = new List<FileCabinetRecord>();
+            foreach (var record in allRecords)
+            {
+                if (!record.Item2)
+                {
+                    aliveRecords.Add(record.Item1);
+                }
+            }
+
+            long startLength = this.fileStream.Length;
+            this.fileStream.Close();
+            this.fileStream = File.Open(pathToDb, FileMode.Create, FileAccess.ReadWrite);
+            this.fileStream.Position = 0;
+            foreach (var record in aliveRecords)
+            {
+                byte[] recordByteArray = RecordToByte(record, false);
+                this.fileStream.Position = this.fileStream.Length;
+                this.fileStream.Write(recordByteArray);
+            }
+
+            this.fileStream.Flush();
+            long purgedLength = this.fileStream.Length;
+
+            return (int)(startLength - purgedLength) / MaxRecordLength;
         }
     }
 }

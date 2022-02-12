@@ -1,12 +1,10 @@
-﻿using FileCabinetApp.PrinterHandlers;
-
-namespace FileCabinetApp.CommandHandlers
+﻿namespace FileCabinetApp.CommandHandlers
 {
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private IRecordPrinter printer;
+        private Action<IEnumerable<FileCabinetRecord>> printer;
 
-        public FindCommandHandler(IFileCabinetService service, IRecordPrinter printer)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
             : base(service)
         {
             this.service = service;
@@ -72,7 +70,7 @@ namespace FileCabinetApp.CommandHandlers
                         throw new ArgumentException("Wrong parameter", parameter);
                     }
 
-                    this.printer.Print(records);
+                    this.printer(records);
                 }
                 catch (Exception e)
                 {

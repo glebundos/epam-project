@@ -1,11 +1,16 @@
-﻿namespace FileCabinetApp.CommandHandlers
+﻿using FileCabinetApp.PrinterHandlers;
+
+namespace FileCabinetApp.CommandHandlers
 {
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        public FindCommandHandler(IFileCabinetService service)
+        private IRecordPrinter printer;
+
+        public FindCommandHandler(IFileCabinetService service, IRecordPrinter printer)
             : base(service)
         {
             this.service = service;
+            this.printer = printer;
         }
 
         public override void Handle(AppCommandRequest request)
@@ -67,10 +72,7 @@
                         throw new ArgumentException("Wrong parameter", parameter);
                     }
 
-                    foreach (var record in records)
-                    {
-                        WriteRecord(record);
-                    }
+                    this.printer.Print(records);
                 }
                 catch (Exception e)
                 {
@@ -82,33 +84,6 @@
             {
                 this.nextHandler.Handle(request);
             }
-        }
-
-        private static void WriteRecord(FileCabinetRecord record)
-        {
-            string temperament = string.Empty;
-            switch (record.Temperament)
-            {
-                case 'P':
-                    temperament = "Phlegmatic";
-                    break;
-                case 'S':
-                    temperament = "Sanguine";
-                    break;
-                case 'C':
-                    temperament = "Choleric";
-                    break;
-                case 'M':
-                    temperament = "Melancholic";
-                    break;
-                default:
-                    temperament = "MISSING";
-                    break;
-            }
-
-            Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
-                    $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                    $"{record.Height} cm, {record.Weight} kg, {temperament}");
         }
     }
 }

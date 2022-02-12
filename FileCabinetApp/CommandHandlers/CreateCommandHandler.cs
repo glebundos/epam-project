@@ -68,7 +68,7 @@
                 DateOfBirth = DateTime.Now,
                 Height = 0,
                 Weight = 0,
-                Temperament = 'G',
+                Temperament = '\0',
             };
             FirstNameValidator firstNameValidator = new FirstNameValidator(settings.FirstNameLenght_min, settings.FirstNameLenght_max);
             return Tuple.Create(firstNameValidator.ValidateParameters(onlyFirstNameRecord), "Parameter is invalid");
@@ -83,7 +83,7 @@
                 DateOfBirth = DateTime.Now,
                 Height = 0,
                 Weight = 0,
-                Temperament = 'G',
+                Temperament = '\0',
             };
             LastNameValidator lastNameValidator = new LastNameValidator(settings.LastNameLenght_min, settings.LastNameLenght_max);
             return Tuple.Create(lastNameValidator.ValidateParameters(onlyLastNameRecord), "Parameter is invalid");
@@ -98,7 +98,7 @@
                 DateOfBirth = (DateTime)input,
                 Height = 0,
                 Weight = 0,
-                Temperament = 'G',
+                Temperament = '\0',
             };
             DateOfBirthValidator dateOfBirthValidator = new DateOfBirthValidator(settings.DateOfBitrth_min, settings.DateOfBitrth_max);
             return Tuple.Create(dateOfBirthValidator.ValidateParameters(onlyDateOfBirthRecord), "Parameter is invalid");
@@ -113,7 +113,7 @@
                 DateOfBirth = DateTime.Now,
                 Height = (short)input,
                 Weight = 0,
-                Temperament = 'G',
+                Temperament = '\0',
             };
             HeightValidator heightValidator = new HeightValidator(settings.Height_min, settings.Height_max);
             return Tuple.Create(heightValidator.ValidateParameters(onlyHeightRecord), "Parameter is invalid");
@@ -128,7 +128,7 @@
                 DateOfBirth = DateTime.Now,
                 Height = 0,
                 Weight = (decimal)input,
-                Temperament = 'G',
+                Temperament = '\0',
             };
             WeightValidator weightValidator = new WeightValidator(settings.Weight_min, settings.Weight_max);
             return Tuple.Create(weightValidator.ValidateParameters(onlyWeightRecord), "Parameter is invalid");

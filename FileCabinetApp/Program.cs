@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.PrinterHandlers;
 
 namespace FileCabinetApp
 {
@@ -129,12 +130,14 @@ namespace FileCabinetApp
 
         private static ICommandHandler CreateCommandHandlers()
         {
+            var recordPrinter = new DefaultRecordPrinter();
+
             var helpHandler = new HelpCommandHandler();
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService, validatorsSettings);
-            var listHandler = new ListCommandHandler(fileCabinetService);
+            var listHandler = new ListCommandHandler(fileCabinetService, recordPrinter);
             var editHandler = new EditCommandHandler(fileCabinetService, validatorsSettings);
-            var findHandler = new FindCommandHandler(fileCabinetService);
+            var findHandler = new FindCommandHandler(fileCabinetService, recordPrinter);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);

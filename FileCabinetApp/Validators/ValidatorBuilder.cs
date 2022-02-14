@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="settings">Validators settings.</param>
         /// <returns>FullValidator instance.</returns>
-        public static IRecordValidator CreateFullValidator(ValidatorsSettings settings)
+        public static IRecordValidator CreateCompositeValidator(ValidatorsSettings settings)
         {
             if (settings is null)
             {

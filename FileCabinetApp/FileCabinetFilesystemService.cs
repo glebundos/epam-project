@@ -29,7 +29,7 @@ namespace FileCabinetApp
         public FileCabinetFilesystemService(IRecordValidator validator)
         {
             this.validator = validator;
-            this.fileStream = File.Open(pathToDb, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            this.fileStream = File.Open(this.pathToDb, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (this.fileStream.Length >= MaxRecordLength)
             {
                 this.fileStream.Position = 0;

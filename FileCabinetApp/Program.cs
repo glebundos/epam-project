@@ -54,7 +54,7 @@ namespace FileCabinetApp
             {
                 validatorsSettings.SetDefaultConfig();
                 Console.WriteLine("Using default validation rules");
-                IRecordValidator validatorDefault = ValidatorBuilder.CreateFullValidator(validatorsSettings);
+                IRecordValidator validatorDefault = ValidatorBuilder.CreateCompositeValidator(validatorsSettings);
                 fileCabinetService = new FileCabinetMemoryService(validatorDefault);
                 Console.WriteLine("Using memory service");
                 return;
@@ -106,7 +106,7 @@ namespace FileCabinetApp
                 Console.WriteLine("Using default validation rules");
             }
 
-            IRecordValidator validator = ValidatorBuilder.CreateFullValidator(validatorsSettings);
+            IRecordValidator validator = ValidatorBuilder.CreateCompositeValidator(validatorsSettings);
             if (configuration.TryGetValue("-s", out value) || configuration.TryGetValue("--storage", out value))
             {
                 if (value == "file")

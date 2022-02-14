@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains all validators.
     /// </summary>
-    public class FullValidator : IRecordValidator
+    public class CompositeValidator : IRecordValidator
     {
         private readonly IReadOnlyCollection<IRecordValidator> validators;
 
@@ -11,7 +11,7 @@
         /// Initializes a new instance of the <see cref="FullValidator"/> class.
         /// </summary>
         /// <param name="validators">List of validators.</param>
-        public FullValidator(IReadOnlyCollection<IRecordValidator> validators)
+        public CompositeValidator(IReadOnlyCollection<IRecordValidator> validators)
         {
             this.validators = validators;
         }

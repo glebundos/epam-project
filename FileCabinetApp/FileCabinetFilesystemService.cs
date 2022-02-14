@@ -10,9 +10,9 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
-        private const string pathToDb = @"D:\Прога\epam-project\cabinet-records.db";
         private const int MaxRecordLength = 258 + sizeof(short) + sizeof(decimal) + sizeof(char);
 
+        private readonly string pathToDb = @"D:\Прога\epam-project\cabinet-records.db";
         private readonly Dictionary<int, int> idOffsetDictionary = new Dictionary<int, int>();
         private readonly Dictionary<string, List<int>> firstNameOffsetDictionary = new Dictionary<string, List<int>>();
         private readonly Dictionary<string, List<int>> lastNameOffsetDictionary = new Dictionary<string, List<int>>();

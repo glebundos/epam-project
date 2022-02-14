@@ -69,7 +69,7 @@
 
         private IRecordValidator Create()
         {
-            return new FullValidator(this.validators);
+            return new CompositeValidator(this.validators);
         }
     }
 }

@@ -74,7 +74,7 @@ namespace FileCabinetApp
                     value = key.Split('=')[1];
                     key = key.Split('=')[0];
                 }
-                else
+                else if (key.Contains('-', StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (++i < args.Length)
                     {
@@ -84,6 +84,10 @@ namespace FileCabinetApp
                     {
                         value = "default";
                     }
+                }
+                else
+                {
+                    value = "default";
                 }
 
                 configuration.Add(key, value);
@@ -139,10 +143,16 @@ namespace FileCabinetApp
                 Console.WriteLine("Using memory service");
             }
 
-            if (configuration.ContainsKey("-u") || configuration.ContainsKey("--use-stopwatch"))
+            if (configuration.ContainsKey("us") || configuration.ContainsKey("--use-stopwatch"))
             {
                 fileCabinetService = new ServiceMeter(fileCabinetService);
                 Console.WriteLine("Using stopwatch");
+            }
+
+            if (configuration.ContainsKey("ul") || configuration.ContainsKey("--use-logger"))
+            {
+                fileCabinetService = new ServiceLogger(fileCabinetService);
+                Console.WriteLine("Using logger");
             }
         }
 

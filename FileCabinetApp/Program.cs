@@ -138,6 +138,12 @@ namespace FileCabinetApp
                 fileCabinetService = new FileCabinetMemoryService(validator);
                 Console.WriteLine("Using memory service");
             }
+
+            if (configuration.ContainsKey("-u") || configuration.ContainsKey("--use-stopwatch"))
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+                Console.WriteLine("Using stopwatch");
+            }
         }
 
         private static ICommandHandler CreateCommandHandlers()

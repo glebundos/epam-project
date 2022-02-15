@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using FileCabinetApp.CommandHandlers;
+﻿using FileCabinetApp.CommandHandlers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace FileCabinetApp
 {
@@ -86,23 +89,33 @@ namespace FileCabinetApp
                 configuration.Add(key, value);
             }
 
+            string path = @"D:\Прога\epam-project\FileCabinetApp\validation-rules.json";
+            ValidatorsSettings defaultSettings = null;
+            ValidatorsSettings customSettings = null;
+            if (File.Exists(path))
+            {
+                var settings = JsonConvert.DeserializeObject<Dictionary<string, ValidatorsSettings>>(File.ReadAllText(path));
+                defaultSettings = settings["Default"];
+                customSettings = settings["Custom"];
+            }
+
             value = string.Empty;
             if (configuration.TryGetValue("-v", out value) || configuration.TryGetValue("--validation-rules", out value))
             {
                 if (value == "custom")
                 {
-                    validatorsSettings.SetCustomConfig();
+                    validatorsSettings = customSettings;
                     Console.WriteLine("Using custom validation rules");
                 }
                 else
                 {
-                    validatorsSettings.SetDefaultConfig();
+                    validatorsSettings = defaultSettings;
                     Console.WriteLine("Using default validation rules");
                 }
             }
             else
             {
-                validatorsSettings.SetDefaultConfig();
+                validatorsSettings = defaultSettings;
                 Console.WriteLine("Using default validation rules");
             }
 

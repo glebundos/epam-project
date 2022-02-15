@@ -22,9 +22,9 @@
             }
 
             return new ValidatorBuilder()
-                .FirstNameValidator(settings.FirstNameLenght_min, settings.FirstNameLenght_max)
-                .LastNameValidator(settings.LastNameLenght_min, settings.LastNameLenght_max)
-                .DateOfBirthValidator(settings.DateOfBitrth_min, settings.DateOfBitrth_max)
+                .FirstNameValidator(settings.FirstNameLength_min, settings.FirstNameLength_max)
+                .LastNameValidator(settings.LastNameLength_min, settings.LastNameLength_max)
+                .DateOfBirthValidator(settings.DateOfBirth_min, settings.DateOfBirth_max)
                 .HeightValidator(settings.Height_min, settings.Height_max)
                 .WeightValidator(settings.Weight_min, settings.Weight_max)
                 .TemperamentValidator(settings.AllowedTemperaments)

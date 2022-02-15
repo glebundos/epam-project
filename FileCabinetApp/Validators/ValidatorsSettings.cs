@@ -3,6 +3,7 @@
     /// <summary>
     /// Contents all limits for validators.
     /// </summary>
+    [Serializable]
     public class ValidatorsSettings
     {
         /// <summary>
@@ -11,7 +12,7 @@
         /// <value>
         /// Minimal possible length of first name.
         /// </value>
-        public int FirstNameLenght_min { get; set; }
+        public int FirstNameLength_min { get; set; }
 
         /// <summary>
         /// Gets or sets maximum possible length of first name.
@@ -19,7 +20,7 @@
         /// <value>
         /// Maximum possible length of first name.
         /// </value>
-        public int FirstNameLenght_max { get; set; }
+        public int FirstNameLength_max { get; set; }
 
         /// <summary>
         /// Gets or sets minimal possible length of last name.
@@ -27,7 +28,7 @@
         /// <value>
         /// Minimal possible length of last name.
         /// </value>
-        public int LastNameLenght_min { get; set; }
+        public int LastNameLength_min { get; set; }
 
         /// <summary>
         /// Gets or sets maximum possible length of last name.
@@ -35,7 +36,7 @@
         /// <value>
         /// Maximum possible length of last name.
         /// </value>
-        public int LastNameLenght_max { get; set; }
+        public int LastNameLength_max { get; set; }
 
         /// <summary>
         /// Gets or sets minimal possible date of birth.
@@ -43,7 +44,7 @@
         /// <value>
         /// Minimal possible date of birth.
         /// </value>
-        public DateTime DateOfBitrth_min { get; set; }
+        public DateTime DateOfBirth_min { get; set; }
 
         /// <summary>
         /// Gets or sets maximum possible date of birth.
@@ -51,7 +52,7 @@
         /// <value>
         /// Maximum possible date of birth.
         /// </value>
-        public DateTime DateOfBitrth_max { get; set; }
+        public DateTime DateOfBirth_max { get; set; }
 
         /// <summary>
         /// Gets or sets minimum possible height.
@@ -100,12 +101,12 @@
         /// </summary>
         public void SetDefaultConfig()
         {
-            this.FirstNameLenght_min = 2;
-            this.FirstNameLenght_max = 60;
-            this.LastNameLenght_min = 2;
-            this.LastNameLenght_max = 60;
-            this.DateOfBitrth_min = new DateTime(1950, 1, 1);
-            this.DateOfBitrth_max = DateTime.Now;
+            this.FirstNameLength_min = 2;
+            this.FirstNameLength_max = 60;
+            this.LastNameLength_min = 2;
+            this.LastNameLength_max = 60;
+            this.DateOfBirth_min = new DateTime(1950, 1, 1);
+            this.DateOfBirth_max = DateTime.Now;
             this.Height_min = 45;
             this.Height_max = 252;
             this.Weight_min = 2;
@@ -118,12 +119,12 @@
         /// </summary>
         public void SetCustomConfig()
         {
-            this.FirstNameLenght_min = 4;
-            this.FirstNameLenght_max = 30;
-            this.LastNameLenght_min = 4;
-            this.LastNameLenght_max = 30;
-            this.DateOfBitrth_min = new DateTime(DateTime.Now.Year - 150, DateTime.Now.Month, DateTime.Now.Day);
-            this.DateOfBitrth_max = new DateTime(DateTime.Now.Year - 18, DateTime.Now.Month, DateTime.Now.Day);
+            this.FirstNameLength_min = 4;
+            this.FirstNameLength_max = 30;
+            this.LastNameLength_min = 4;
+            this.LastNameLength_max = 30;
+            this.DateOfBirth_min = new DateTime(1870, 1, 1);
+            this.DateOfBirth_max = new DateTime(2004, 2, 15);
             this.Height_min = 90;
             this.Height_max = 252;
             this.Weight_min = 25;

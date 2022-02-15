@@ -1,0 +1,40 @@
+{
+  "Default": {
+    "FirstNameLength_min": 2,
+    "FirstNameLength_max": 60,
+
+    "LastNameLength_min": 2,
+    "LastNameLength_max": 60,
+
+    "DateOfBirth_min": "Jan-01-1950",
+    "DateOfBirth_max": "Feb-15-2022",
+
+    "Height_min": 45,
+    "Height_max": 252,
+
+    "Weight_min": 2,
+    "Weight_max": 600,
+
+    "AllowedTemperaments": [ "S", "C", "P", "M" ]
+  },
+
+  "Custom": {
+    "FirstNameLength_min": 4,
+    "FirstNameLength_max": 30,
+
+    "LastNameLength_min": 4,
+    "LastNameLength_max": 30,
+
+    "DateOfBirth_min": "Jan-01-1870",
+    "DateOfBirth_max": "Feb-15-2004",
+
+    "Height_min": 90,
+    "Height_max": 252,
+
+    "Weight_min": 25,
+    "Weight_max": 600,
+
+    "AllowedTemperaments": [ "S", "C", "P" ]
+  }
+
+}

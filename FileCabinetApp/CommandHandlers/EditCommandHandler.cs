@@ -84,7 +84,7 @@
                 Weight = 0,
                 Temperament = 'G',
             };
-            FirstNameValidator firstNameValidator = new FirstNameValidator(settings.FirstNameLenght_min, settings.FirstNameLenght_max);
+            FirstNameValidator firstNameValidator = new FirstNameValidator(settings.FirstNameLength_min, settings.FirstNameLength_max);
             return Tuple.Create(firstNameValidator.ValidateParameters(onlyFirstNameRecord), "Parameter is invalid");
         }
 
@@ -99,7 +99,7 @@
                 Weight = 0,
                 Temperament = 'G',
             };
-            LastNameValidator lastNameValidator = new LastNameValidator(settings.LastNameLenght_min, settings.LastNameLenght_max);
+            LastNameValidator lastNameValidator = new LastNameValidator(settings.LastNameLength_min, settings.LastNameLength_max);
             return Tuple.Create(lastNameValidator.ValidateParameters(onlyLastNameRecord), "Parameter is invalid");
         }
 
@@ -114,7 +114,7 @@
                 Weight = 0,
                 Temperament = 'G',
             };
-            DateOfBirthValidator dateOfBirthValidator = new DateOfBirthValidator(settings.DateOfBitrth_min, settings.DateOfBitrth_max);
+            DateOfBirthValidator dateOfBirthValidator = new DateOfBirthValidator(settings.DateOfBirth_min, settings.DateOfBirth_max);
             return Tuple.Create(dateOfBirthValidator.ValidateParameters(onlyDateOfBirthRecord), "Parameter is invalid");
         }
 

@@ -14,11 +14,10 @@ namespace FileCabinetApp
 
         private readonly string pathToDb = @"D:\Прога\epam-project\cabinet-records.db";
         private readonly Dictionary<int, int> idOffsetDictionary = new Dictionary<int, int>();
-        private readonly Dictionary<string, List<int>> firstNameOffsetDictionary = new Dictionary<string, List<int>>();
-        private readonly Dictionary<string, List<int>> lastNameOffsetDictionary = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, List<int>> firstNameOffsetDictionary = new Dictionary<string, List<int>>(StringComparer.CurrentCultureIgnoreCase);
+        private readonly Dictionary<string, List<int>> lastNameOffsetDictionary = new Dictionary<string, List<int>>(StringComparer.CurrentCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<int>> dateOfBirthOffsetDictionary = new Dictionary<DateTime, List<int>>();
 
-        private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         private FileStream fileStream;
         private IRecordValidator validator;
 
@@ -338,24 +337,24 @@ namespace FileCabinetApp
                 this.idOffsetDictionary.Add(newRecord.Id, position);
             }
 
-            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
+            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
             {
-                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
             }
             else
             {
-                this.firstNameOffsetDictionary.Add(newRecord.FirstName.ToLower(this.cultureInfo), new List<int>());
-                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+                this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
+                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
             }
 
-            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName.ToLower(this.cultureInfo)))
+            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
             {
-                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
             }
             else
             {
-                this.lastNameOffsetDictionary.Add(newRecord.LastName.ToLower(this.cultureInfo), new List<int>());
-                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+                this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
+                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
             }
 
             if (this.dateOfBirthOffsetDictionary.ContainsKey(newRecord.DateOfBirth))
@@ -371,26 +370,26 @@ namespace FileCabinetApp
 
         private void UpdateDictionaries(FileCabinetRecord newRecord, FileCabinetRecord oldRecord, int position)
         {
-            this.firstNameOffsetDictionary[oldRecord.FirstName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[oldRecord.Id]);
-            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
+            this.firstNameOffsetDictionary[oldRecord.FirstName].Remove(this.idOffsetDictionary[oldRecord.Id]);
+            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
             {
-                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
             }
             else
             {
-                this.firstNameOffsetDictionary.Add(newRecord.FirstName.ToLower(this.cultureInfo), new List<int>());
-                this.firstNameOffsetDictionary[newRecord.FirstName.ToLower(this.cultureInfo)].Add(position);
+                this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
+                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
             }
 
-            this.lastNameOffsetDictionary[oldRecord.LastName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[oldRecord.Id]);
-            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName.ToLower(this.cultureInfo)))
+            this.lastNameOffsetDictionary[oldRecord.LastName].Remove(this.idOffsetDictionary[oldRecord.Id]);
+            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
             {
-                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
             }
             else
             {
-                this.lastNameOffsetDictionary.Add(newRecord.LastName.ToLower(this.cultureInfo), new List<int>());
-                this.lastNameOffsetDictionary[newRecord.LastName.ToLower(this.cultureInfo)].Add(position);
+                this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
+                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
             }
 
             this.dateOfBirthOffsetDictionary[oldRecord.DateOfBirth].Remove(this.idOffsetDictionary[oldRecord.Id]);
@@ -407,8 +406,8 @@ namespace FileCabinetApp
 
         private void RemoveFromDictionaries(FileCabinetRecord recordToRemove)
         {
-            this.firstNameOffsetDictionary[recordToRemove.FirstName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[recordToRemove.Id]);
-            this.lastNameOffsetDictionary[recordToRemove.LastName.ToLower(this.cultureInfo)].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            this.firstNameOffsetDictionary[recordToRemove.FirstName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            this.lastNameOffsetDictionary[recordToRemove.LastName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
             this.dateOfBirthOffsetDictionary[recordToRemove.DateOfBirth].Remove(this.idOffsetDictionary[recordToRemove.Id]);
             this.idOffsetDictionary.Remove(recordToRemove.Id);
         }

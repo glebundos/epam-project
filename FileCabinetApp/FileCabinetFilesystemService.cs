@@ -170,49 +170,61 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            List<FileCabinetRecord> fileCabinetRecordsByFirstName = new List<FileCabinetRecord>();
-            if (this.firstNameOffsetDictionary.ContainsKey(firstName))
+            if (!this.firstNameOffsetDictionary.ContainsKey(firstName) || string.IsNullOrEmpty(firstName))
             {
-                foreach (var item in this.firstNameOffsetDictionary[firstName])
-                {
-                    var record = this.ReadRecord(item);
-                    fileCabinetRecordsByFirstName.Add(record.Item1);
-                }
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByFirstName;
+            return this.FindByFirstNameEnumerable(firstName);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
+        {
+            foreach (var offset in this.firstNameOffsetDictionary[firstName])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
         }
 
         /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            List<FileCabinetRecord> fileCabinetRecordsByLastName = new List<FileCabinetRecord>();
-            if (this.lastNameOffsetDictionary.ContainsKey(lastName))
+            if (!this.lastNameOffsetDictionary.ContainsKey(lastName) || string.IsNullOrEmpty(lastName))
             {
-                foreach (var item in this.lastNameOffsetDictionary[lastName])
-                {
-                    var record = this.ReadRecord(item);
-                    fileCabinetRecordsByLastName.Add(record.Item1);
-                }
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByLastName;
+            return this.FindByLastNameEnumerable(lastName);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
+        {
+            foreach (var offset in this.lastNameOffsetDictionary[lastName])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
         }
 
         /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
-            List<FileCabinetRecord> fileCabinetRecordsByDateOfBirth = new List<FileCabinetRecord>();
-            if (this.dateOfBirthOffsetDictionary.ContainsKey(dateOfBirth))
+            if (!this.dateOfBirthOffsetDictionary.ContainsKey(dateOfBirth))
             {
-                foreach (var item in this.dateOfBirthOffsetDictionary[dateOfBirth])
-                {
-                    var record = this.ReadRecord(item);
-                    fileCabinetRecordsByDateOfBirth.Add(record.Item1);
-                }
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByDateOfBirth;
+            return this.FindByDateOfBirthEnumerable(dateOfBirth);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
+        {
+            foreach (var offset in this.dateOfBirthOffsetDictionary[dateOfBirth])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
         }
 
         /// <inheritdoc/>

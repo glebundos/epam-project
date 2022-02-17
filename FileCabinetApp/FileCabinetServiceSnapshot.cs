@@ -35,7 +35,7 @@
             FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(streamReader);
             var records = reader.ReadAll();
             Records.AddRange(records);
-            return records.Count;
+            return records.Count();
         }
 
         public int LoadFromXml(StreamReader streamReader)

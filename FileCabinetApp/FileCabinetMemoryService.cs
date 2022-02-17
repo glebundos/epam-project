@@ -242,15 +242,22 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">The first name to search for.</param>
         /// <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByFirstName = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-            if (this.firstNameDictionary.ContainsKey(firstName))
+            if (!this.firstNameDictionary.ContainsKey(firstName) || string.IsNullOrEmpty(firstName))
             {
-                fileCabinetRecordsByFirstName = new (this.firstNameDictionary[firstName].ToArray());
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByFirstName;
+            return this.FindByFirstNameEnumerable(firstName);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
+        {
+            foreach (var record in this.firstNameDictionary[firstName])
+            {
+                yield return record;
+            }
         }
 
         /// <summary>
@@ -258,15 +265,22 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">The last name to search for.</param>
         /// <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByLastName = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-            if (this.lastNameDictionary.ContainsKey(lastName))
+            if (!this.lastNameDictionary.ContainsKey(lastName) || string.IsNullOrEmpty(lastName))
             {
-                fileCabinetRecordsByLastName = new (this.lastNameDictionary[lastName].ToArray());
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByLastName;
+            return this.FindByLastNameEnumerable(lastName);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
+        {
+            foreach (var record in this.lastNameDictionary[lastName])
+            {
+                yield return record;
+            }
         }
 
         /// <summary>
@@ -274,15 +288,22 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">The date of birth to search for.</param>
         /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
-            ReadOnlyCollection<FileCabinetRecord> fileCabinetRecordsByDateOfBirth = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
+            if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
             {
-                fileCabinetRecordsByDateOfBirth = new (this.dateOfBirthDictionary[dateOfBirth].ToArray());
+                return new List<FileCabinetRecord>();
             }
 
-            return fileCabinetRecordsByDateOfBirth;
+            return this.FindByDateOfBirthEnumerable(dateOfBirth);
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
+        {
+            foreach (var record in this.dateOfBirthDictionary[dateOfBirth])
+            {
+                yield return record;
+            }
         }
 
         /// <summary>

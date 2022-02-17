@@ -9,16 +9,14 @@
             this.reader = reader;
         }
 
-        public IList<FileCabinetRecord> ReadAll()
+        public IEnumerable<FileCabinetRecord> ReadAll()
         {
-            List<FileCabinetRecord> fileCabinetRecords = new List<FileCabinetRecord>();
             while (!this.reader.EndOfStream)
             {
-                fileCabinetRecords.Add(this.Read());
+                yield return this.Read();
             }
 
             this.Dispose();
-            return fileCabinetRecords;
         }
 
         public void Dispose()

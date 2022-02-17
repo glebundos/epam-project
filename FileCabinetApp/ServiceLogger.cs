@@ -32,7 +32,7 @@
             this.writer.Flush();
         }
 
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");
             this.writer.WriteLine($"{date} - Calling FindByDateOfBirth with DateOfBirth = '{dateOfBirth}'");
@@ -42,7 +42,7 @@
             return result;
         }
 
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");
             this.writer.WriteLine($"{date} - Calling FindByFirstName with FirstName = '{firstName}'");
@@ -52,7 +52,7 @@
             return result;
         }
 
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");
             this.writer.WriteLine($"{date} - Calling FindByLastName with LastName = '{lastName}'");

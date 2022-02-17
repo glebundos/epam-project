@@ -24,7 +24,7 @@
                     }
 
                     string value = request.Parameters.Split()[1].ToLower(new System.Globalization.CultureInfo("en-US"))[1..^1];
-                    IReadOnlyCollection<FileCabinetRecord> records = new List<FileCabinetRecord>();
+                    IEnumerable<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
                     if (parameter == "firstname")
                     {

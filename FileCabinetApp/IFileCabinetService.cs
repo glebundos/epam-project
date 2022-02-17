@@ -35,21 +35,21 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">The first name to search for.</param>
         /// <returns>Array of records with given first name or an empty array if there are no records with that first name.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
         /// Searches for all records with given last name (Ignoring lower case and upper case differences).
         /// </summary>
         /// <param name="lastName">The last name to search for.</param>
         /// <returns>Array of records with given last name or an empty array if there are no records with that last name.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
         /// Searches for all records with given date of birth.
         /// </summary>
         /// <param name="dateOfBirth">The date of birth to search for.</param>
         /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth);
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth);
 
         /// <summary>
         /// Gets the all records.

@@ -168,7 +168,7 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             List<FileCabinetRecord> fileCabinetRecordsByFirstName = new List<FileCabinetRecord>();
             if (this.firstNameOffsetDictionary.ContainsKey(firstName))
@@ -184,7 +184,7 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             List<FileCabinetRecord> fileCabinetRecordsByLastName = new List<FileCabinetRecord>();
             if (this.lastNameOffsetDictionary.ContainsKey(lastName))
@@ -200,7 +200,7 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             List<FileCabinetRecord> fileCabinetRecordsByDateOfBirth = new List<FileCabinetRecord>();
             if (this.dateOfBirthOffsetDictionary.ContainsKey(dateOfBirth))

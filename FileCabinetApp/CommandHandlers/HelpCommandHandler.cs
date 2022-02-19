@@ -19,7 +19,8 @@
             new string[] { "import <file extension> <path>", "imports records", "The 'import' imports records from the file(path)." },
             new string[] { "remove <id>", "removes record", "The 'remove' removes record with given id." },
             new string[] { "purge", "purges records", "The 'purge' purges removed records." },
-            new string[] { "insert (p1, p2,...,p7) values (v1,v2,...,v7) ", "insert record", "The 'insert' inserts record." },
+            new string[] { "insert (p1, p2,...,p7) values (v1,v2,...,v7) ", "inserts record", "The 'insert' inserts record." },
+            new string[] { "delete where <parameter> = <value>", "deletes record", "The 'delete' deletes records with given parameter." },
         };
 
         public override void Handle(AppCommandRequest request)

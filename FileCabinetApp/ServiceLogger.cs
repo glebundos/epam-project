@@ -9,7 +9,7 @@
         public ServiceLogger(IFileCabinetService service)
         {
             this.service = service;
-            this.writer = new StreamWriter(@"D:\Прога\epam-project\service-logger.txt");
+            this.writer = new StreamWriter(@"D:\Прога\epam-project\service-logger.txt", true);
         }
 
         public int CreateRecord(FileCabinetRecord newRecord)

@@ -192,7 +192,7 @@
             }
 
             decimal weight;
-            bool isConvertered = decimal.TryParse(input, out weight);
+            bool isConvertered = decimal.TryParse(input, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out weight);
             return Tuple.Create<bool, string, object>(isConvertered, "Convertating error", weight);
         }
 

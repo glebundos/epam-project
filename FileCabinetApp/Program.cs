@@ -170,6 +170,7 @@ namespace FileCabinetApp
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
             var exitHandler = new ExitCommandHandler(Exit);
             var missedHelpHandler = new MissedHelpCommandHandler();
+            var insertHandler = new InsertCommandHandler(fileCabinetService, validatorsSettings);
 
             helpHandler.SetNext(statHandler);
             statHandler.SetNext(createHandler);
@@ -180,8 +181,9 @@ namespace FileCabinetApp
             exportHandler.SetNext(importHandler);
             importHandler.SetNext(removeHandler);
             removeHandler.SetNext(purgeHandler);
-            purgeHandler.SetNext(exitHandler);
+            purgeHandler.SetNext(insertHandler);
 
+            insertHandler.SetNext(exitHandler);
             exitHandler.SetNext(missedHelpHandler);
 
             return helpHandler;

@@ -101,7 +101,7 @@ namespace FileCabinetApp
                 Temperament = newRecord.Temperament,
             };
 
-            byte[] recordByteArray = RecordToByte(record, true);
+            byte[] recordByteArray = RecordToByte(record, false);
             this.UpdateDictionaries(record, oldRecord.Item1, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
             this.fileStream.Flush();

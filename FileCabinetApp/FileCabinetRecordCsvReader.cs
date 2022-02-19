@@ -37,7 +37,7 @@
                 LastName = recordString[2],
                 DateOfBirth = new DateTime(month: Convert.ToInt32(dob[0]), day: Convert.ToInt32(dob[1]), year: Convert.ToInt32(dob[2])),
                 Height = Convert.ToInt16(recordString[4]),
-                Weight = Convert.ToDecimal(recordString[5]),
+                Weight = Convert.ToDecimal(recordString[5], System.Globalization.CultureInfo.InvariantCulture),
                 Temperament = recordString[6][0],
             };
         }

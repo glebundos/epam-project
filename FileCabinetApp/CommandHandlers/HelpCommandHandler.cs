@@ -21,6 +21,7 @@
             new string[] { "purge", "purges records", "The 'purge' purges removed records." },
             new string[] { "insert (p1, p2,...,p7) values (v1,v2,...,v7) ", "inserts record", "The 'insert' inserts record." },
             new string[] { "delete where <parameter> = <value>", "deletes record", "The 'delete' deletes records with given parameter." },
+            new string[] { "update set <p1=v1>,...<pn=vn> where <p1=v1> and ... <pm=vm>", "updates records", "The 'update' updates records." },
         };
 
         public override void Handle(AppCommandRequest request)

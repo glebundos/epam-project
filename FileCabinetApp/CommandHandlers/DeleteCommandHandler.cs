@@ -62,8 +62,10 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    this.service.RemoveRecord(record.Id);
-                    outputStringBuilder.Append("#" + record.Id + ", ");
+                    if (this.service.RemoveRecord(record.Id))
+                    {
+                        outputStringBuilder.Append("#" + record.Id + ", ");
+                    }
                 }
 
                 outputStringBuilder.Remove(outputStringBuilder.Length - 2, 2);
@@ -82,8 +84,10 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    this.service.RemoveRecord(record.Id);
-                    outputStringBuilder.Append("#" + record.Id + ", ");
+                    if (this.service.RemoveRecord(record.Id))
+                    {
+                        outputStringBuilder.Append("#" + record.Id + ", ");
+                    }
                 }
 
                 outputStringBuilder.Remove(outputStringBuilder.Length - 2, 2);
@@ -102,8 +106,10 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    this.service.RemoveRecord(record.Id);
-                    outputStringBuilder.Append("#" + record.Id + ", ");
+                    if (this.service.RemoveRecord(record.Id))
+                    {
+                        outputStringBuilder.Append("#" + record.Id + ", ");
+                    }
                 }
 
                 outputStringBuilder.Remove(outputStringBuilder.Length - 2, 2);

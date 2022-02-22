@@ -65,6 +65,17 @@ namespace FileCabinetApp
             return result;
         }
 
+        public FileCabinetRecord GetById(int id)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var result = this.service.GetById(id);
+            stopWatch.Stop();
+            long elapsedTicks = stopWatch.Elapsed.Ticks;
+            Console.WriteLine($"GetById method execution duration is {elapsedTicks} ticks.");
+            return result;
+        }
+
         public List<FileCabinetRecord> GetRecords()
         {
             Stopwatch stopWatch = new Stopwatch();

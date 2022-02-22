@@ -227,6 +227,22 @@ namespace FileCabinetApp
             }
         }
 
+        public FileCabinetRecord GetById(int id)
+        {
+            if (!this.idOffsetDictionary.ContainsKey(id))
+            {
+                throw new ArgumentException("There are no record with such id", nameof(id));
+            }
+
+            var record = this.ReadRecord(this.RecordIndex(id) * MaxRecordLength);
+            if (record.Item2)
+            {
+                throw new ArgumentException("There are no record with such id", nameof(id));
+            }
+
+            return record.Item1;
+        }
+
         /// <inheritdoc/>
         public List<FileCabinetRecord> GetRecords()
         {

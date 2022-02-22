@@ -62,6 +62,16 @@
             return result;
         }
 
+        public FileCabinetRecord GetById(int id)
+        {
+            string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");
+            this.writer.WriteLine($"{date} - Calling GetById with Id = '{id}'");
+            var result = this.service.GetById(id);
+            this.writer.WriteLine($"{date} - GetById returned {result}");
+            this.writer.Flush();
+            return result;
+        }
+
         public List<FileCabinetRecord> GetRecords()
         {
             string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");

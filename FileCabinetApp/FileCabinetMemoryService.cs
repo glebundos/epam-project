@@ -306,6 +306,16 @@ namespace FileCabinetApp
             }
         }
 
+        public FileCabinetRecord GetById(int id)
+        {
+            if (!this.idList.Contains(id))
+            {
+                throw new ArgumentException("There are no record with such id", nameof(id));
+            }
+
+            return this.list[this.RecordIndex(id)];
+        }
+
         /// <summary>
         /// Gets the all records.
         /// </summary>

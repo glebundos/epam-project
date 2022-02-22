@@ -76,7 +76,7 @@
 
                             break;
                         case "dateofbirth":
-                            if (record.DateOfBirth != DateTime.Parse(oldValues[i]))
+                            if (record.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
                             {
                                 throw new ArgumentException("No such record");
                             }
@@ -88,6 +88,9 @@
                 string firstName = record.FirstName;
                 string lastName = record.LastName;
                 DateTime dateOfBirth = record.DateOfBirth;
+                short height = record.Height;
+                decimal weight = record.Weight;
+                char temperament = record.Temperament;
 
                 for (int i = 0; i < newParams.Length; i++)
                 {
@@ -100,9 +103,17 @@
                             lastName = newValues[i];
                             break;
                         case "dateofbirth":
-                            dateOfBirth = DateTime.Parse(newValues[i]);
+                            dateOfBirth = DateTime.Parse(newValues[i], new System.Globalization.CultureInfo("en-US"));
                             break;
-
+                        case "height":
+                            height = Convert.ToInt16(newValues[i]);
+                            break;
+                        case "weight":
+                            weight = Convert.ToDecimal(newValues[i], System.Globalization.CultureInfo.InvariantCulture);
+                            break;
+                        case "temperament":
+                            temperament = char.ToUpper(Convert.ToChar(newValues[i]));
+                            break;
                     }
                 }
 
@@ -112,9 +123,9 @@
                     FirstName = firstName,
                     LastName = lastName,
                     DateOfBirth = dateOfBirth,
-                    Height = record.Height,
-                    Weight = record.Weight,
-                    Temperament = record.Temperament,
+                    Height = height,
+                    Weight = weight,
+                    Temperament = temperament,
                 };
 
                 this.service.EditRecord(record.Id, newRecord);
@@ -131,7 +142,7 @@
                         oldRecords = this.service.FindByLastName(oldValues[0].ToLower()).ToList();
                         break;
                     case "dateofbirth":
-                        oldRecords = this.service.FindByDateOfBirth(DateTime.Parse(oldValues[0])).ToList();
+                        oldRecords = this.service.FindByDateOfBirth(DateTime.Parse(oldValues[0], new System.Globalization.CultureInfo("en-US"))).ToList();
                         break;
                 }
 
@@ -157,7 +168,7 @@
 
                                 break;
                             case "dateofbirth":
-                                if (oldRecord.DateOfBirth != DateTime.Parse(oldValues[i]))
+                                if (oldRecord.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
                                 {
                                     oldValidRecords.Remove(oldRecord);
                                 }
@@ -177,6 +188,9 @@
                     string firstName = oldValidRecords[i].FirstName;
                     string lastName = oldValidRecords[i].LastName;
                     DateTime dateOfBirth = oldValidRecords[i].DateOfBirth;
+                    short height = oldValidRecords[i].Height;
+                    decimal weight = oldValidRecords[i].Weight;
+                    char temperament = oldValidRecords[i].Temperament;
 
                     for (int j = 0; j < newParams.Length; j++)
                     {
@@ -189,9 +203,17 @@
                                 lastName = newValues[j];
                                 break;
                             case "dateofbirth":
-                                dateOfBirth = DateTime.Parse(newValues[j]);
+                                dateOfBirth = DateTime.Parse(newValues[j], new System.Globalization.CultureInfo("en-US"));
                                 break;
-
+                            case "height":
+                                height = Convert.ToInt16(newValues[j]);
+                                break;
+                            case "weight":
+                                weight = Convert.ToDecimal(newValues[j], System.Globalization.CultureInfo.InvariantCulture);
+                                break;
+                            case "temperament":
+                                temperament = char.ToUpper(Convert.ToChar(newValues[j], new System.Globalization.CultureInfo("en-US")), new System.Globalization.CultureInfo("en-US"));
+                                break;
                         }
                     }
 
@@ -201,9 +223,9 @@
                         FirstName = firstName,
                         LastName = lastName,
                         DateOfBirth = dateOfBirth,
-                        Height = oldValidRecords[i].Height,
-                        Weight = oldValidRecords[i].Weight,
-                        Temperament = oldValidRecords[i].Temperament,
+                        Height = height,
+                        Weight = weight,
+                        Temperament = temperament,
                     };
 
                     this.service.EditRecord(oldValidRecords[i].Id, newRecord);
@@ -289,7 +311,8 @@
             for (int i = 0; i < newParams.Length; i++)
             {
                 newParams[i] = newParams[i].ToLower();
-                if (newParams[i] != "firstname" && newParams[i] != "lastname" && newParams[i] != "dateofbirth")
+                if (newParams[i] != "firstname" && newParams[i] != "lastname" && newParams[i] != "dateofbirth"
+                    && newParams[i] != "height" && newParams[i] != "weight" && newParams[i] != "temperament")
                 {
                     throw new ArgumentException("Wrong parameter: " + newParams[i]);
                 }

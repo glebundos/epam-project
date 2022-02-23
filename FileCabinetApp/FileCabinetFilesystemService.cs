@@ -101,7 +101,7 @@ namespace FileCabinetApp
                 Temperament = newRecord.Temperament,
             };
 
-            byte[] recordByteArray = RecordToByte(record, true);
+            byte[] recordByteArray = RecordToByte(record, false);
             this.UpdateDictionaries(record, oldRecord.Item1, (int)this.fileStream.Position);
             this.fileStream.Write(recordByteArray);
             this.fileStream.Flush();
@@ -225,6 +225,22 @@ namespace FileCabinetApp
                 var record = this.ReadRecord(offset);
                 yield return record.Item1;
             }
+        }
+
+        public FileCabinetRecord GetById(int id)
+        {
+            if (!this.idOffsetDictionary.ContainsKey(id))
+            {
+                throw new ArgumentException("There are no record with such id", nameof(id));
+            }
+
+            var record = this.ReadRecord(this.RecordIndex(id) * MaxRecordLength);
+            if (record.Item2)
+            {
+                throw new ArgumentException("There are no record with such id", nameof(id));
+            }
+
+            return record.Item1;
         }
 
         /// <inheritdoc/>

@@ -51,6 +51,8 @@ namespace FileCabinetApp
         /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth);
 
+        public FileCabinetRecord GetById(int id);
+
         /// <summary>
         /// Gets the all records.
         /// </summary>

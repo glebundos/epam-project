@@ -9,7 +9,7 @@
         public ServiceLogger(IFileCabinetService service)
         {
             this.service = service;
-            this.writer = new StreamWriter(@"D:\Прога\epam-project\service-logger.txt");
+            this.writer = new StreamWriter(@"D:\Прога\epam-project\service-logger.txt", true);
         }
 
         public int CreateRecord(FileCabinetRecord newRecord)
@@ -58,6 +58,16 @@
             this.writer.WriteLine($"{date} - Calling FindByLastName with LastName = '{lastName}'");
             var result = this.service.FindByLastName(lastName);
             this.writer.WriteLine($"{date} - FindByLastName returned {result}");
+            this.writer.Flush();
+            return result;
+        }
+
+        public FileCabinetRecord GetById(int id)
+        {
+            string date = DateTime.Now.ToString("MM-dd-yyyy hh:mm");
+            this.writer.WriteLine($"{date} - Calling GetById with Id = '{id}'");
+            var result = this.service.GetById(id);
+            this.writer.WriteLine($"{date} - GetById returned {result}");
             this.writer.Flush();
             return result;
         }

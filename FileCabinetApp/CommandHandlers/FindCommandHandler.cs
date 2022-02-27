@@ -2,9 +2,9 @@
 {
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private Action<IEnumerable<FileCabinetRecord>> printer;
+        private Action<IEnumerable<FileCabinetRecord>, string[]> printer;
 
-        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>, string[]> printer)
             : base(service)
         {
             this.service = service;
@@ -70,7 +70,7 @@
                         throw new ArgumentException("Wrong parameter", parameter);
                     }
 
-                    this.printer(records);
+                    this.printer(records, new string[1] { "*" });
                 }
                 catch (Exception e)
                 {

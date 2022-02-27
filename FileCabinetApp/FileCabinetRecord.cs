@@ -6,7 +6,7 @@ namespace FileCabinetApp
     /// Contains all record parameters and its Id in the FileCabinet.
     /// </summary>
     [Serializable]
-    public class FileCabinetRecord
+    public class FileCabinetRecord : IEquatable<FileCabinetRecord>
     {
         /// <summary>
         /// Gets the value that matches the Id of the record.
@@ -64,5 +64,25 @@ namespace FileCabinetApp
         /// First letter of temperament.
         /// </value>
         public char Temperament { get; init; }
+
+        public bool Equals(FileCabinetRecord? other)
+        {
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return this.Id.Equals(other.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id == 0 ? 0 : this.Id.GetHashCode();
+        }
     }
 }

@@ -12,8 +12,6 @@
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
-            new string[] { "list", "shows a list of all records", "The 'list' command shows a list of all records." },
-            new string[] { "find <parameter> \"value\"", "finds a record", "The 'find' finds all records with a specific parameter value." },
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
             new string[] { "import <file extension> <path>", "imports records", "The 'import' imports records from the file(path)." },
             new string[] { "purge", "purges records", "The 'purge' purges removed records." },

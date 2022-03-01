@@ -7,13 +7,12 @@
         public SelectCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>, string[]> printer)
             : base(service)
         {
-            this.service = service;
             this.printer = printer;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "select")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("select", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

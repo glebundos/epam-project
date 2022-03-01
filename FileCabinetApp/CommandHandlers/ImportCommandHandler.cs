@@ -5,12 +5,11 @@
         public ImportCommandHandler(IFileCabinetService service)
             : base(service)
         {
-            this.service = service;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "import")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("import", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

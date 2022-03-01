@@ -12,7 +12,7 @@
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "insert")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("insert", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

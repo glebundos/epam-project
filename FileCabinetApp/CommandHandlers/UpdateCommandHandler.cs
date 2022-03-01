@@ -7,13 +7,12 @@
         public UpdateCommandHandler(IFileCabinetService service, ValidatorsSettings settings)
             : base(service)
         {
-            this.service = service;
             this.settings = settings;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "update")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("update", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

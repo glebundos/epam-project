@@ -12,7 +12,6 @@ namespace FileCabinetApp
     {
         private const int MaxRecordLength = 258 + sizeof(short) + sizeof(decimal) + sizeof(char);
 
-        private readonly string pathToDb = @"D:\Прога\epam-project\cabinet-records.db";
         private readonly Dictionary<int, int> idOffsetDictionary = new Dictionary<int, int>();
         private readonly Dictionary<string, List<int>> firstNameOffsetDictionary = new Dictionary<string, List<int>>(StringComparer.CurrentCultureIgnoreCase);
         private readonly Dictionary<string, List<int>> lastNameOffsetDictionary = new Dictionary<string, List<int>>(StringComparer.CurrentCultureIgnoreCase);
@@ -28,7 +27,7 @@ namespace FileCabinetApp
         public FileCabinetFilesystemService(IRecordValidator validator)
         {
             this.validator = validator;
-            this.fileStream = File.Open(this.pathToDb, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            this.fileStream = File.Open("cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (this.fileStream.Length >= MaxRecordLength)
             {
                 this.fileStream.Position = 0;
@@ -502,7 +501,7 @@ namespace FileCabinetApp
 
             long startLength = this.fileStream.Length;
             this.fileStream.Close();
-            this.fileStream = File.Open(pathToDb, FileMode.Create, FileAccess.ReadWrite);
+            this.fileStream = File.Open("cabinet-records.db", FileMode.Create, FileAccess.ReadWrite);
             this.fileStream.Position = 0;
             foreach (var record in aliveRecords)
             {

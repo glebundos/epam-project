@@ -23,7 +23,7 @@
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "help")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("help", StringComparison.OrdinalIgnoreCase))
             {
                 this.Help(request);
             }
@@ -54,7 +54,7 @@
 
                 foreach (var helpMessage in helpMessages)
                 {
-                    Console.WriteLine("\t{0}\t- {1}", helpMessage[CommandHelpIndex], helpMessage[DescriptionHelpIndex]);
+                    Console.WriteLine("\t{0, -60} - {1}", helpMessage[CommandHelpIndex], helpMessage[DescriptionHelpIndex]);
                 }
             }
 

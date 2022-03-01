@@ -5,12 +5,11 @@
         public ExportCommandHandler(IFileCabinetService service)
             : base(service)
         {
-            this.service = service;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "export")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("export", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

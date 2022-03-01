@@ -5,12 +5,11 @@
         public PurgeCommandHandler(IFileCabinetService service)
             : base(service)
         {
-            this.service = service;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "purge")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("purge", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

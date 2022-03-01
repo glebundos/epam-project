@@ -7,13 +7,12 @@
         public CreateCommandHandler(IFileCabinetService service, ValidatorsSettings validatorSettings)
             : base(service)
         {
-            this.service = service;
             settings = validatorSettings;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "create")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("create", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

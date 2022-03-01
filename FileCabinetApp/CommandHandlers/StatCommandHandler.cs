@@ -5,12 +5,11 @@
         public StatCommandHandler(IFileCabinetService service)
             : base(service)
         {
-            this.service = service;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "stat")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("stat", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

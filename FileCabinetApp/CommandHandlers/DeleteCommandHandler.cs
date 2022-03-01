@@ -7,12 +7,11 @@ namespace FileCabinetApp.CommandHandlers
         public DeleteCommandHandler(IFileCabinetService service)
             : base(service)
         {
-            this.service = service;
         }
 
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "delete")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("delete", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

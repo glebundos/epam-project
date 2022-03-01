@@ -15,6 +15,7 @@
                 int startCount = this.service.GetStat(out _);
                 int purgedCount = this.service.Purge();
                 Console.WriteLine($"Data file processing is completed: {purgedCount} of {startCount} records were purged.");
+                Memoizer.Clear();
             }
             else
             {

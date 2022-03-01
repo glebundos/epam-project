@@ -23,6 +23,7 @@
                     try
                     {
                         this.Insert(request);
+                        Memoizer.Clear();
                     }
                     catch (Exception e)
                     {

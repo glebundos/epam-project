@@ -39,154 +39,167 @@
 
         private void Select(AppCommandRequest request)
         {
-            string[] outParams;
-            string[] searchParams;
-            string[] searchValues;
-            bool andOperator;
-            SplitParameters(request.Parameters, out outParams, out searchParams, out searchValues, out andOperator);
-
-            if (searchParams[0] == "*")
+            var memory = Memoizer.Remember(request);
+            if (memory == null)
             {
-                this.printer(this.service.GetRecords(), outParams);
-                return;
-            }
+                string[] outParams;
+                string[] searchParams;
+                string[] searchValues;
+                bool andOperator;
+                SplitParameters(request.Parameters, out outParams, out searchParams, out searchValues, out andOperator);
 
-            if (andOperator)
-            {
-                for (int i = 0; i < searchParams.Length; i++)
+                if (searchParams[0] == "*")
                 {
-                    if (searchParams[i] == "id")
-                    {
-                        string temp = searchParams[0];
-                        searchParams[0] = searchParams[i];
-                        searchParams[i] = temp;
-
-                        temp = searchValues[0];
-                        searchValues[0] = searchValues[i];
-                        searchValues[i] = temp;
-                        break;
-                    }
+                    var records = this.service.GetRecords();
+                    this.printer(records, outParams);
+                    Memoizer.Memoize(request, Tuple.Create(records, outParams));
+                    return;
                 }
 
-                if (searchParams[0] == "id")
+                if (andOperator)
                 {
-                    var record = this.service.GetById(Convert.ToInt32(searchValues[0]));
-                    for (int i = 1; i < searchParams.Length; i++)
+                    for (int i = 0; i < searchParams.Length; i++)
                     {
-                        switch (searchParams[i])
+                        if (searchParams[i] == "id")
                         {
-                            case "firstname":
-                                if (record.FirstName.ToLower() != searchValues[i].ToLower())
-                                {
-                                    throw new ArgumentException("No such records");
-                                }
+                            string temp = searchParams[0];
+                            searchParams[0] = searchParams[i];
+                            searchParams[i] = temp;
 
-                                break;
-                            case "lastname":
-                                if (record.LastName.ToLower() != searchValues[i].ToLower())
-                                {
-                                    throw new ArgumentException("No such records");
-                                }
-
-                                break;
-                            case "dateofbirth":
-                                if (record.DateOfBirth != DateTime.Parse(searchValues[i], new System.Globalization.CultureInfo("en-US")))
-                                {
-                                    throw new ArgumentException("No such records");
-                                }
-
-                                break;
+                            temp = searchValues[0];
+                            searchValues[0] = searchValues[i];
+                            searchValues[i] = temp;
+                            break;
                         }
                     }
 
-                    List<FileCabinetRecord> recordList = new List<FileCabinetRecord>();
-                    recordList.Add(record);
-                    this.printer(recordList, outParams);
-                }
-                else
-                {
-                    List<FileCabinetRecord> foundRecords = new List<FileCabinetRecord>();
-                    switch (searchParams[0])
+                    if (searchParams[0] == "id")
                     {
-                        case "firstname":
-                            foundRecords = this.service.FindByFirstName(searchValues[0].ToLower()).ToList();
-                            break;
-                        case "lastname":
-                            foundRecords = this.service.FindByLastName(searchValues[0].ToLower()).ToList();
-                            break;
-                        case "dateofbirth":
-                            foundRecords = this.service.FindByDateOfBirth(DateTime.Parse(searchValues[0], new System.Globalization.CultureInfo("en-US"))).ToList();
-                            break;
-                    }
-
-                    List<FileCabinetRecord> foundValidRecords = new List<FileCabinetRecord>(foundRecords);
-                    foreach (var foundRecord in foundRecords)
-                    {
-                        for (int i = 0; i < searchParams.Length; i++)
+                        var record = this.service.GetById(Convert.ToInt32(searchValues[0]));
+                        for (int i = 1; i < searchParams.Length; i++)
                         {
                             switch (searchParams[i])
                             {
                                 case "firstname":
-                                    if (foundRecord.FirstName.ToLower() != searchValues[i].ToLower())
+                                    if (record.FirstName.ToLower() != searchValues[i].ToLower())
                                     {
-                                        foundValidRecords.Remove(foundRecord);
+                                        throw new ArgumentException("No such records");
                                     }
 
                                     break;
                                 case "lastname":
-                                    if (foundRecord.LastName.ToLower() != searchValues[i].ToLower())
+                                    if (record.LastName.ToLower() != searchValues[i].ToLower())
                                     {
-                                        foundValidRecords.Remove(foundRecord);
+                                        throw new ArgumentException("No such records");
                                     }
 
                                     break;
                                 case "dateofbirth":
-                                    if (foundRecord.DateOfBirth != DateTime.Parse(searchValues[i], new System.Globalization.CultureInfo("en-US")))
+                                    if (record.DateOfBirth != DateTime.Parse(searchValues[i], new System.Globalization.CultureInfo("en-US")))
                                     {
-                                        foundValidRecords.Remove(foundRecord);
+                                        throw new ArgumentException("No such records");
                                     }
 
                                     break;
                             }
                         }
+
+                        List<FileCabinetRecord> recordList = new List<FileCabinetRecord>();
+                        recordList.Add(record);
+                        this.printer(recordList, outParams);
+                        Memoizer.Memoize(request, Tuple.Create(recordList, outParams));
+                    }
+                    else
+                    {
+                        List<FileCabinetRecord> foundRecords = new List<FileCabinetRecord>();
+                        switch (searchParams[0])
+                        {
+                            case "firstname":
+                                foundRecords = this.service.FindByFirstName(searchValues[0].ToLower()).ToList();
+                                break;
+                            case "lastname":
+                                foundRecords = this.service.FindByLastName(searchValues[0].ToLower()).ToList();
+                                break;
+                            case "dateofbirth":
+                                foundRecords = this.service.FindByDateOfBirth(DateTime.Parse(searchValues[0], new System.Globalization.CultureInfo("en-US"))).ToList();
+                                break;
+                        }
+
+                        List<FileCabinetRecord> foundValidRecords = new List<FileCabinetRecord>(foundRecords);
+                        foreach (var foundRecord in foundRecords)
+                        {
+                            for (int i = 0; i < searchParams.Length; i++)
+                            {
+                                switch (searchParams[i])
+                                {
+                                    case "firstname":
+                                        if (foundRecord.FirstName.ToLower() != searchValues[i].ToLower())
+                                        {
+                                            foundValidRecords.Remove(foundRecord);
+                                        }
+
+                                        break;
+                                    case "lastname":
+                                        if (foundRecord.LastName.ToLower() != searchValues[i].ToLower())
+                                        {
+                                            foundValidRecords.Remove(foundRecord);
+                                        }
+
+                                        break;
+                                    case "dateofbirth":
+                                        if (foundRecord.DateOfBirth != DateTime.Parse(searchValues[i], new System.Globalization.CultureInfo("en-US")))
+                                        {
+                                            foundValidRecords.Remove(foundRecord);
+                                        }
+
+                                        break;
+                                }
+                            }
+                        }
+
+                        if (!foundValidRecords.Any())
+                        {
+                            throw new ArgumentException("No records with such parameters");
+                        }
+
+                        this.printer(foundValidRecords, outParams);
+                        Memoizer.Memoize(request, Tuple.Create(foundValidRecords, outParams));
+                    }
+                }
+                else
+                {
+                    List<FileCabinetRecord> foundRecords = new List<FileCabinetRecord>();
+                    for (int i = 0; i < searchParams.Length; i++)
+                    {
+                        switch (searchParams[i])
+                        {
+                            case "firstname":
+                                foundRecords.AddRange(this.service.FindByFirstName(searchValues[i].ToLower()));
+                                break;
+                            case "lastname":
+                                foundRecords.AddRange(this.service.FindByLastName(searchValues[i].ToLower()));
+                                break;
+                            case "dateofbirth":
+                                foundRecords.AddRange(this.service.FindByDateOfBirth(DateTime.Parse(searchValues[i],
+                                                      new System.Globalization.CultureInfo("en-US"))));
+                                break;
+                        }
                     }
 
-                    if (!foundValidRecords.Any())
+                    foundRecords = foundRecords.Distinct().ToList();
+
+                    if (!foundRecords.Any())
                     {
                         throw new ArgumentException("No records with such parameters");
                     }
 
-                    this.printer(foundValidRecords, outParams);
+                    this.printer(foundRecords, outParams);
+                    Memoizer.Memoize(request, Tuple.Create(foundRecords, outParams));
                 }
             }
             else
             {
-                List<FileCabinetRecord> foundRecords = new List<FileCabinetRecord>();
-                for (int i = 0; i < searchParams.Length; i++)
-                {
-                    switch (searchParams[i])
-                    {
-                        case "firstname":
-                            foundRecords.AddRange(this.service.FindByFirstName(searchValues[i].ToLower()));
-                            break;
-                        case "lastname":
-                            foundRecords.AddRange(this.service.FindByLastName(searchValues[i].ToLower()));
-                            break;
-                        case "dateofbirth":
-                            foundRecords.AddRange(this.service.FindByDateOfBirth(DateTime.Parse(searchValues[i],
-                                                  new System.Globalization.CultureInfo("en-US"))));
-                            break;
-                    }
-                }
-
-                foundRecords = foundRecords.Distinct().ToList();
-
-                if (!foundRecords.Any())
-                {
-                    throw new ArgumentException("No records with such parameters");
-                }
-
-                this.printer(foundRecords, outParams);
+                this.printer(((Tuple<List<FileCabinetRecord>, string[]>)memory).Item1, ((Tuple<List<FileCabinetRecord>, string[]>)memory).Item2);
             }
         }
 

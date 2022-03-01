@@ -18,6 +18,7 @@
                 try
                 {
                     this.Update(request);
+                    Memoizer.Clear();
                 }
                 catch (Exception e)
                 {

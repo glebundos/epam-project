@@ -44,6 +44,8 @@
                     {
                         throw new ArgumentException("Wrong parameters.");
                     }
+
+                    Memoizer.Clear();
                 }
                 catch (Exception e)
                 {

@@ -15,20 +15,13 @@
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command == "select")
             {
-                if (string.IsNullOrEmpty(request.Parameters))
+                try
                 {
-                    Console.WriteLine("Parameters were empty");
+                    this.Select(request);
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        this.Select(request);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    Console.WriteLine("Select failed: " + e.Message);
                 }
             }
             else
@@ -39,6 +32,11 @@
 
         private void Select(AppCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
             var memory = Memoizer.Remember(request);
             if (memory == null)
             {

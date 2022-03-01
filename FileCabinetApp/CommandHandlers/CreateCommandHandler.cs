@@ -17,36 +17,8 @@
             {
                 try
                 {
-                    Console.Write("First name: ");
-                    string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
-
-                    Console.Write("Last name: ");
-                    string lastName = (string)ReadInput(StringConverter, LastNameValidator);
-
-                    Console.Write("Date of birth: ");
-                    DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
-
-                    Console.Write("Height: ");
-                    short height = (short)ReadInput(HeightConverter, HeightValidator);
-
-                    Console.Write("Weight: ");
-                    decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
-
-                    Console.Write("Temperament: ");
-                    char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
-
-                    FileCabinetRecord newRecord = new FileCabinetRecord()
-                    {
-                        Id = 0,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dob,
-                        Height = height,
-                        Weight = weight,
-                        Temperament = temperament,
-                    };
-
-                    this.service.CreateRecord(newRecord);
+                    this.Create();
+                    Memoizer.Clear();
                 }
                 catch (Exception e)
                 {
@@ -57,6 +29,40 @@
             {
                 this.nextHandler.Handle(request);
             }
+        }
+
+        private void Create()
+        {
+            Console.Write("First name: ");
+            string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
+
+            Console.Write("Last name: ");
+            string lastName = (string)ReadInput(StringConverter, LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
+
+            Console.Write("Height: ");
+            short height = (short)ReadInput(HeightConverter, HeightValidator);
+
+            Console.Write("Weight: ");
+            decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
+
+            Console.Write("Temperament: ");
+            char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
+
+            FileCabinetRecord newRecord = new FileCabinetRecord()
+            {
+                Id = 0,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dob,
+                Height = height,
+                Weight = weight,
+                Temperament = temperament,
+            };
+
+            this.service.CreateRecord(newRecord);
         }
 
         private static Tuple<bool, string> FirstNameValidator(object input)

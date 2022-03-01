@@ -22,7 +22,7 @@
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Update failed: " + e.Message);
                 }
 
             }
@@ -34,6 +34,11 @@
 
         private void Update(AppCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
             string[] oldParams;
             string[] oldValues;
             string[] newParams;

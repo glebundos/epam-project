@@ -25,36 +25,40 @@
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command == "help")
             {
-                string parameters = request.Parameters;
-                if (!string.IsNullOrEmpty(parameters))
-                {
-                    var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
-                    if (index >= 0)
-                    {
-                        Console.WriteLine(helpMessages[index][ExplanationHelpIndex]);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"There is no explanation for '{parameters}' command.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Available commands:");
-
-                    foreach (var helpMessage in helpMessages)
-                    {
-                        Console.WriteLine("\t{0}\t- {1}", helpMessage[CommandHelpIndex], helpMessage[DescriptionHelpIndex]);
-                    }
-                }
-
-                Console.WriteLine();
+                this.Help(request);
             }
             else
             {
                 this.nextHandler.Handle(request);
             }
+        }
 
+        private void Help(AppCommandRequest request)
+        {
+            string parameters = request.Parameters;
+            if (!string.IsNullOrEmpty(parameters))
+            {
+                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
+                if (index >= 0)
+                {
+                    Console.WriteLine(helpMessages[index][ExplanationHelpIndex]);
+                }
+                else
+                {
+                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Available commands:");
+
+                foreach (var helpMessage in helpMessages)
+                {
+                    Console.WriteLine("\t{0}\t- {1}", helpMessage[CommandHelpIndex], helpMessage[DescriptionHelpIndex]);
+                }
+            }
+
+            Console.WriteLine();
         }
     }
 }

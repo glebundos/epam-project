@@ -21,7 +21,7 @@ namespace FileCabinetApp.CommandHandlers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Delete error: " + e.Message);
                 }
             }
             else
@@ -32,6 +32,11 @@ namespace FileCabinetApp.CommandHandlers
 
         private void Delete(AppCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
             if (request.Parameters.Split(' ')[0] != "where")
             {
                 throw new ArgumentException("Wrong parameters, use \"delete where parameter = value\"");

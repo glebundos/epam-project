@@ -12,15 +12,27 @@
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command == "purge")
             {
-                int startCount = this.service.GetStat(out _);
-                int purgedCount = this.service.Purge();
-                Console.WriteLine($"Data file processing is completed: {purgedCount} of {startCount} records were purged.");
-                Memoizer.Clear();
+                try
+                {
+                    this.Purge();
+                    Memoizer.Clear();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Purge failed: " + e.Message);
+                }
             }
             else
             {
                 this.nextHandler.Handle(request);
             }
+        }
+
+        private void Purge()
+        {
+            int startCount = this.service.GetStat(out _);
+            int purgedCount = this.service.Purge();
+            Console.WriteLine($"Data file processing is completed: {purgedCount} of {startCount} records were purged.");
         }
     }
 }

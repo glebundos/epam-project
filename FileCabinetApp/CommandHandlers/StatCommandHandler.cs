@@ -12,21 +12,33 @@
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command == "stat")
             {
-                var memory = Memoizer.Remember(request);
-                if (memory == null)
+                try
                 {
-                    var recordsCount = this.service.GetStat(out int removedCount);
-                    Console.WriteLine($"{recordsCount} record(s), {removedCount} of them are removed.");
-                    Memoizer.Memoize(request, Tuple.Create(recordsCount, removedCount));
+                    this.Stat(request);
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine($"{((Tuple<int, int>)memory).Item1} record(s), {((Tuple<int, int>)memory).Item2} of them are removed.");
+                    Console.WriteLine("Stat failed: " + e.Message);
                 }
             }
             else
             {
                 this.nextHandler.Handle(request);
+            }
+        }
+
+        private void Stat(AppCommandRequest request)
+        {
+            var memory = Memoizer.Remember(request);
+            if (memory == null)
+            {
+                var recordsCount = this.service.GetStat(out int removedCount);
+                Console.WriteLine($"{recordsCount} record(s), {removedCount} of them are removed.");
+                Memoizer.Memoize(request, Tuple.Create(recordsCount, removedCount));
+            }
+            else
+            {
+                Console.WriteLine($"{((Tuple<int, int>)memory).Item1} record(s), {((Tuple<int, int>)memory).Item2} of them are removed.");
             }
         }
     }

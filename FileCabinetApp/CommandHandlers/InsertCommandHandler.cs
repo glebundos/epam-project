@@ -14,21 +14,14 @@
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command == "insert")
             {
-                if (string.IsNullOrEmpty(request.Parameters))
+                try
                 {
-                    Console.WriteLine("Parameters were empty");
+                    this.Insert(request);
+                    Memoizer.Clear();
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        this.Insert(request);
-                        Memoizer.Clear();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    Console.WriteLine("Insert failed: " + e.Message);
                 }
             }
             else
@@ -39,6 +32,11 @@
 
         private void Insert(AppCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
             string[] parameters = RemoveWhitespace(request.Parameters.Split("values")[0])[1..^1].ToLower().Split(',');
             if (parameters.Length != 7)
             {

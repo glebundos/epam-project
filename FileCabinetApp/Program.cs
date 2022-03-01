@@ -1,4 +1,6 @@
-﻿using FileCabinetApp.CommandHandlers;
+﻿using System.Text;
+using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Comparers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -161,8 +163,6 @@ namespace FileCabinetApp
             var helpHandler = new HelpCommandHandler();
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService, validatorsSettings);
-            var listHandler = new ListCommandHandler(fileCabinetService, Print);
-            var findHandler = new FindCommandHandler(fileCabinetService, Print);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
@@ -171,57 +171,247 @@ namespace FileCabinetApp
             var insertHandler = new InsertCommandHandler(fileCabinetService, validatorsSettings);
             var deleteHandler = new DeleteCommandHandler(fileCabinetService);
             var updateHandler = new UpdateCommandHandler(fileCabinetService, validatorsSettings);
+            var selectHandler = new SelectCommandHandler(fileCabinetService, Print);
 
             helpHandler.SetNext(statHandler);
             statHandler.SetNext(createHandler);
-            createHandler.SetNext(listHandler);
-            listHandler.SetNext(findHandler);
-            findHandler.SetNext(exportHandler);
+            createHandler.SetNext(exportHandler);
             exportHandler.SetNext(importHandler);
             importHandler.SetNext(purgeHandler);
             purgeHandler.SetNext(insertHandler);
             insertHandler.SetNext(deleteHandler);
             deleteHandler.SetNext(updateHandler);
-            updateHandler.SetNext(exitHandler);
+            updateHandler.SetNext(selectHandler);
+            selectHandler.SetNext(exitHandler);
 
             exitHandler.SetNext(missedHelpHandler);
 
             return helpHandler;
         }
 
-        private static void Print(IEnumerable<FileCabinetRecord> records)
+        private static void Print(IEnumerable<FileCabinetRecord> records, string[] outParams)
         {
-            foreach (var record in records)
+            List<FileCabinetRecord> recordsList = records.ToList();
+            int[] allignments;
+            if (outParams.Contains("*"))
             {
-                string temperament = string.Empty;
-                switch (record.Temperament)
+                allignments = new int[7];
+                Console.Write("|");
+
+                recordsList.Sort(new IdComparer());
+                allignments[0] = GetNumberLength(recordsList[^1].Id) > 2 ? GetNumberLength(recordsList[^1].Id) : 2;
+                Console.Write("{0," + allignments[0] + "}|", "Id");
+
+                recordsList.Sort(new FirstNameLengthComparer());
+                allignments[1] = -(recordsList[^1].FirstName.Length > 9 ? recordsList[^1].FirstName.Length : 9);
+                Console.Write("{0," + allignments[1] + "}|", "FirstName");
+
+                recordsList.Sort(new LastNameLengthComparer());
+                allignments[2] = -(recordsList[^1].LastName.Length > 8 ? recordsList[^1].LastName.Length : 8);
+                Console.Write("{0," + allignments[2] + "}|", "LastName");
+
+                recordsList.Sort(new DateOfBirthComparer());
+                allignments[3] = -(recordsList[^1].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")).Length > 11 ?
+                                   recordsList[^1].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")).Length : 11);
+                Console.Write("{0," + allignments[3] + "}|", "DateOfBirth");
+
+                recordsList.Sort(new HeightComparer());
+                allignments[4] = GetNumberLength(recordsList[^1].Height) > 6 ? GetNumberLength(recordsList[^1].Height) : 6;
+                Console.Write("{0," + allignments[4] + "}|", "Height");
+
+                recordsList.Sort(new WeightComparer());
+                allignments[5] = GetNumberLength(recordsList[^1].Weight) > 6 ? GetNumberLength(recordsList[^1].Weight) : 6;
+                Console.Write("{0," + allignments[5] + "}|", "Weight");
+
+                recordsList.Sort(new TemperamentComparer());
+                allignments[6] = -11;
+                Console.Write("{0," + allignments[6] + "}|", "Temperament");
+
+                Console.WriteLine();
+            }
+            else
+            {
+                allignments = new int[outParams.Length];
+                Console.Write("|");
+                for (int i = 0; i < outParams.Length; i++)
                 {
-                    case 'P':
-                        temperament = "Phlegmatic";
-                        break;
-                    case 'S':
-                        temperament = "Sanguine";
-                        break;
-                    case 'C':
-                        temperament = "Choleric";
-                        break;
-                    case 'M':
-                        temperament = "Melancholic";
-                        break;
-                    default:
-                        temperament = "MISSING";
-                        break;
+                    switch (outParams[i])
+                    {
+                        case "id":
+                            recordsList.Sort(new IdComparer());
+                            allignments[i] = GetNumberLength(recordsList[^1].Id) > 2 ? GetNumberLength(recordsList[^1].Id) : 2;
+                            Console.Write("{0," + allignments[i] + "}|", "Id");
+                            break;
+                        case "firstname":
+                            recordsList.Sort(new FirstNameLengthComparer());
+                            allignments[i] = -(recordsList[^1].FirstName.Length > 9 ? recordsList[^1].FirstName.Length : 9);
+                            Console.Write("{0," + allignments[i] + "}|", "FirstName");
+                            break;
+                        case "lastname":
+                            recordsList.Sort(new LastNameLengthComparer());
+                            allignments[i] = -(recordsList[^1].LastName.Length > 8 ? recordsList[^1].LastName.Length : 8);
+                            Console.Write("{0," + allignments[i] + "}|", "LastName");
+                            break;
+                        case "dateofbirth":
+                            recordsList.Sort(new DateOfBirthComparer());
+                            allignments[i] = -(recordsList[^1].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")).Length > 11 ?
+                                               recordsList[^1].DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")).Length : 11);
+                            Console.Write("{0," + allignments[i] + "}|", "DateOfBirth");
+                            break;
+                        case "height":
+                            recordsList.Sort(new HeightComparer());
+                            allignments[i] = GetNumberLength(recordsList[^1].Height) > 6 ? GetNumberLength(recordsList[^1].Height) : 6;
+                            Console.Write("{0," + allignments[i] + "}|", "Height");
+                            break;
+                        case "weight":
+                            recordsList.Sort(new WeightComparer());
+                            allignments[i] = GetNumberLength(recordsList[^1].Weight) > 6 ? GetNumberLength(recordsList[^1].Weight) : 6;
+                            Console.Write("{0," + allignments[i] + "}|", "Weight");
+                            break;
+                        case "temperament":
+                            recordsList.Sort(new TemperamentComparer());
+                            allignments[i] = -11;
+                            Console.Write("|{0," + allignments[i] + "}|", "Temperament");
+                            break;
+                    }
                 }
 
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, " +
-                        $"{record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US"))}, " +
-                        $"{record.Height} cm, {record.Weight} kg, {temperament}");
+                Console.WriteLine();
             }
+
+            Console.Write('+');
+            foreach (var allignment in allignments)
+            {
+                for (int i = 0; i < Math.Abs(allignment); i++)
+                {
+                    Console.Write('-');
+                }
+
+                Console.Write('+');
+            }
+
+            Console.WriteLine();
+            foreach (var record in records)
+            {
+                string temperament;
+                Console.Write("|");
+                for (int i = 0; i < outParams.Length; i++)
+                {
+                    switch (outParams[i])
+                    {
+                        case "id":
+                            Console.Write("{0," + allignments[i] + "}|", record.Id);
+                            break;
+                        case "firstname":
+                            Console.Write("{0," + allignments[i] + "}|", record.FirstName);
+                            break;
+                        case "lastname":
+                            Console.Write("{0," + allignments[i] + "}|", record.LastName);
+                            break;
+                        case "dateofbirth":
+                            Console.Write("{0," + allignments[i] + "}|", record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")));
+                            break;
+                        case "height":
+                            Console.Write("{0," + allignments[i] + "}|", record.Height);
+                            break;
+                        case "weight":
+                            Console.Write("{0," + allignments[i] + "}|", record.Weight);
+                            break;
+                        case "temperament":
+                            switch (record.Temperament)
+                            {
+                                case 'P':
+                                    temperament = "Phlegmatic";
+                                    break;
+                                case 'S':
+                                    temperament = "Sanguine";
+                                    break;
+                                case 'C':
+                                    temperament = "Choleric";
+                                    break;
+                                case 'M':
+                                    temperament = "Melancholic";
+                                    break;
+                                default:
+                                    temperament = "MISSING";
+                                    break;
+                            }
+
+                            Console.Write("|{0," + allignments[i] + "}|", temperament);
+                            break;
+                        case "*":
+                            Console.Write("{0," + allignments[0] + "}|", record.Id);
+                            Console.Write("{0," + allignments[1] + "}|", record.FirstName);
+                            Console.Write("{0," + allignments[2] + "}|", record.LastName);
+                            Console.Write("{0," + allignments[3] + "}|", record.DateOfBirth.ToString("yyyy-MMM-d", new System.Globalization.CultureInfo("en-US")));
+                            Console.Write("{0," + allignments[4] + "}|", record.Height);
+                            Console.Write("{0," + allignments[5] + "}|", record.Weight);
+                            switch (record.Temperament)
+                            {
+                                case 'P':
+                                    temperament = "Phlegmatic";
+                                    break;
+                                case 'S':
+                                    temperament = "Sanguine";
+                                    break;
+                                case 'C':
+                                    temperament = "Choleric";
+                                    break;
+                                case 'M':
+                                    temperament = "Melancholic";
+                                    break;
+                                default:
+                                    temperament = "MISSING";
+                                    break;
+                            }
+
+                            Console.Write("{0," + allignments[6] + "}|", temperament);
+                            break;
+                    }
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.Write('+');
+            foreach (var allignment in allignments)
+            {
+                for (int i = 0; i < Math.Abs(allignment); i++)
+                {
+                    Console.Write('-');
+                }
+
+                Console.Write('+');
+            }
+
+            Console.WriteLine();
         }
 
         private static void Exit(bool status)
         {
             isRunning = status;
+        }
+
+        private static int GetNumberLength(long number)
+        {
+            return (int)Math.Log10(number) + 1;
+        }
+
+        private static int GetNumberLength(decimal number)
+        {
+            var count = 0;
+            if (number - (long)number != 0)
+            {
+                count++;
+            }
+
+            while (number - (long)number != 0)
+            {
+                number *= 10;
+            }
+
+            count += GetNumberLength((long)number);
+            return count;
         }
     }
 }

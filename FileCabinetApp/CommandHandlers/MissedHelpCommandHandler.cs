@@ -6,7 +6,7 @@ namespace FileCabinetApp.CommandHandlers
     {
         private static string[] commands = new string[]
         {
-            "help", "exit", "stat", "create", "list", "find", "export", "import", "purge", "insert", "delete", "update",
+            "help", "exit", "stat", "create", "export", "import", "purge", "insert", "delete", "update", "select",
         };
 
         public override void Handle(AppCommandRequest request)

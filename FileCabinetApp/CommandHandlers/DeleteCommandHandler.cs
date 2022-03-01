@@ -17,6 +17,7 @@ namespace FileCabinetApp.CommandHandlers
                 try
                 {
                     this.Delete(request);
+                    Memoizer.Clear();
                 }
                 catch (Exception e)
                 {

@@ -95,8 +95,8 @@ namespace FileCabinetApp
                 configuration.Add(key, value);
             }
 
-            ValidatorsSettings defaultSettings = null;
-            ValidatorsSettings customSettings = null;
+            ValidatorsSettings defaultSettings = new ValidatorsSettings();
+            ValidatorsSettings customSettings = new ValidatorsSettings();
             if (File.Exists("validation-rules.json"))
             {
                 var settings = JsonConvert.DeserializeObject<Dictionary<string, ValidatorsSettings>>(File.ReadAllText("validation-rules.json"));

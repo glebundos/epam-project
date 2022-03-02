@@ -9,7 +9,7 @@ namespace FileCabinetGenerator
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static Config config;
+        private static Config? config;
         private static bool isRunning = true;
         private static IReadOnlyCollection<FileCabinetRecord> fileCabinetRecords = new List<FileCabinetRecord>();
 
@@ -216,6 +216,10 @@ namespace FileCabinetGenerator
             try
             {
                 bool append = false;
+                if (config is null)
+                {
+                    throw new ArgumentNullException("Config was null");
+                }
                 if (config.Type == "csv")
                 {
                     if (File.Exists(config.FilePath))

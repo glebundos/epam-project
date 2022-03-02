@@ -7,8 +7,6 @@
     {
         private FileCabinetRecord[] records;
 
-        public List<FileCabinetRecord> Records { get; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
@@ -20,9 +18,15 @@
         }
 
         /// <summary>
+        /// Gets list of <see cref="FileCabinetRecord"/>.
+        /// </summary>
+        /// <value> Records list.</value>
+        public List<FileCabinetRecord> Records { get; }
+
+        /// <summary>
         /// Writes the snapshot into .csv file.
         /// </summary>
-        /// <param name="streamWriter">Stream with file path.</param>
+        /// <param name="streamWriter">Stream to write to.</param>
         /// <param name="append">Append text if true, rewrite if false.</param>
         public void SaveToCsv(StreamWriter streamWriter, bool append)
         {
@@ -30,19 +34,29 @@
             writer.Write(this.records, append);
         }
 
+        /// <summary>
+        /// Reads the records from .csv file into the <see cref="Records"/>.
+        /// </summary>
+        /// <param name="streamReader">Stream to read from.</param>
+        /// <returns>Count of red records.</returns>
         public int LoadFromCsv(StreamReader streamReader)
         {
             FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(streamReader);
             var records = reader.ReadAll();
-            Records.AddRange(records);
+            this.Records.AddRange(records);
             return records.Count();
         }
 
+        /// <summary>
+        /// Reads the records from .xml file into the <see cref="Records"/>.
+        /// </summary>
+        /// <param name="streamReader">Stream to read from.</param>
+        /// <returns>Count of red records.</returns>
         public int LoadFromXml(StreamReader streamReader)
         {
             FileCabinetRecordXmlReader reader = new FileCabinetRecordXmlReader(streamReader);
             var records = reader.ReadAll();
-            Records.AddRange(records);
+            this.Records.AddRange(records);
             return records.Count;
         }
 

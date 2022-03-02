@@ -6,7 +6,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Writing <see cref="FileCabinetRecord"/> to the .xml file.
     /// </summary>
-    public class FileCabinetRecordXmlWriter : IDisposable
+    public class FileCabinetRecordXmlWriter
     {
         private TextWriter writer;
 
@@ -45,9 +45,7 @@ namespace FileCabinetApp
             this.writer.Dispose();
         }
 
-#pragma warning disable CA1063 // Правильно реализуйте IDisposable
         private void Dispose(bool disposing)
-#pragma warning restore CA1063 // Правильно реализуйте IDisposable
         {
             this.writer?.Dispose();
         }

@@ -1,7 +1,11 @@
 ﻿namespace FileCabinetApp.Comparers
 {
+    /// <summary>
+    /// Comparer class for comparing FileCabinetRecords by weight.
+    /// </summary>
     public class WeightComparer : IComparer<FileCabinetRecord>
     {
+        /// <inheritdoc/>
         public int Compare(FileCabinetRecord? x, FileCabinetRecord? y)
         {
             return GetNumberLength(x.Weight).CompareTo(GetNumberLength(y.Weight));
@@ -24,6 +28,5 @@
             count += GetNumberLength((long)number);
             return count;
         }
-
     }
 }

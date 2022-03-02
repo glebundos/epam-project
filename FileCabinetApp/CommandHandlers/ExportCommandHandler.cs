@@ -1,12 +1,20 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for export command.
+    /// </summary>
     public class ExportCommandHandler : ServiceCommandHandlerBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
         public ExportCommandHandler(IFileCabinetService service)
             : base(service)
         {
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("export", StringComparison.OrdinalIgnoreCase))
@@ -51,13 +59,13 @@
                 }
 
                 StreamWriter streamWriter = new StreamWriter(arguments[1], append);
-                this.service.MakeSnapshot().SaveToCsv(streamWriter, append);
+                this.Service.MakeSnapshot().SaveToCsv(streamWriter, append);
             }
             else if (arguments[0] == "xml")
             {
                 arguments[1] = arguments[1][1..^1];
                 StreamWriter streamWriter = new StreamWriter(arguments[1], append);
-                this.service.MakeSnapshot().SaveToXml(streamWriter, append);
+                this.Service.MakeSnapshot().SaveToXml(streamWriter, append);
             }
             else
             {

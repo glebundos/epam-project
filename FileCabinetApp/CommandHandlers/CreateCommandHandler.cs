@@ -1,15 +1,24 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for create command.
+    /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
-        private static ValidatorsSettings settings;
+        private static ValidatorsSettings? settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
+        /// <param name="validatorSettings"> - settings for validation values.</param>
         public CreateCommandHandler(IFileCabinetService service, ValidatorsSettings validatorSettings)
             : base(service)
         {
             settings = validatorSettings;
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("create", StringComparison.OrdinalIgnoreCase))
@@ -28,40 +37,6 @@
             {
                 this.NextHandler.Handle(request);
             }
-        }
-
-        private void Create()
-        {
-            Console.Write("First name: ");
-            string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
-
-            Console.Write("Last name: ");
-            string lastName = (string)ReadInput(StringConverter, LastNameValidator);
-
-            Console.Write("Date of birth: ");
-            DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
-
-            Console.Write("Height: ");
-            short height = (short)ReadInput(HeightConverter, HeightValidator);
-
-            Console.Write("Weight: ");
-            decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
-
-            Console.Write("Temperament: ");
-            char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
-
-            FileCabinetRecord newRecord = new FileCabinetRecord()
-            {
-                Id = 0,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dob,
-                Height = height,
-                Weight = weight,
-                Temperament = temperament,
-            };
-
-            this.service.CreateRecord(newRecord);
         }
 
         private static Tuple<bool, string> FirstNameValidator(object input)
@@ -213,13 +188,19 @@
             return Tuple.Create<bool, string, object>(isConvertered, "Convertating error", char.ToUpper(temperament, new System.Globalization.CultureInfo("en-US")));
         }
 
-        protected static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
         {
             do
             {
                 T value;
 
                 var input = Console.ReadLine();
+                if (input is null)
+                {
+                    Console.WriteLine($"Conversion failed: input was null. Please, correct your input.");
+                    continue;
+                }
+
                 var conversionResult = converter(input);
 
                 if (!conversionResult.Item1)
@@ -240,6 +221,40 @@
                 return value;
             }
             while (true);
+        }
+
+        private void Create()
+        {
+            Console.Write("First name: ");
+            string firstName = (string)ReadInput(StringConverter, FirstNameValidator);
+
+            Console.Write("Last name: ");
+            string lastName = (string)ReadInput(StringConverter, LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            DateTime dob = (DateTime)ReadInput(DateConverter, DateOfBirthValidator);
+
+            Console.Write("Height: ");
+            short height = (short)ReadInput(HeightConverter, HeightValidator);
+
+            Console.Write("Weight: ");
+            decimal weight = (decimal)ReadInput(WeightConverter, WeightValidator);
+
+            Console.Write("Temperament: ");
+            char temperament = (char)ReadInput(TemperamentConverter, TemperamentValidator);
+
+            FileCabinetRecord newRecord = new FileCabinetRecord()
+            {
+                Id = 0,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dob,
+                Height = height,
+                Weight = weight,
+                Temperament = temperament,
+            };
+
+            this.Service.CreateRecord(newRecord);
         }
     }
 }

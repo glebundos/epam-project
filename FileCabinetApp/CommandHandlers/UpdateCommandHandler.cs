@@ -1,15 +1,24 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for update command.
+    /// </summary>
     public class UpdateCommandHandler : ServiceCommandHandlerBase
     {
         private ValidatorsSettings settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
+        /// <param name="settings"> - settings for validating values.</param>
         public UpdateCommandHandler(IFileCabinetService service, ValidatorsSettings settings)
             : base(service)
         {
             this.settings = settings;
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("update", StringComparison.OrdinalIgnoreCase))
@@ -23,218 +32,10 @@
                 {
                     Console.WriteLine("Update failed: " + e.Message);
                 }
-
             }
             else
             {
                 this.NextHandler.Handle(request);
-            }
-        }
-
-        private void Update(AppCommandRequest request)
-        {
-            if (string.IsNullOrEmpty(request.Parameters))
-            {
-                throw new ArgumentException("Parameters were empty");
-            }
-
-            string[] oldParams;
-            string[] oldValues;
-            string[] newParams;
-            string[] newValues;
-            SplitParameters(request.Parameters, out oldParams, out oldValues, out newParams, out newValues);
-
-            for (int i = 0; i < oldParams.Length; i++)
-            {
-                if (oldParams[i] == "id")
-                {
-                    string temp = oldParams[0];
-                    oldParams[0] = oldParams[i];
-                    oldParams[i] = temp;
-
-                    temp = oldValues[0];
-                    oldValues[0] = oldValues[i];
-                    oldValues[i] = temp;
-                    break;
-                }
-            }
-
-            if (oldParams[0] == "id")
-            {
-                var record = this.service.GetById(Convert.ToInt32(oldValues[0]));
-                for (int i = 1; i < oldParams.Length; i++)
-                {
-                    switch (oldParams[i])
-                    {
-                        case "firstname":
-                            if (record.FirstName.ToLower() != oldValues[i].ToLower())
-                            {
-                                throw new ArgumentException("No such record");
-                            }
-
-                            break;
-                        case "lastname":
-                            if (record.LastName.ToLower() != oldValues[i].ToLower())
-                            {
-                                throw new ArgumentException("No such record");
-                            }
-
-                            break;
-                        case "dateofbirth":
-                            if (record.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
-                            {
-                                throw new ArgumentException("No such record");
-                            }
-
-                            break;
-                    }
-                }
-
-                string firstName = record.FirstName;
-                string lastName = record.LastName;
-                DateTime dateOfBirth = record.DateOfBirth;
-                short height = record.Height;
-                decimal weight = record.Weight;
-                char temperament = record.Temperament;
-
-                for (int i = 0; i < newParams.Length; i++)
-                {
-                    switch (newParams[i])
-                    {
-                        case "firstname":
-                            firstName = newValues[i];
-                            break;
-                        case "lastname":
-                            lastName = newValues[i];
-                            break;
-                        case "dateofbirth":
-                            dateOfBirth = DateTime.Parse(newValues[i], new System.Globalization.CultureInfo("en-US"));
-                            break;
-                        case "height":
-                            height = Convert.ToInt16(newValues[i]);
-                            break;
-                        case "weight":
-                            weight = Convert.ToDecimal(newValues[i], System.Globalization.CultureInfo.InvariantCulture);
-                            break;
-                        case "temperament":
-                            temperament = char.ToUpper(Convert.ToChar(newValues[i]));
-                            break;
-                    }
-                }
-
-                var newRecord = new FileCabinetRecord()
-                {
-                    Id = record.Id,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    DateOfBirth = dateOfBirth,
-                    Height = height,
-                    Weight = weight,
-                    Temperament = temperament,
-                };
-
-                this.service.EditRecord(record.Id, newRecord);
-            }
-            else
-            {
-                List<FileCabinetRecord> oldRecords = new List<FileCabinetRecord>();
-                switch (oldParams[0])
-                {
-                    case "firstname":
-                        oldRecords = this.service.FindByFirstName(oldValues[0].ToLower()).ToList();
-                        break;
-                    case "lastname":
-                        oldRecords = this.service.FindByLastName(oldValues[0].ToLower()).ToList();
-                        break;
-                    case "dateofbirth":
-                        oldRecords = this.service.FindByDateOfBirth(DateTime.Parse(oldValues[0], new System.Globalization.CultureInfo("en-US"))).ToList();
-                        break;
-                }
-
-                List<FileCabinetRecord> oldValidRecords = new List<FileCabinetRecord>(oldRecords);
-                foreach (var oldRecord in oldRecords)
-                {
-                    for (int i = 0; i < oldParams.Length; i++)
-                    {
-                        switch (oldParams[i])
-                        {
-                            case "firstname":
-                                if (oldRecord.FirstName.ToLower() != oldValues[i].ToLower())
-                                {
-                                    oldValidRecords.Remove(oldRecord);
-                                }
-
-                                break;
-                            case "lastname":
-                                if (oldRecord.LastName.ToLower() != oldValues[i].ToLower())
-                                {
-                                    oldValidRecords.Remove(oldRecord);
-                                }
-
-                                break;
-                            case "dateofbirth":
-                                if (oldRecord.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
-                                {
-                                    oldValidRecords.Remove(oldRecord);
-                                }
-
-                                break;
-                        }
-                    }
-                }
-
-                if (!oldValidRecords.Any())
-                {
-                    throw new ArgumentException("No records with such parameters");
-                }
-
-                for (int i = 0; i < oldValidRecords.Count; i++)
-                {
-                    string firstName = oldValidRecords[i].FirstName;
-                    string lastName = oldValidRecords[i].LastName;
-                    DateTime dateOfBirth = oldValidRecords[i].DateOfBirth;
-                    short height = oldValidRecords[i].Height;
-                    decimal weight = oldValidRecords[i].Weight;
-                    char temperament = oldValidRecords[i].Temperament;
-
-                    for (int j = 0; j < newParams.Length; j++)
-                    {
-                        switch (newParams[j])
-                        {
-                            case "firstname":
-                                firstName = newValues[j];
-                                break;
-                            case "lastname":
-                                lastName = newValues[j];
-                                break;
-                            case "dateofbirth":
-                                dateOfBirth = DateTime.Parse(newValues[j], new System.Globalization.CultureInfo("en-US"));
-                                break;
-                            case "height":
-                                height = Convert.ToInt16(newValues[j]);
-                                break;
-                            case "weight":
-                                weight = Convert.ToDecimal(newValues[j], System.Globalization.CultureInfo.InvariantCulture);
-                                break;
-                            case "temperament":
-                                temperament = char.ToUpper(Convert.ToChar(newValues[j], new System.Globalization.CultureInfo("en-US")), new System.Globalization.CultureInfo("en-US"));
-                                break;
-                        }
-                    }
-
-                    var newRecord = new FileCabinetRecord()
-                    {
-                        Id = oldValidRecords[i].Id,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Height = height,
-                        Weight = weight,
-                        Temperament = temperament,
-                    };
-
-                    this.service.EditRecord(oldValidRecords[i].Id, newRecord);
-                }
             }
         }
 
@@ -320,6 +121,213 @@
                     && newParams[i] != "height" && newParams[i] != "weight" && newParams[i] != "temperament")
                 {
                     throw new ArgumentException("Wrong parameter: " + newParams[i]);
+                }
+            }
+        }
+
+        private void Update(AppCommandRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
+            string[] oldParams;
+            string[] oldValues;
+            string[] newParams;
+            string[] newValues;
+            SplitParameters(request.Parameters, out oldParams, out oldValues, out newParams, out newValues);
+
+            for (int i = 0; i < oldParams.Length; i++)
+            {
+                if (oldParams[i] == "id")
+                {
+                    string temp = oldParams[0];
+                    oldParams[0] = oldParams[i];
+                    oldParams[i] = temp;
+
+                    temp = oldValues[0];
+                    oldValues[0] = oldValues[i];
+                    oldValues[i] = temp;
+                    break;
+                }
+            }
+
+            if (oldParams[0] == "id")
+            {
+                var record = this.Service.GetById(Convert.ToInt32(oldValues[0]));
+                for (int i = 1; i < oldParams.Length; i++)
+                {
+                    switch (oldParams[i])
+                    {
+                        case "firstname":
+                            if (record.FirstName.ToLower() != oldValues[i].ToLower())
+                            {
+                                throw new ArgumentException("No such record");
+                            }
+
+                            break;
+                        case "lastname":
+                            if (record.LastName.ToLower() != oldValues[i].ToLower())
+                            {
+                                throw new ArgumentException("No such record");
+                            }
+
+                            break;
+                        case "dateofbirth":
+                            if (record.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
+                            {
+                                throw new ArgumentException("No such record");
+                            }
+
+                            break;
+                    }
+                }
+
+                string firstName = record.FirstName ?? string.Empty;
+                string lastName = record.LastName ?? string.Empty;
+                DateTime dateOfBirth = record.DateOfBirth;
+                short height = record.Height;
+                decimal weight = record.Weight;
+                char temperament = record.Temperament;
+
+                for (int i = 0; i < newParams.Length; i++)
+                {
+                    switch (newParams[i])
+                    {
+                        case "firstname":
+                            firstName = newValues[i];
+                            break;
+                        case "lastname":
+                            lastName = newValues[i];
+                            break;
+                        case "dateofbirth":
+                            dateOfBirth = DateTime.Parse(newValues[i], new System.Globalization.CultureInfo("en-US"));
+                            break;
+                        case "height":
+                            height = Convert.ToInt16(newValues[i]);
+                            break;
+                        case "weight":
+                            weight = Convert.ToDecimal(newValues[i], System.Globalization.CultureInfo.InvariantCulture);
+                            break;
+                        case "temperament":
+                            temperament = char.ToUpper(Convert.ToChar(newValues[i]));
+                            break;
+                    }
+                }
+
+                var newRecord = new FileCabinetRecord()
+                {
+                    Id = record.Id,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    Height = height,
+                    Weight = weight,
+                    Temperament = temperament,
+                };
+
+                this.Service.EditRecord(record.Id, newRecord);
+            }
+            else
+            {
+                List<FileCabinetRecord> oldRecords = new List<FileCabinetRecord>();
+                switch (oldParams[0])
+                {
+                    case "firstname":
+                        oldRecords = this.Service.FindByFirstName(oldValues[0].ToLower()).ToList();
+                        break;
+                    case "lastname":
+                        oldRecords = this.Service.FindByLastName(oldValues[0].ToLower()).ToList();
+                        break;
+                    case "dateofbirth":
+                        oldRecords = this.Service.FindByDateOfBirth(DateTime.Parse(oldValues[0], new System.Globalization.CultureInfo("en-US"))).ToList();
+                        break;
+                }
+
+                List<FileCabinetRecord> oldValidRecords = new List<FileCabinetRecord>(oldRecords);
+                foreach (var oldRecord in oldRecords)
+                {
+                    for (int i = 0; i < oldParams.Length; i++)
+                    {
+                        switch (oldParams[i])
+                        {
+                            case "firstname":
+                                if (oldRecord.FirstName.ToLower() != oldValues[i].ToLower())
+                                {
+                                    oldValidRecords.Remove(oldRecord);
+                                }
+
+                                break;
+                            case "lastname":
+                                if (oldRecord.LastName.ToLower() != oldValues[i].ToLower())
+                                {
+                                    oldValidRecords.Remove(oldRecord);
+                                }
+
+                                break;
+                            case "dateofbirth":
+                                if (oldRecord.DateOfBirth != DateTime.Parse(oldValues[i], new System.Globalization.CultureInfo("en-US")))
+                                {
+                                    oldValidRecords.Remove(oldRecord);
+                                }
+
+                                break;
+                        }
+                    }
+                }
+
+                if (!oldValidRecords.Any())
+                {
+                    throw new ArgumentException("No records with such parameters");
+                }
+
+                for (int i = 0; i < oldValidRecords.Count; i++)
+                {
+                    string firstName = oldValidRecords[i].FirstName ?? string.Empty;
+                    string lastName = oldValidRecords[i].LastName ?? string.Empty;
+                    DateTime dateOfBirth = oldValidRecords[i].DateOfBirth;
+                    short height = oldValidRecords[i].Height;
+                    decimal weight = oldValidRecords[i].Weight;
+                    char temperament = oldValidRecords[i].Temperament;
+
+                    for (int j = 0; j < newParams.Length; j++)
+                    {
+                        switch (newParams[j])
+                        {
+                            case "firstname":
+                                firstName = newValues[j];
+                                break;
+                            case "lastname":
+                                lastName = newValues[j];
+                                break;
+                            case "dateofbirth":
+                                dateOfBirth = DateTime.Parse(newValues[j], new System.Globalization.CultureInfo("en-US"));
+                                break;
+                            case "height":
+                                height = Convert.ToInt16(newValues[j]);
+                                break;
+                            case "weight":
+                                weight = Convert.ToDecimal(newValues[j], System.Globalization.CultureInfo.InvariantCulture);
+                                break;
+                            case "temperament":
+                                temperament = char.ToUpper(Convert.ToChar(newValues[j], new System.Globalization.CultureInfo("en-US")), new System.Globalization.CultureInfo("en-US"));
+                                break;
+                        }
+                    }
+
+                    var newRecord = new FileCabinetRecord()
+                    {
+                        Id = oldValidRecords[i].Id,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        DateOfBirth = dateOfBirth,
+                        Height = height,
+                        Weight = weight,
+                        Temperament = temperament,
+                    };
+
+                    this.Service.EditRecord(oldValidRecords[i].Id, newRecord);
                 }
             }
         }

@@ -1,5 +1,8 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for help command.
+    /// </summary>
     public class HelpCommandHandler : CommandHandlerBase
     {
         private const int CommandHelpIndex = 0;
@@ -21,6 +24,7 @@
             new string[] { "select <p1>,...<pn> where <p1=v1> and ... <pm=vm>", "writes records", "The 'select' finds and writes records with given parameters." },
         };
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("help", StringComparison.OrdinalIgnoreCase))

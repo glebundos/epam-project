@@ -2,13 +2,21 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for delete command.
+    /// </summary>
     public class DeleteCommandHandler : ServiceCommandHandlerBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeleteCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
         public DeleteCommandHandler(IFileCabinetService service)
             : base(service)
         {
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("delete", StringComparison.OrdinalIgnoreCase))
@@ -29,6 +37,13 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
+        private static string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
         private void Delete(AppCommandRequest request)
         {
             if (string.IsNullOrEmpty(request.Parameters))
@@ -45,19 +60,19 @@ namespace FileCabinetApp.CommandHandlers
 
             if (parameter == "id")
             {
-                int idToDelete = Convert.ToInt32(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1]);
-                if (this.service.RemoveRecord(idToDelete))
+                int idtodelete = Convert.ToInt32(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1]);
+                if (this.Service.RemoveRecord(idtodelete))
                 {
-                    Console.WriteLine("Record #" + idToDelete + " is deleted.");
+                    Console.WriteLine("Record #" + idtodelete + " is deleted.");
                 }
                 else
                 {
-                    Console.WriteLine("Record #" + idToDelete + " doesn't exists.");
+                    Console.WriteLine("Record #" + idtodelete + " doesn't exists.");
                 }
             }
             else if (parameter == "firstname")
             {
-                var foundedRecords = this.service.FindByFirstName(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1].ToLower());
+                var foundedRecords = this.Service.FindByFirstName(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1].ToLower());
                 if (!foundedRecords.Any())
                 {
                     throw new ArgumentException("No records with such parameter");
@@ -67,7 +82,7 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    if (this.service.RemoveRecord(record.Id))
+                    if (this.Service.RemoveRecord(record.Id))
                     {
                         outputStringBuilder.Append("#" + record.Id + ", ");
                     }
@@ -79,7 +94,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else if (parameter == "lastname")
             {
-                var foundedRecords = this.service.FindByLastName(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1].ToLower());
+                var foundedRecords = this.Service.FindByLastName(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1].ToLower());
                 if (!foundedRecords.Any())
                 {
                     throw new ArgumentException("No records with such parameter");
@@ -89,7 +104,7 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    if (this.service.RemoveRecord(record.Id))
+                    if (this.Service.RemoveRecord(record.Id))
                     {
                         outputStringBuilder.Append("#" + record.Id + ", ");
                     }
@@ -101,7 +116,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else if (parameter == "dateofbirth")
             {
-                var foundedRecords = this.service.FindByDateOfBirth(DateTime.Parse(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1], new System.Globalization.CultureInfo("en-US")));
+                var foundedRecords = this.Service.FindByDateOfBirth(DateTime.Parse(RemoveWhitespace(request.Parameters.Remove(0, 6)).Split('=')[1], new System.Globalization.CultureInfo("en-US")));
                 if (!foundedRecords.Any())
                 {
                     throw new ArgumentException("No records with such parameter");
@@ -111,7 +126,7 @@ namespace FileCabinetApp.CommandHandlers
                 outputStringBuilder.Append("Record(s) ");
                 foreach (var record in foundedRecords.ToList())
                 {
-                    if (this.service.RemoveRecord(record.Id))
+                    if (this.Service.RemoveRecord(record.Id))
                     {
                         outputStringBuilder.Append("#" + record.Id + ", ");
                     }
@@ -125,13 +140,6 @@ namespace FileCabinetApp.CommandHandlers
             {
                 throw new ArgumentException("Wrong parameter: " + parameter);
             }
-        }
-
-        private static string RemoveWhitespace(string input)
-        {
-            return new string(input.ToCharArray()
-                .Where(c => !char.IsWhiteSpace(c))
-                .ToArray());
         }
     }
 }

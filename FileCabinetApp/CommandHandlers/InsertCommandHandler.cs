@@ -1,15 +1,24 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for insert command.
+    /// </summary>
     public class InsertCommandHandler : ServiceCommandHandlerBase
     {
         private ValidatorsSettings settings;
 
-        public InsertCommandHandler (IFileCabinetService service, ValidatorsSettings settings)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InsertCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
+        /// <param name="settings"> - setting for validating values.</param>
+        public InsertCommandHandler(IFileCabinetService service, ValidatorsSettings settings)
             : base(service)
         {
             this.settings = settings;
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("insert", StringComparison.OrdinalIgnoreCase))
@@ -28,6 +37,13 @@
             {
                 this.NextHandler.Handle(request);
             }
+        }
+
+        private static string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
         }
 
         private void Insert(AppCommandRequest request)
@@ -87,7 +103,7 @@
                 }
             }
 
-            if (this.service.RecordIndex(id) != -1)
+            if (this.Service.RecordIndex(id) != -1)
             {
                 throw new ArgumentException("Record with given id is already exists.");
             }
@@ -105,19 +121,12 @@
 
             if (ValidatorBuilder.CreateCompositeValidator(this.settings).ValidateParameters(record))
             {
-                this.service.CreateRecord(record);
+                this.Service.CreateRecord(record);
             }
             else
             {
                 throw new ArgumentException("Invalid values");
             }
-        }
-
-        private static string RemoveWhitespace(string input)
-        {
-            return new string(input.ToCharArray()
-                .Where(c => !char.IsWhiteSpace(c))
-                .ToArray());
         }
     }
 }

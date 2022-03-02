@@ -22,7 +22,7 @@
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.NextHandler.Handle(request);
             }
         }
 
@@ -35,7 +35,7 @@
 
             int readedCount = 0;
             string[] arguments = request.Parameters.Split();
-            StreamReader streamReader = new StreamReader(arguments[1]);
+            StreamReader streamReader = new StreamReader(arguments[1][1..^1]);
             FileCabinetServiceSnapshot snapshot = new FileCabinetServiceSnapshot(new List<FileCabinetRecord>());
             if (arguments[0] == "csv")
             {

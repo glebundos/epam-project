@@ -27,7 +27,7 @@
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.NextHandler.Handle(request);
             }
         }
 

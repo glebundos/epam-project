@@ -13,7 +13,7 @@
             new string[] { "stat", "prints the statistics", "The 'stat' command prints the statistics." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "export <file extension> \"path\"", "exports records", "The 'export' exports records into the file(path)." },
-            new string[] { "import <file extension> <path>", "imports records", "The 'import' imports records from the file(path)." },
+            new string[] { "import <file extension> \"path\"", "imports records", "The 'import' imports records from the file(path)." },
             new string[] { "purge", "purges records", "The 'purge' purges removed records." },
             new string[] { "insert (p1, p2,...,p7) values (v1,v2,...,v7) ", "inserts record", "The 'insert' inserts record." },
             new string[] { "delete where <parameter> = <value>", "deletes record", "The 'delete' deletes records with given parameter." },
@@ -29,7 +29,7 @@
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.NextHandler.Handle(request);
             }
         }
 

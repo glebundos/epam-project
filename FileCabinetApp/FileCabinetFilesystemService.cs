@@ -177,15 +177,6 @@ namespace FileCabinetApp
             return this.FindByFirstNameEnumerable(firstName);
         }
 
-        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
-        {
-            foreach (var offset in this.firstNameOffsetDictionary[firstName])
-            {
-                var record = this.ReadRecord(offset);
-                yield return record.Item1;
-            }
-        }
-
         /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
@@ -195,15 +186,6 @@ namespace FileCabinetApp
             }
 
             return this.FindByLastNameEnumerable(lastName);
-        }
-
-        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
-        {
-            foreach (var offset in this.lastNameOffsetDictionary[lastName])
-            {
-                var record = this.ReadRecord(offset);
-                yield return record.Item1;
-            }
         }
 
         /// <inheritdoc/>
@@ -217,15 +199,7 @@ namespace FileCabinetApp
             return this.FindByDateOfBirthEnumerable(dateOfBirth);
         }
 
-        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
-        {
-            foreach (var offset in this.dateOfBirthOffsetDictionary[dateOfBirth])
-            {
-                var record = this.ReadRecord(offset);
-                yield return record.Item1;
-            }
-        }
-
+        /// <inheritdoc/>
         public FileCabinetRecord GetById(int id)
         {
             if (!this.idOffsetDictionary.ContainsKey(id))
@@ -281,6 +255,63 @@ namespace FileCabinetApp
             return allRecords.Count;
         }
 
+        /// <inheritdoc/>
+        public int Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            int counter = 0;
+            foreach (var snapshotRecord in snapshot.Records)
+            {
+                if (!this.validator.ValidateParameters(snapshotRecord))
+                {
+                    Console.WriteLine("Invalid parameters. Id: " + snapshotRecord.Id);
+                    continue;
+                }
+
+                if (this.idOffsetDictionary.ContainsKey(snapshotRecord.Id))
+                {
+                    this.EditRecord(snapshotRecord.Id, snapshotRecord);
+                    counter++;
+                }
+                else
+                {
+                    this.CreateRecord(snapshotRecord);
+                    counter++;
+                }
+            }
+
+            return counter;
+        }
+
+        /// <inheritdoc/>
+        public int Purge()
+        {
+            var allRecords = this.ReadRecords();
+            List<FileCabinetRecord> aliveRecords = new List<FileCabinetRecord>();
+            foreach (var record in allRecords)
+            {
+                if (!record.Item2)
+                {
+                    aliveRecords.Add(record.Item1);
+                }
+            }
+
+            long startLength = this.fileStream.Length;
+            this.fileStream.Close();
+            this.fileStream = File.Open("cabinet-records.db", FileMode.Create, FileAccess.ReadWrite);
+            this.fileStream.Position = 0;
+            foreach (var record in aliveRecords)
+            {
+                byte[] recordByteArray = RecordToByte(record, false);
+                this.fileStream.Position = this.fileStream.Length;
+                this.fileStream.Write(recordByteArray);
+            }
+
+            this.fileStream.Flush();
+            long purgedLength = this.fileStream.Length;
+
+            return (int)(startLength - purgedLength) / MaxRecordLength;
+        }
+
         private static byte[] StringToByte(string text)
         {
             var result = new byte[120];
@@ -300,8 +331,8 @@ namespace FileCabinetApp
             byte[] recordByteArray = new byte[MaxRecordLength];
             using var memoryStream = new MemoryStream(recordByteArray);
             using var binaryWriter = new BinaryWriter(memoryStream);
-            var byteFirstName = StringToByte(record.FirstName);
-            var byteLastName = StringToByte(record.LastName);
+            var byteFirstName = StringToByte(record.FirstName ?? string.Empty);
+            var byteLastName = StringToByte(record.LastName ?? string.Empty);
             short status = isDeleted ? (short)4 : (short)0;
             binaryWriter.Write(status);
             binaryWriter.Write(record.Id);
@@ -343,6 +374,33 @@ namespace FileCabinetApp
             return (record, isDeleted);
         }
 
+        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
+        {
+            foreach (var offset in this.firstNameOffsetDictionary[firstName])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
+        {
+            foreach (var offset in this.lastNameOffsetDictionary[lastName])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
+        {
+            foreach (var offset in this.dateOfBirthOffsetDictionary[dateOfBirth])
+            {
+                var record = this.ReadRecord(offset);
+                yield return record.Item1;
+            }
+        }
+
         private int LastId()
         {
             if (this.idOffsetDictionary.Count > 0)
@@ -364,24 +422,30 @@ namespace FileCabinetApp
                 this.idOffsetDictionary.Add(newRecord.Id, position);
             }
 
-            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
+            if (!(newRecord.FirstName is null))
             {
-                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
-            }
-            else
-            {
-                this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
-                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
+                {
+                    this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                }
+                else
+                {
+                    this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
+                    this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                }
             }
 
-            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
+            if (!(newRecord.LastName is null))
             {
-                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
-            }
-            else
-            {
-                this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
-                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
+                {
+                    this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                }
+                else
+                {
+                    this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
+                    this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                }
             }
 
             if (this.dateOfBirthOffsetDictionary.ContainsKey(newRecord.DateOfBirth))
@@ -397,26 +461,40 @@ namespace FileCabinetApp
 
         private void UpdateDictionaries(FileCabinetRecord newRecord, FileCabinetRecord oldRecord, int position)
         {
-            this.firstNameOffsetDictionary[oldRecord.FirstName].Remove(this.idOffsetDictionary[oldRecord.Id]);
-            if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
+            if (!(oldRecord.FirstName is null))
             {
-                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
-            }
-            else
-            {
-                this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
-                this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                this.firstNameOffsetDictionary[oldRecord.FirstName].Remove(this.idOffsetDictionary[oldRecord.Id]);
             }
 
-            this.lastNameOffsetDictionary[oldRecord.LastName].Remove(this.idOffsetDictionary[oldRecord.Id]);
-            if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
+            if (!(newRecord.FirstName is null))
             {
-                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                if (this.firstNameOffsetDictionary.ContainsKey(newRecord.FirstName))
+                {
+                    this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                }
+                else
+                {
+                    this.firstNameOffsetDictionary.Add(newRecord.FirstName, new List<int>());
+                    this.firstNameOffsetDictionary[newRecord.FirstName].Add(position);
+                }
             }
-            else
+
+            if (!(oldRecord.LastName is null))
             {
-                this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
-                this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                this.lastNameOffsetDictionary[oldRecord.LastName].Remove(this.idOffsetDictionary[oldRecord.Id]);
+            }
+
+            if (!(newRecord.LastName is null))
+            {
+                if (this.lastNameOffsetDictionary.ContainsKey(newRecord.LastName))
+                {
+                    this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                }
+                else
+                {
+                    this.lastNameOffsetDictionary.Add(newRecord.LastName, new List<int>());
+                    this.lastNameOffsetDictionary[newRecord.LastName].Add(position);
+                }
             }
 
             this.dateOfBirthOffsetDictionary[oldRecord.DateOfBirth].Remove(this.idOffsetDictionary[oldRecord.Id]);
@@ -433,8 +511,16 @@ namespace FileCabinetApp
 
         private void RemoveFromDictionaries(FileCabinetRecord recordToRemove)
         {
-            this.firstNameOffsetDictionary[recordToRemove.FirstName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
-            this.lastNameOffsetDictionary[recordToRemove.LastName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            if (!(recordToRemove.FirstName is null))
+            {
+                this.firstNameOffsetDictionary[recordToRemove.FirstName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            }
+
+            if (!(recordToRemove.LastName is null))
+            {
+                this.lastNameOffsetDictionary[recordToRemove.LastName].Remove(this.idOffsetDictionary[recordToRemove.Id]);
+            }
+
             this.dateOfBirthOffsetDictionary[recordToRemove.DateOfBirth].Remove(this.idOffsetDictionary[recordToRemove.Id]);
             this.idOffsetDictionary.Remove(recordToRemove.Id);
         }
@@ -459,61 +545,6 @@ namespace FileCabinetApp
             }
 
             return result;
-        }
-
-        public int Restore(FileCabinetServiceSnapshot snapshot)
-        {
-            int counter = 0;
-            foreach (var snapshotRecord in snapshot.Records)
-            {
-                if (!this.validator.ValidateParameters(snapshotRecord))
-                {
-                    Console.WriteLine("Invalid parameters. Id: " + snapshotRecord.Id);
-                    continue;
-                }
-
-                if (this.idOffsetDictionary.ContainsKey(snapshotRecord.Id))
-                {
-                    this.EditRecord(snapshotRecord.Id, snapshotRecord);
-                    counter++;
-                }
-                else
-                {
-                    this.CreateRecord(snapshotRecord);
-                    counter++;
-                }
-            }
-
-            return counter;
-        }
-
-        public int Purge()
-        {
-            var allRecords = this.ReadRecords();
-            List<FileCabinetRecord> aliveRecords = new List<FileCabinetRecord>();
-            foreach (var record in allRecords)
-            {
-                if (!record.Item2)
-                {
-                    aliveRecords.Add(record.Item1);
-                }
-            }
-
-            long startLength = this.fileStream.Length;
-            this.fileStream.Close();
-            this.fileStream = File.Open("cabinet-records.db", FileMode.Create, FileAccess.ReadWrite);
-            this.fileStream.Position = 0;
-            foreach (var record in aliveRecords)
-            {
-                byte[] recordByteArray = RecordToByte(record, false);
-                this.fileStream.Position = this.fileStream.Length;
-                this.fileStream.Write(recordByteArray);
-            }
-
-            this.fileStream.Flush();
-            long purgedLength = this.fileStream.Length;
-
-            return (int)(startLength - purgedLength) / MaxRecordLength;
         }
     }
 }

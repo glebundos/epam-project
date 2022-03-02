@@ -21,6 +21,11 @@ namespace FileCabinetApp
         /// <param name="newRecord">Object with all record parameters.</param>
         public void EditRecord(int id, FileCabinetRecord newRecord);
 
+        /// <summary>
+        /// Removes records with given id.
+        /// </summary>
+        /// <param name="id"> - id of the record to remove.</param>
+        /// <returns>true - if record was deleted, otherwise - false.</returns>
         public bool RemoveRecord(int id);
 
         /// <summary>
@@ -51,6 +56,11 @@ namespace FileCabinetApp
         /// <returns>Array of records with given date of birth or an empty array if there are no records with that date of birth.</returns>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth);
 
+        /// <summary>
+        /// Gets record with a specific id.
+        /// </summary>
+        /// <param name="id"> - id of record.</param>
+        /// <returns>Record with a specific id or throws an exception.</returns>
         public FileCabinetRecord GetById(int id);
 
         /// <summary>
@@ -63,6 +73,7 @@ namespace FileCabinetApp
         /// Gets the number of all records.
         /// </summary>
         /// <returns>Number of all records.</returns>
+        /// <param name="removedCount"> - count of removed records.</param>
         public int GetStat(out int removedCount);
 
         /// <summary>
@@ -71,8 +82,17 @@ namespace FileCabinetApp
         /// <returns>Snapshot of current records list.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot();
 
+        /// <summary>
+        /// Restores records list from given snapshot.
+        /// </summary>
+        /// <param name="snapshot"> - snapshot of records list.</param>
+        /// <returns>Count of restored records.</returns>
         public int Restore(FileCabinetServiceSnapshot snapshot);
 
+        /// <summary>
+        /// Purges all removed records.
+        /// </summary>
+        /// <returns>Count of purged records.</returns>
         public int Purge();
     }
 }

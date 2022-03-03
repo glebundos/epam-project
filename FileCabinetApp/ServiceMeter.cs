@@ -2,15 +2,23 @@
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Decorator class which meters all command executions.
+    /// </summary>
     public class ServiceMeter : IFileCabinetService
     {
         private IFileCabinetService service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceMeter"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to meters.</param>
         public ServiceMeter(IFileCabinetService service)
         {
             this.service = service;
         }
 
+        /// <inheritdoc/>
         public int CreateRecord(FileCabinetRecord newRecord)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -22,6 +30,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public void EditRecord(int id, FileCabinetRecord newRecord)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -32,6 +41,7 @@ namespace FileCabinetApp
             Console.WriteLine($"Edit method execution duration is {elapsedTicks} ticks.");
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -43,6 +53,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -54,6 +65,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -65,6 +77,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public FileCabinetRecord GetById(int id)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -76,6 +89,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public List<FileCabinetRecord> GetRecords()
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -87,6 +101,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public int GetStat(out int removedCount)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -98,6 +113,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -109,6 +125,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public int Purge()
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -120,6 +137,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public int RecordIndex(int id)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -131,6 +149,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public bool RemoveRecord(int id)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -142,6 +161,7 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
         public int Restore(FileCabinetServiceSnapshot snapshot)
         {
             Stopwatch stopWatch = new Stopwatch();

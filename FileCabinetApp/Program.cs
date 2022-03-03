@@ -95,12 +95,11 @@ namespace FileCabinetApp
                 configuration.Add(key, value);
             }
 
-            string path = @"D:\Прога\epam-project\FileCabinetApp\validation-rules.json";
-            ValidatorsSettings defaultSettings = null;
-            ValidatorsSettings customSettings = null;
-            if (File.Exists(path))
+            ValidatorsSettings defaultSettings = new ValidatorsSettings();
+            ValidatorsSettings customSettings = new ValidatorsSettings();
+            if (File.Exists("validation-rules.json"))
             {
-                var settings = JsonConvert.DeserializeObject<Dictionary<string, ValidatorsSettings>>(File.ReadAllText(path));
+                var settings = JsonConvert.DeserializeObject<Dictionary<string, ValidatorsSettings>>(File.ReadAllText("validation-rules.json"));
                 defaultSettings = settings["Default"];
                 customSettings = settings["Custom"];
             }

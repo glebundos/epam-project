@@ -1,44 +1,58 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for insert command.
+    /// </summary>
     public class InsertCommandHandler : ServiceCommandHandlerBase
     {
         private ValidatorsSettings settings;
 
-        public InsertCommandHandler (IFileCabinetService service, ValidatorsSettings settings)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InsertCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service"> - fileCabinetService to manipulate with.</param>
+        /// <param name="settings"> - setting for validating values.</param>
+        public InsertCommandHandler(IFileCabinetService service, ValidatorsSettings settings)
             : base(service)
         {
             this.settings = settings;
         }
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
-            if (!string.IsNullOrEmpty(request.Command) && request.Command == "insert")
+            if (!string.IsNullOrEmpty(request.Command) && request.Command.Equals("insert", StringComparison.OrdinalIgnoreCase))
             {
-                if (string.IsNullOrEmpty(request.Parameters))
+                try
                 {
-                    Console.WriteLine("Parameters were empty");
+                    this.Insert(request);
+                    Memoizer.Clear();
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        this.Insert(request);
-                        Memoizer.Clear();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    Console.WriteLine("Insert failed: " + e.Message);
                 }
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.NextHandler.Handle(request);
             }
+        }
+
+        private static string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
         }
 
         private void Insert(AppCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Parameters))
+            {
+                throw new ArgumentException("Parameters were empty");
+            }
+
             string[] parameters = RemoveWhitespace(request.Parameters.Split("values")[0])[1..^1].ToLower().Split(',');
             if (parameters.Length != 7)
             {
@@ -89,7 +103,7 @@
                 }
             }
 
-            if (this.service.RecordIndex(id) != -1)
+            if (this.Service.RecordIndex(id) != -1)
             {
                 throw new ArgumentException("Record with given id is already exists.");
             }
@@ -107,19 +121,12 @@
 
             if (ValidatorBuilder.CreateCompositeValidator(this.settings).ValidateParameters(record))
             {
-                this.service.CreateRecord(record);
+                this.Service.CreateRecord(record);
             }
             else
             {
                 throw new ArgumentException("Invalid values");
             }
-        }
-
-        private static string RemoveWhitespace(string input)
-        {
-            return new string(input.ToCharArray()
-                .Where(c => !char.IsWhiteSpace(c))
-                .ToArray());
         }
     }
 }

@@ -65,6 +65,7 @@ namespace FileCabinetApp
         /// </value>
         public char Temperament { get; init; }
 
+        /// <inheritdoc/>
         public bool Equals(FileCabinetRecord? other)
         {
             if (ReferenceEquals(other, null))
@@ -80,6 +81,7 @@ namespace FileCabinetApp
             return this.Id.Equals(other.Id);
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return this.Id == 0 ? 0 : this.Id.GetHashCode();

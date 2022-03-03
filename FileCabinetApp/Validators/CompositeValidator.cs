@@ -8,7 +8,7 @@
         private readonly IReadOnlyCollection<IRecordValidator> validators;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FullValidator"/> class.
+        /// Initializes a new instance of the <see cref="CompositeValidator"/> class.
         /// </summary>
         /// <param name="validators">List of validators.</param>
         public CompositeValidator(IReadOnlyCollection<IRecordValidator> validators)

@@ -1,7 +1,11 @@
 ﻿namespace FileCabinetApp.Comparers
 {
+    /// <summary>
+    /// Comparer class for comparing FileCabinetRecords by temperamentLength.
+    /// </summary>
     public class TemperamentComparer : IComparer<FileCabinetRecord>
     {
+        /// <inheritdoc/>
         public int Compare(FileCabinetRecord? x, FileCabinetRecord? y)
         {
             if (x.Temperament == y.Temperament)
@@ -9,47 +13,24 @@
                 return 0;
             }
 
-            int xPos;
-            switch (x.Temperament)
-            {
-                case 'C':
-                    xPos = 1;
-                    break;
-                case 'S':
-                    xPos = 2;
-                    break;
-                case 'P':
-                    xPos = 3;
-                    break;
-                case 'M':
-                    xPos = 4;
-                    break;
-                default:
-                    xPos = -1;
-                    break;
-            }
+            int xpos = x.Temperament switch {
+                'C' => 1,
+                'S' => 2,
+                'P' => 3,
+                'M' => 4,
+                _ => -1,
+            };
 
-            int yPos;
-            switch (y.Temperament)
+            int ypos = x.Temperament switch
             {
-                case 'C':
-                    yPos = 1;
-                    break;
-                case 'S':
-                    yPos = 2;
-                    break;
-                case 'P':
-                    yPos = 3;
-                    break;
-                case 'M':
-                    yPos = 4;
-                    break;
-                default:
-                    yPos = -1;
-                    break;
-            }
+                'C' => 1,
+                'S' => 2,
+                'P' => 3,
+                'M' => 4,
+                _ => -1,
+            };
 
-            return xPos.CompareTo(yPos);
+            return xpos.CompareTo(ypos);
         }
     }
 }

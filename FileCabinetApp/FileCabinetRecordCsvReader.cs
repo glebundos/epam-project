@@ -1,14 +1,25 @@
 ﻿namespace FileCabinetApp
 {
+    /// <summary>
+    /// Class for reading records from csv files.
+    /// </summary>
     public class FileCabinetRecordCsvReader
     {
         private StreamReader reader;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetRecordCsvReader"/> class.
+        /// </summary>
+        /// <param name="reader"> - <see cref="StreamReader"/> to read from.</param>
         public FileCabinetRecordCsvReader(StreamReader reader)
         {
             this.reader = reader;
         }
 
+        /// <summary>
+        /// Reads all records from the stream.
+        /// </summary>
+        /// <returns> <see cref="IEnumerable{FileCabinetRecord}"/> of red records.</returns>
         public IEnumerable<FileCabinetRecord> ReadAll()
         {
             while (!this.reader.EndOfStream)
@@ -19,6 +30,9 @@
             this.Dispose();
         }
 
+        /// <summary>
+        /// Dispose method for reader.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);

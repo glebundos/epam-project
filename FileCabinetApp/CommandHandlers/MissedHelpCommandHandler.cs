@@ -2,6 +2,9 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Command handler class for missed commands.
+    /// </summary>
     public class MissedHelpCommandHandler : CommandHandlerBase
     {
         private static string[] commands = new string[]
@@ -9,6 +12,7 @@ namespace FileCabinetApp.CommandHandlers
             "help", "exit", "stat", "create", "export", "import", "purge", "insert", "delete", "update", "select",
         };
 
+        /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
             Console.WriteLine($"There is no '{request.Command}' command.");

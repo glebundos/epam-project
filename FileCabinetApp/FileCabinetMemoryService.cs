@@ -12,11 +12,11 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
-        private readonly List<int> idList = new List<int>();
+        private readonly List<int> idlist = new List<int>();
         private readonly System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
         /// </summary>
         /// <param name="validator">Validator.</param>
         public FileCabinetMemoryService(IRecordValidator validator)
@@ -41,9 +41,9 @@ namespace FileCabinetApp
                 }
 
                 int newId = 1;
-                if (this.idList.Count > 0)
+                if (this.idlist.Count > 0)
                 {
-                    newId = this.idList.Max() + 1;
+                    newId = this.idlist.Max() + 1;
                 }
 
                 var record = new FileCabinetRecord
@@ -59,7 +59,7 @@ namespace FileCabinetApp
 
                 this.list.Add(record);
 
-                this.idList.Add(record.Id);
+                this.idlist.Add(record.Id);
 
                 if (this.firstNameDictionary.ContainsKey(newRecord.FirstName.ToLower(this.cultureInfo)))
                 {
@@ -187,6 +187,7 @@ namespace FileCabinetApp
 #pragma warning restore CA1062 // newRecord проверяется на null в ValidateParameters.
 #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки (проверяется в ValidateParameters).
 
+        /// <inheritdoc/>
         public bool RemoveRecord(int id)
         {
             if (id < 0)
@@ -194,7 +195,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("Wrong parameter: ", nameof(id));
             }
 
-            if (!this.idList.Contains(id))
+            if (!this.idlist.Contains(id))
             {
                 throw new ArgumentException("Wrong parameter: ", nameof(id));
             }
@@ -209,7 +210,7 @@ namespace FileCabinetApp
                 var recordToRemove = this.list[indexToRemove];
 
                 this.list.RemoveAt(indexToRemove);
-                this.idList.Remove(id);
+                this.idlist.Remove(id);
                 this.firstNameDictionary[recordToRemove.FirstName.ToLower(this.cultureInfo)].Remove(recordToRemove);
                 this.lastNameDictionary[recordToRemove.LastName.ToLower(this.cultureInfo)].Remove(recordToRemove);
                 this.dateOfBirthDictionary[recordToRemove.DateOfBirth].Remove(recordToRemove);
@@ -252,14 +253,6 @@ namespace FileCabinetApp
             return this.FindByFirstNameEnumerable(firstName);
         }
 
-        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
-        {
-            foreach (var record in this.firstNameDictionary[firstName])
-            {
-                yield return record;
-            }
-        }
-
         /// <summary>
         /// Searches for all records with given last name (Ignoring lower case and upper case differences).
         /// </summary>
@@ -273,14 +266,6 @@ namespace FileCabinetApp
             }
 
             return this.FindByLastNameEnumerable(lastName);
-        }
-
-        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
-        {
-            foreach (var record in this.lastNameDictionary[lastName])
-            {
-                yield return record;
-            }
         }
 
         /// <summary>
@@ -298,17 +283,10 @@ namespace FileCabinetApp
             return this.FindByDateOfBirthEnumerable(dateOfBirth);
         }
 
-        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
-        {
-            foreach (var record in this.dateOfBirthDictionary[dateOfBirth])
-            {
-                yield return record;
-            }
-        }
-
+        /// <inheritdoc/>
         public FileCabinetRecord GetById(int id)
         {
-            if (!this.idList.Contains(id))
+            if (!this.idlist.Contains(id))
             {
                 throw new ArgumentException("There are no record with such id", nameof(id));
             }
@@ -326,10 +304,7 @@ namespace FileCabinetApp
             return records;
         }
 
-        /// <summary>
-        /// Gets the number of all records.
-        /// </summary>
-        /// <returns>Number of all records.</returns>
+        /// <inheritdoc/>
         public int GetStat(out int removedCount)
         {
             removedCount = 0;
@@ -345,6 +320,7 @@ namespace FileCabinetApp
             return new FileCabinetServiceSnapshot(this.list);
         }
 
+        /// <inheritdoc/>
         public int Restore(FileCabinetServiceSnapshot snapshot)
         {
             int counter = 0;
@@ -381,9 +357,34 @@ namespace FileCabinetApp
             return counter;
         }
 
+        /// <inheritdoc/>
         public int Purge()
         {
             throw new NotImplementedException("Purge method is unavailable im memory service.");
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByDateOfBirthEnumerable(DateTime dateOfBirth)
+        {
+            foreach (var record in this.dateOfBirthDictionary[dateOfBirth])
+            {
+                yield return record;
+            }
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByLastNameEnumerable(string lastName)
+        {
+            foreach (var record in this.lastNameDictionary[lastName])
+            {
+                yield return record;
+            }
+        }
+
+        private IEnumerable<FileCabinetRecord> FindByFirstNameEnumerable(string firstName)
+        {
+            foreach (var record in this.firstNameDictionary[firstName])
+            {
+                yield return record;
+            }
         }
     }
 }

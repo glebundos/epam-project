@@ -3,7 +3,7 @@
     /// <summary>
     /// Writing <see cref="FileCabinetRecord"/> to the .csv file.
     /// </summary>
-    public class FileCabinetRecordCsvWriter : IDisposable
+    public class FileCabinetRecordCsvWriter
     {
         private TextWriter writer;
 
@@ -60,9 +60,7 @@
             this.writer.WriteLine($"{record.Id},{record.FirstName},{record.LastName},{record.DateOfBirth.ToString("MM/dd/yyyy", new System.Globalization.CultureInfo("en-US"))},{record.Height},{record.Weight},{record.Temperament}.");
         }
 
-#pragma warning disable CA1063 // Правильно реализуйте IDisposable
         private void Dispose(bool disposing)
-#pragma warning restore CA1063 // Правильно реализуйте IDisposable
         {
             this.writer?.Dispose();
         }
